@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -164,7 +163,7 @@ interface ModelViewer3DProps {
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  const [apiKey, setApiKey] = useState("msy_svAC0mIhifeW594hdJR4jlQvt7kMiqtDYeoJ");
   const [showApiInput, setShowApiInput] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
   const { toast } = useToast();
@@ -356,12 +355,12 @@ f 1 2 3
         )}
       </div>
 
-      {/* API Key Input */}
-      {(showApiInput || !apiKey) && (
+      {/* API Key Input - now hidden by default since we have a key */}
+      {showApiInput && (
         <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-          <h3 className="text-yellow-400 font-medium mb-2">Meshy AI API Key Required</h3>
+          <h3 className="text-yellow-400 font-medium mb-2">Meshy AI API Key</h3>
           <p className="text-gray-300 text-sm mb-3">
-            Get your free API key from <a href="https://www.meshy.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">meshy.ai</a>
+            Update your Meshy AI API key if needed
           </p>
           <div className="flex space-x-2">
             <input
@@ -376,14 +375,39 @@ f 1 2 3
                 if (apiKey.trim()) {
                   setShowApiInput(false);
                   toast({
-                    title: "API Key Set",
-                    description: "Upload an image to start generating your 3D model!",
+                    title: "API Key Updated",
+                    description: "Your API key has been updated successfully!",
                   });
                 }
               }}
               className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
             >
               Save
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Success banner showing API is ready */}
+      {!showApiInput && (
+        <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start space-x-3">
+              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-white text-xs font-bold">✓</span>
+              </div>
+              <div>
+                <h3 className="text-green-400 font-medium mb-1">API Ready</h3>
+                <p className="text-gray-300 text-sm">
+                  Meshy AI API key is configured. Upload an image to start generating 3D models!
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowApiInput(true)}
+              className="text-green-400 hover:text-green-300 text-sm font-medium"
+            >
+              Change Key
             </button>
           </div>
         </div>
