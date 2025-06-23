@@ -1,19 +1,12 @@
 
 import { useState } from "react";
-import { Download, Eye, Share2, Heart } from "lucide-react";
+import { Download, Eye, Share2, Heart, Plus } from "lucide-react";
+import CADUploadForm from "./CADUploadForm";
 
 const ModelGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
-
-  const categories = [
-    { id: "all", name: "All Models" },
-    { id: "mechanical", name: "Mechanical" },
-    { id: "architectural", name: "Architectural" },
-    { id: "product", name: "Product Design" },
-    { id: "prototypes", name: "Prototypes" }
-  ];
-
-  const models = [
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [models, setModels] = useState([
     {
       id: 1,
       name: "Gear Assembly",
@@ -74,34 +67,68 @@ const ModelGallery = () => {
       author: "Lisa Davis",
       date: "6 days ago"
     }
+  ]);
+
+  const categories = [
+    { id: "all", name: "All Models" },
+    { id: "mechanical", name: "Mechanical" },
+    { id: "architectural", name: "Architectural" },
+    { id: "product", name: "Product Design" },
+    { id: "prototypes", name: "Prototypes" },
+    { id: "art", name: "Art & Sculpture" },
+    { id: "jewelry", name: "Jewelry" }
   ];
 
   const filteredModels = selectedCategory === "all" 
     ? models 
     : models.filter(model => model.category === selectedCategory);
 
+  const handleUploadComplete = (newModel: any) => {
+    setModels(prev => [newModel, ...prev]);
+    setShowUploadForm(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-white">Model Gallery</h1>
         
-        <div className="flex space-x-2">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? "bg-purple-600 text-white"
-                  : "bg-white/10 text-gray-300 hover:text-white hover:bg-white/20"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => setShowUploadForm(!showUploadForm)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Upload CAD</span>
+          </button>
+          
+          <div className="flex space-x-2">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedCategory === category.id
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/10 text-gray-300 hover:text-white hover:bg-white/20"
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
+      {/* Upload Form */}
+      {showUploadForm && (
+        <CADUploadForm
+          onUploadComplete={handleUploadComplete}
+          onClose={() => setShowUploadForm(false)}
+        />
+      )}
+
+      {/* Models Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredModels.map((model) => (
           <div key={model.id} className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
@@ -148,6 +175,26 @@ const ModelGallery = () => {
           </div>
         ))}
       </div>
+
+      {/* Empty State */}
+      {filteredModels.length === 0 && (
+        <div className="text-center py-20">
+          <h2 className="text-2xl font-bold text-white mb-4">No models found</h2>
+          <p className="text-gray-400 mb-6">
+            {selectedCategory === "all" 
+              ? "Be the first to upload a CAD model to the gallery!" 
+              : `No models found in the ${categories.find(c => c.id === selectedCategory)?.name} category.`
+            }
+          </p>
+          <button
+            onClick={() => setShowUploadForm(true)}
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Upload Your First Model</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
