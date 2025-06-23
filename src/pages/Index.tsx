@@ -6,6 +6,7 @@ import ModelSelector from "@/components/ModelSelector";
 import ComputeInstance from "@/components/ComputeInstance";
 import ModelGallery from "@/components/ModelGallery";
 import WorkflowSidebar from "@/components/WorkflowSidebar";
+import ModelViewer3D from "@/components/ModelViewer3D";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -32,13 +33,13 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <ImageUpload 
-                  uploadedImages={uploadedImages}
-                  setUploadedImages={setUploadedImages}
-                />
-                
-                <div className="space-y-6">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <div className="xl:col-span-1 space-y-6">
+                  <ImageUpload 
+                    uploadedImages={uploadedImages}
+                    setUploadedImages={setUploadedImages}
+                  />
+                  
                   <ModelSelector 
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
@@ -55,6 +56,10 @@ const Index = () => {
                   >
                     Generate 3D Model
                   </button>
+                </div>
+
+                <div className="xl:col-span-2">
+                  <ModelViewer3D />
                 </div>
               </div>
             </div>
