@@ -1,7 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Box, Sphere } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { RotateCcw, ZoomIn, ZoomOut, Download, Share2, Maximize2 } from "lucide-react";
 import * as THREE from "three";
 
@@ -18,64 +18,76 @@ const HandCADModel = () => {
   return (
     <group ref={meshRef}>
       {/* Palm */}
-      <Box args={[1, 0.3, 1.5]} position={[0, 0, 0]}>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1, 0.3, 1.5]} />
         <meshStandardMaterial color="#fdbcb4" />
-      </Box>
+      </mesh>
       
       {/* Thumb */}
       <group position={[-0.7, 0, 0.3]}>
-        <Box args={[0.2, 0.2, 0.8]} position={[0, 0, 0.4]}>
+        <mesh position={[0, 0, 0.4]}>
+          <boxGeometry args={[0.2, 0.2, 0.8]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
-        <Box args={[0.15, 0.15, 0.6]} position={[0, 0, 0.9]}>
+        </mesh>
+        <mesh position={[0, 0, 0.9]}>
+          <boxGeometry args={[0.15, 0.15, 0.6]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
+        </mesh>
       </group>
       
       {/* Index finger */}
       <group position={[-0.3, 0, 0.8]}>
-        <Box args={[0.15, 0.15, 0.7]} position={[0, 0, 0.35]}>
+        <mesh position={[0, 0, 0.35]}>
+          <boxGeometry args={[0.15, 0.15, 0.7]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
-        <Box args={[0.12, 0.12, 0.5]} position={[0, 0, 0.75]}>
+        </mesh>
+        <mesh position={[0, 0, 0.75]}>
+          <boxGeometry args={[0.12, 0.12, 0.5]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
+        </mesh>
       </group>
       
       {/* Middle finger */}
       <group position={[0, 0, 0.85]}>
-        <Box args={[0.15, 0.15, 0.8]} position={[0, 0, 0.4]}>
+        <mesh position={[0, 0, 0.4]}>
+          <boxGeometry args={[0.15, 0.15, 0.8]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
-        <Box args={[0.12, 0.12, 0.6]} position={[0, 0, 0.85]}>
+        </mesh>
+        <mesh position={[0, 0, 0.85]}>
+          <boxGeometry args={[0.12, 0.12, 0.6]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
+        </mesh>
       </group>
       
       {/* Ring finger */}
       <group position={[0.3, 0, 0.8]}>
-        <Box args={[0.15, 0.15, 0.7]} position={[0, 0, 0.35]}>
+        <mesh position={[0, 0, 0.35]}>
+          <boxGeometry args={[0.15, 0.15, 0.7]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
-        <Box args={[0.12, 0.12, 0.5]} position={[0, 0, 0.75]}>
+        </mesh>
+        <mesh position={[0, 0, 0.75]}>
+          <boxGeometry args={[0.12, 0.12, 0.5]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
+        </mesh>
       </group>
       
       {/* Pinky finger */}
       <group position={[0.5, 0, 0.6]}>
-        <Box args={[0.12, 0.12, 0.6]} position={[0, 0, 0.3]}>
+        <mesh position={[0, 0, 0.3]}>
+          <boxGeometry args={[0.12, 0.12, 0.6]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
-        <Box args={[0.1, 0.1, 0.4]} position={[0, 0, 0.65]}>
+        </mesh>
+        <mesh position={[0, 0, 0.65]}>
+          <boxGeometry args={[0.1, 0.1, 0.4]} />
           <meshStandardMaterial color="#fdbcb4" />
-        </Box>
+        </mesh>
       </group>
       
       {/* Wrist */}
-      <Box args={[0.8, 0.25, 0.8]} position={[0, 0, -0.9]}>
+      <mesh position={[0, 0, -0.9]}>
+        <boxGeometry args={[0.8, 0.25, 0.8]} />
         <meshStandardMaterial color="#fdbcb4" />
-      </Box>
+      </mesh>
     </group>
   );
 };
