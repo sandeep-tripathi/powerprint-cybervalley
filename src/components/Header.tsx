@@ -1,0 +1,78 @@
+
+import { useState } from "react";
+import { Search, Bell, User, Settings } from "lucide-react";
+
+const Header = () => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  return (
+    <header className="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">P</span>
+              </div>
+              <h1 className="text-2xl font-bold text-white">PowerPrint</h1>
+            </div>
+            
+            <nav className="hidden md:flex space-x-6">
+              <a href="#" className="text-white hover:text-purple-400 transition-colors">Workspace</a>
+              <a href="#" className="text-gray-300 hover:text-purple-400 transition-colors">Gallery</a>
+              <a href="#" className="text-gray-300 hover:text-purple-400 transition-colors">Community</a>
+              <a href="#" className="text-gray-300 hover:text-purple-400 transition-colors">Pricing</a>
+            </nav>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input 
+                type="text" 
+                placeholder="Search models..."
+                className="bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 w-64"
+              />
+            </div>
+            
+            <button className="relative p-2 text-gray-300 hover:text-white transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            </button>
+            
+            <div className="relative">
+              <button 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center space-x-2 p-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white hidden md:block">John Doe</span>
+              </button>
+              
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-black/80 backdrop-blur-lg border border-white/20 rounded-lg py-2">
+                  <a href="#" className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10">
+                    <User className="w-4 h-4" />
+                    <span>Profile</span>
+                  </a>
+                  <a href="#" className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10">
+                    <Settings className="w-4 h-4" />
+                    <span>Settings</span>
+                  </a>
+                  <hr className="my-2 border-white/20" />
+                  <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10">
+                    Sign Out
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
