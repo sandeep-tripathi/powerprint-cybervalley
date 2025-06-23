@@ -163,10 +163,11 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasModel, setHasModel] = useState(false);
+  const [hasModel, setHasModel] = useState(true); // Show placeholder by default
   const [apiKey, setApiKey] = useState("pp_example123456789abcdefghijk");
   const [showApiInput, setShowApiInput] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
+  const [isPlaceholder, setIsPlaceholder] = useState(true); // Track if showing placeholder
   const { toast } = useToast();
 
   // Convert image to 3D mesh using PowerPrint API
@@ -183,6 +184,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
 
     console.log("Starting 3D conversion for:", imageFile.name);
     setIsLoading(true);
+    setIsPlaceholder(false);
     setGenerationStatus("Uploading image...");
 
     try {
@@ -261,6 +263,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
 
     } catch (error) {
       console.error("Error generating 3D model:", error);
+      setIsPlaceholder(true); // Revert to placeholder on error
       toast({
         title: "Generation Failed",
         description: error instanceof Error ? error.message : "Failed to generate 3D model. Please try again.",
@@ -277,7 +280,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
       // Use the first uploaded image
       convertImageTo3D(uploadedImages[0]);
     } else if (uploadedImages.length === 0) {
-      setHasModel(false);
+      setHasModel(true); // Keep showing placeholder
+      setIsPlaceholder(true);
       setGenerationStatus("");
     }
   }, [uploadedImages, apiKey]);
@@ -322,7 +326,9 @@ f 1 2 3
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
-          <p className="text-sm text-gray-400">AI-Powered Image to 3D Conversion</p>
+          <p className="text-sm text-gray-400">
+            {isPlaceholder ? "Placeholder CAD Model - Upload an image to generate" : "AI-Powered Image to 3D Conversion"}
+          </p>
         </div>
         
         {hasModel && (
@@ -462,7 +468,7 @@ f 1 2 3
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-gray-400">Source</p>
-                <p className="text-white font-medium">Meshy AI</p>
+                <p className="text-white font-medium">{isPlaceholder ? "Placeholder" : "PowerPrint AI"}</p>
               </div>
               <div>
                 <p className="text-gray-400">Format</p>
@@ -470,11 +476,13 @@ f 1 2 3
               </div>
               <div>
                 <p className="text-gray-400">Quality</p>
-                <p className="text-white font-medium">High</p>
+                <p className="text-white font-medium">{isPlaceholder ? "Demo" : "High"}</p>
               </div>
               <div>
                 <p className="text-gray-400">Status</p>
-                <p className="text-green-400 font-medium">Generated</p>
+                <p className={`font-medium ${isPlaceholder ? 'text-blue-400' : 'text-green-400'}`}>
+                  {isPlaceholder ? "Placeholder" : "Generated"}
+                </p>
               </div>
             </div>
           </div>

@@ -33,16 +33,16 @@ const SlicedCubeLogo = () => (
     
     <defs>
       <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#8B5CF6" />
-        <stop offset="100%" stopColor="#A855F7" />
+        <stop offset="0%" stopColor="#10B981" />
+        <stop offset="100%" stopColor="#059669" />
       </linearGradient>
       <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#6366F1" />
-        <stop offset="100%" stopColor="#8B5CF6" />
+        <stop offset="0%" stopColor="#3B82F6" />
+        <stop offset="100%" stopColor="#10B981" />
       </linearGradient>
       <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#3B82F6" />
-        <stop offset="100%" stopColor="#6366F1" />
+        <stop offset="0%" stopColor="#1E40AF" />
+        <stop offset="100%" stopColor="#3B82F6" />
       </linearGradient>
     </defs>
   </svg>
