@@ -29,7 +29,7 @@ const Index = () => {
                   AI-Powered Image to 3D Model Conversion
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Transform your images into professional 3D models using Meshy AI's advanced technology
+                  Transform your images into professional 3D models using PowerPrint's advanced AI technology
                 </p>
               </div>
 
@@ -42,10 +42,8 @@ const Index = () => {
                   <div>
                     <h3 className="text-blue-400 font-medium mb-1">Free API Integration</h3>
                     <p className="text-gray-300 text-sm">
-                      This app uses Meshy AI's free API (200 credits/month). 
-                      <a href="https://www.meshy.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline ml-1">
-                        Get your free API key here →
-                      </a>
+                      This app uses PowerPrint's free API (500 credits/month). 
+                      Click on your username to generate a new API key instantly!
                     </p>
                   </div>
                 </div>

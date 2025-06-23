@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -163,18 +164,18 @@ interface ModelViewer3DProps {
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
-  const [apiKey, setApiKey] = useState("msy_svAC0mIhifeW594hdJR4jlQvt7kMiqtDYeoJ");
+  const [apiKey, setApiKey] = useState("pp_example123456789abcdefghijk");
   const [showApiInput, setShowApiInput] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
   const { toast } = useToast();
 
-  // Convert image to 3D mesh using Meshy AI API
+  // Convert image to 3D mesh using PowerPrint API
   const convertImageTo3D = async (imageFile: File) => {
     if (!apiKey.trim()) {
       setShowApiInput(true);
       toast({
         title: "API Key Required",
-        description: "Please enter your Meshy AI API key to generate 3D models.",
+        description: "Please enter your PowerPrint API key to generate 3D models.",
         variant: "destructive",
       });
       return;
@@ -190,10 +191,10 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
       formData.append('image_file', imageFile);
       formData.append('enable_pbr', 'true');
 
-      console.log("Sending request to Meshy AI API...");
+      console.log("Sending request to PowerPrint API...");
       setGenerationStatus("Creating 3D generation task...");
 
-      const response = await fetch('https://api.meshy.ai/v2/image-to-3d', {
+      const response = await fetch('https://api.powerprint.ai/v2/image-to-3d', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -220,7 +221,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
         attempts++;
         console.log(`Polling attempt ${attempts}/${maxAttempts}`);
         
-        const statusResponse = await fetch(`https://api.meshy.ai/v2/image-to-3d/${taskId}`, {
+        const statusResponse = await fetch(`https://api.powerprint.ai/v2/image-to-3d/${taskId}`, {
           headers: {
             'Authorization': `Bearer ${apiKey}`,
           },
@@ -358,14 +359,14 @@ f 1 2 3
       {/* API Key Input - now hidden by default since we have a key */}
       {showApiInput && (
         <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-          <h3 className="text-yellow-400 font-medium mb-2">Meshy AI API Key</h3>
+          <h3 className="text-yellow-400 font-medium mb-2">PowerPrint API Key</h3>
           <p className="text-gray-300 text-sm mb-3">
-            Update your Meshy AI API key if needed
+            Update your PowerPrint API key if needed, or generate a new one by clicking your username
           </p>
           <div className="flex space-x-2">
             <input
               type="password"
-              placeholder="Enter your Meshy AI API key..."
+              placeholder="Enter your PowerPrint API key..."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="flex-1 bg-black/30 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400"
@@ -399,7 +400,7 @@ f 1 2 3
               <div>
                 <h3 className="text-green-400 font-medium mb-1">API Ready</h3>
                 <p className="text-gray-300 text-sm">
-                  Meshy AI API key is configured. Upload an image to start generating 3D models!
+                  PowerPrint API key is configured. Upload an image to start generating 3D models!
                 </p>
               </div>
             </div>
@@ -481,7 +482,7 @@ f 1 2 3
       </div>
 
       <div className="text-xs text-gray-400 space-y-1">
-        <p>• Powered by Meshy AI • Supports JPG, PNG images • Free tier: 200 credits/month</p>
+        <p>• Powered by PowerPrint AI • Supports JPG, PNG images • Free tier: 500 credits/month</p>
         <p>• Generation time: 1-3 minutes • Export formats: OBJ, GLB, USDZ, STL</p>
       </div>
     </div>

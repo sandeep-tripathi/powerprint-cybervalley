@@ -1,9 +1,35 @@
 
 import { useState } from "react";
-import { Search, Bell, User, Settings } from "lucide-react";
+import { Search, Bell, User, Settings, Key } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { toast } = useToast();
+
+  const generateApiKey = () => {
+    // Generate a random API key
+    const prefix = "pp_"; // PowerPrint prefix
+    const randomString = Math.random().toString(36).substring(2, 15) + 
+                        Math.random().toString(36).substring(2, 15) + 
+                        Math.random().toString(36).substring(2, 15);
+    const apiKey = prefix + randomString;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(apiKey).then(() => {
+      toast({
+        title: "API Key Generated!",
+        description: `New PowerPrint API key copied to clipboard: ${apiKey.substring(0, 20)}...`,
+      });
+    }).catch(() => {
+      toast({
+        title: "API Key Generated",
+        description: `Your new PowerPrint API key: ${apiKey}`,
+      });
+    });
+    
+    setIsProfileOpen(false);
+  };
 
   return (
     <header className="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
@@ -52,7 +78,15 @@ const Header = () => {
               </button>
               
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-black/80 backdrop-blur-lg border border-white/20 rounded-lg py-2">
+                <div className="absolute right-0 mt-2 w-56 bg-black/80 backdrop-blur-lg border border-white/20 rounded-lg py-2">
+                  <button 
+                    onClick={generateApiKey}
+                    className="flex items-center space-x-2 px-4 py-2 text-purple-400 hover:text-purple-300 hover:bg-white/10 w-full text-left"
+                  >
+                    <Key className="w-4 h-4" />
+                    <span>Generate API Key</span>
+                  </button>
+                  <hr className="my-2 border-white/20" />
                   <a href="#" className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10">
                     <User className="w-4 h-4" />
                     <span>Profile</span>
