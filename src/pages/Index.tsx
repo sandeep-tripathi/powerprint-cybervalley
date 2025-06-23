@@ -59,7 +59,7 @@ const Index = () => {
                 </div>
 
                 <div className="xl:col-span-2">
-                  <ModelViewer3D />
+                  <ModelViewer3D uploadedImages={uploadedImages} />
                 </div>
               </div>
             </div>

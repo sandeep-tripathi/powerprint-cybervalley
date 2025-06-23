@@ -1,10 +1,111 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Box, Sphere } from "@react-three/drei";
 import { RotateCcw, ZoomIn, ZoomOut, Download, Share2, Maximize2 } from "lucide-react";
+import * as THREE from "three";
 
-const ModelViewer3D = () => {
+// Simple hand-like CAD model component
+const HandCADModel = () => {
+  const meshRef = useRef<THREE.Group>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+    }
+  });
+
+  return (
+    <group ref={meshRef}>
+      {/* Palm */}
+      <Box args={[1, 0.3, 1.5]} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#fdbcb4" />
+      </Box>
+      
+      {/* Thumb */}
+      <group position={[-0.7, 0, 0.3]}>
+        <Box args={[0.2, 0.2, 0.8]} position={[0, 0, 0.4]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+        <Box args={[0.15, 0.15, 0.6]} position={[0, 0, 0.9]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+      </group>
+      
+      {/* Index finger */}
+      <group position={[-0.3, 0, 0.8]}>
+        <Box args={[0.15, 0.15, 0.7]} position={[0, 0, 0.35]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+        <Box args={[0.12, 0.12, 0.5]} position={[0, 0, 0.75]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+      </group>
+      
+      {/* Middle finger */}
+      <group position={[0, 0, 0.85]}>
+        <Box args={[0.15, 0.15, 0.8]} position={[0, 0, 0.4]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+        <Box args={[0.12, 0.12, 0.6]} position={[0, 0, 0.85]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+      </group>
+      
+      {/* Ring finger */}
+      <group position={[0.3, 0, 0.8]}>
+        <Box args={[0.15, 0.15, 0.7]} position={[0, 0, 0.35]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+        <Box args={[0.12, 0.12, 0.5]} position={[0, 0, 0.75]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+      </group>
+      
+      {/* Pinky finger */}
+      <group position={[0.5, 0, 0.6]}>
+        <Box args={[0.12, 0.12, 0.6]} position={[0, 0, 0.3]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+        <Box args={[0.1, 0.1, 0.4]} position={[0, 0, 0.65]}>
+          <meshStandardMaterial color="#fdbcb4" />
+        </Box>
+      </group>
+      
+      {/* Wrist */}
+      <Box args={[0.8, 0.25, 0.8]} position={[0, 0, -0.9]}>
+        <meshStandardMaterial color="#fdbcb4" />
+      </Box>
+    </group>
+  );
+};
+
+interface ModelViewer3DProps {
+  uploadedImages?: File[];
+}
+
+const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
+
+  // Show model when images are uploaded
+  useEffect(() => {
+    if (uploadedImages.length > 0) {
+      setIsLoading(true);
+      // Simulate model generation
+      setTimeout(() => {
+        setIsLoading(false);
+        setHasModel(true);
+      }, 2000);
+    } else {
+      setHasModel(false);
+    }
+  }, [uploadedImages]);
+
+  const resetView = () => {
+    // Reset camera position would go here
+    console.log("Reset view");
+  };
 
   return (
     <div className="space-y-4">
@@ -13,7 +114,10 @@ const ModelViewer3D = () => {
         
         {hasModel && (
           <div className="flex space-x-2">
-            <button className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
+            <button 
+              onClick={resetView}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+            >
               <RotateCcw className="w-5 h-5 text-white" />
             </button>
             <button className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors">
@@ -41,20 +145,28 @@ const ModelViewer3D = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-white font-medium">Generating 3D Model...</p>
-                <p className="text-gray-400 text-sm">This may take a few minutes</p>
+                <p className="text-white font-medium">Generating 3D CAD Model...</p>
+                <p className="text-gray-400 text-sm">Processing hand image...</p>
               </div>
             </div>
           ) : hasModel ? (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-32 h-32 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <div className="text-white text-lg font-bold">3D</div>
-                </div>
-                <p className="text-white font-medium">3D Model Ready</p>
-                <p className="text-gray-400 text-sm">Use controls above to interact</p>
-              </div>
-            </div>
+            <Canvas camera={{ position: [3, 3, 5], fov: 50 }}>
+              <ambientLight intensity={0.4} />
+              <directionalLight position={[10, 10, 5]} intensity={1} />
+              <pointLight position={[-10, -10, -5]} intensity={0.5} />
+              
+              <HandCADModel />
+              
+              <OrbitControls 
+                enablePan={true}
+                enableZoom={true}
+                enableRotate={true}
+                minDistance={2}
+                maxDistance={10}
+              />
+              
+              <gridHelper args={[10, 10, 0x444444, 0x222222]} />
+            </Canvas>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
@@ -62,7 +174,7 @@ const ModelViewer3D = () => {
                   <div className="w-8 h-8 border border-white/30 rounded"></div>
                 </div>
                 <p className="text-white font-medium">No Model Generated</p>
-                <p className="text-gray-400 text-sm">Upload images and generate a 3D model to view it here</p>
+                <p className="text-gray-400 text-sm">Upload hand images to generate a 3D CAD model</p>
               </div>
             </div>
           )}
@@ -73,15 +185,15 @@ const ModelViewer3D = () => {
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-gray-400">Vertices</p>
-                <p className="text-white font-medium">12,847</p>
+                <p className="text-white font-medium">2,847</p>
               </div>
               <div>
                 <p className="text-gray-400">Faces</p>
-                <p className="text-white font-medium">8,932</p>
+                <p className="text-white font-medium">1,932</p>
               </div>
               <div>
                 <p className="text-gray-400">File Size</p>
-                <p className="text-white font-medium">2.4 MB</p>
+                <p className="text-white font-medium">1.2 MB</p>
               </div>
             </div>
           </div>
