@@ -1,6 +1,5 @@
 
 import { useEffect, useRef } from "react";
-import * as OV from "3dviewer";
 
 interface ThreeDCanvasProps {
   isLoading: boolean;
@@ -9,81 +8,44 @@ interface ThreeDCanvasProps {
 }
 
 const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCanvasProps) => {
-  const viewerRef = useRef<HTMLDivElement>(null);
-  const viewerInstanceRef = useRef<OV.Viewer | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (viewerRef.current && !viewerInstanceRef.current) {
-      // Initialize the 3D viewer
-      viewerInstanceRef.current = new OV.Viewer();
-      viewerInstanceRef.current.Init(viewerRef.current);
+    if (canvasRef.current && uploadedImages.length > 0) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
       
-      // Set viewer parameters
-      const viewerParams = new OV.ViewerParams();
-      viewerParams.cameraMode = OV.CameraMode.Perspective;
-      viewerParams.backgroundColor = new OV.RGBColor(0, 0, 0);
-      viewerParams.defaultLineColor = new OV.RGBColor(200, 200, 200);
-      viewerInstanceRef.current.SetParameters(viewerParams);
-    }
-
-    return () => {
-      if (viewerInstanceRef.current) {
-        viewerInstanceRef.current.Destroy();
-        viewerInstanceRef.current = null;
+      if (ctx) {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw a simple 3D-looking cube as placeholder
+        ctx.fillStyle = '#4338ca';
+        ctx.fillRect(100, 100, 200, 200);
+        
+        ctx.fillStyle = '#6366f1';
+        ctx.beginPath();
+        ctx.moveTo(300, 100);
+        ctx.lineTo(350, 50);
+        ctx.lineTo(350, 250);
+        ctx.lineTo(300, 300);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.fillStyle = '#8b5cf6';
+        ctx.beginPath();
+        ctx.moveTo(100, 100);
+        ctx.lineTo(150, 50);
+        ctx.lineTo(350, 50);
+        ctx.lineTo(300, 100);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Add text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '16px Arial';
+        ctx.fillText('3D Model Generated', 150, 350);
       }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (viewerInstanceRef.current && uploadedImages.length > 0) {
-      // Create a simple 3D model when images are uploaded
-      // In a real implementation, this would be the generated 3D model
-      const model = new OV.Model();
-      
-      // Create a simple cube mesh as placeholder
-      const mesh = new OV.Mesh();
-      mesh.SetName("Generated 3D Model");
-      
-      // Add vertices for a cube
-      const vertices = [
-        [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], // bottom face
-        [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]      // top face
-      ];
-      
-      vertices.forEach(vertex => {
-        mesh.AddVertex(new OV.Coord3D(vertex[0], vertex[1], vertex[2]));
-      });
-      
-      // Add faces
-      const faces = [
-        [0, 1, 2, 3], // bottom
-        [4, 7, 6, 5], // top
-        [0, 4, 5, 1], // front
-        [2, 6, 7, 3], // back
-        [0, 3, 7, 4], // left
-        [1, 5, 6, 2]  // right
-      ];
-      
-      faces.forEach(face => {
-        const triangle1 = new OV.Triangle(face[0], face[1], face[2]);
-        const triangle2 = new OV.Triangle(face[0], face[2], face[3]);
-        mesh.AddTriangle(triangle1);
-        mesh.AddTriangle(triangle2);
-      });
-      
-      // Set material
-      const material = new OV.Material();
-      material.name = "Generated Material";
-      material.color = new OV.RGBColor(100, 150, 200);
-      material.metallic = 0.3;
-      material.roughness = 0.7;
-      
-      model.AddMaterial(material);
-      mesh.SetMaterial(0);
-      model.AddMesh(mesh);
-      
-      // Load the model into the viewer
-      viewerInstanceRef.current.LoadModelFromModelObject(model);
     }
   }, [uploadedImages]);
 
@@ -114,10 +76,11 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
   }
 
   return (
-    <div 
-      ref={viewerRef} 
-      className="w-full h-full"
-      style={{ minHeight: '400px' }}
+    <canvas 
+      ref={canvasRef} 
+      width={500} 
+      height={400}
+      className="w-full h-full bg-gray-900 rounded-lg"
     />
   );
 };
