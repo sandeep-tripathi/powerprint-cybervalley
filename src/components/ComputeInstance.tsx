@@ -1,5 +1,5 @@
 
-import { Cpu, Zap, Award } from "lucide-react";
+import { Cpu, Zap, Award, Cloud } from "lucide-react";
 
 interface ComputeInstanceProps {
   selectedInstance: string;
@@ -15,7 +15,10 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       icon: Cpu,
       speed: "3-5 min",
       price: "Free",
-      color: "from-gray-500 to-gray-600"
+      color: "from-gray-500 to-gray-600",
+      cloudProvider: "AWS",
+      instanceType: "t3.large",
+      specs: "Intel Xeon, 2 vCPUs, 8GB RAM"
     },
     {
       id: "pro",
@@ -25,7 +28,10 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       speed: "1-2 min",
       price: "$0.50/run",
       color: "from-blue-500 to-cyan-500",
-      popular: true
+      popular: true,
+      cloudProvider: "Azure",
+      instanceType: "Standard_NC6s_v3",
+      specs: "NVIDIA V100, 6 vCPUs, 112GB RAM"
     },
     {
       id: "enterprise",
@@ -34,9 +40,25 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       icon: Award,
       speed: "30-60 sec",
       price: "$2.00/run",
-      color: "from-purple-500 to-pink-500"
+      color: "from-purple-500 to-pink-500",
+      cloudProvider: "Google Cloud",
+      instanceType: "n1-standard-16 + T4",
+      specs: "NVIDIA T4, 16 vCPUs, 60GB RAM"
     }
   ];
+
+  const getProviderLogo = (provider: string) => {
+    switch (provider) {
+      case "AWS":
+        return "🟠"; // AWS orange
+      case "Azure":
+        return "🔵"; // Azure blue
+      case "Google Cloud":
+        return "🔴"; // Google red
+      default:
+        return "☁️";
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -70,8 +92,13 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
                   </div>
                   
                   <div>
-                    <h3 className="text-white font-semibold">{instance.name}</h3>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-white font-semibold">{instance.name}</h3>
+                      <span className="text-lg">{getProviderLogo(instance.cloudProvider)}</span>
+                      <span className="text-xs text-gray-400">{instance.cloudProvider}</span>
+                    </div>
                     <p className="text-gray-400 text-sm">{instance.description}</p>
+                    <p className="text-gray-500 text-xs">{instance.instanceType} • {instance.specs}</p>
                   </div>
                 </div>
                 
@@ -89,6 +116,16 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
             </div>
           );
         })}
+      </div>
+
+      <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+        <div className="flex items-center space-x-2 mb-2">
+          <Cloud className="w-4 h-4 text-purple-400" />
+          <span className="text-purple-300 font-medium text-sm">Cloud Provider Info</span>
+        </div>
+        <p className="text-slate-300 text-xs">
+          Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance and availability.
+        </p>
       </div>
     </div>
   );
