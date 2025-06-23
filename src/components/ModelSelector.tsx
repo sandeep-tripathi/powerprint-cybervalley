@@ -10,36 +10,36 @@ interface ModelSelectorProps {
 const ModelSelector = ({ selectedModel, setSelectedModel }: ModelSelectorProps) => {
   const models = [
     {
-      id: "cad-pro",
-      name: "CAD Pro",
-      description: "Professional-grade CAD generation with high precision",
+      id: "gpt-4-vision",
+      name: "GPT-4 Vision",
+      description: "Advanced vision-language model with high precision understanding",
       icon: Target,
       speed: "Fast",
       quality: "Professional",
       color: "from-blue-500 to-cyan-500"
     },
     {
-      id: "mesh-builder",
-      name: "Mesh Builder",
-      description: "Optimized for complex mesh generation and topology",
+      id: "claude-vision",
+      name: "Claude Vision",
+      description: "Optimized for complex visual reasoning and detailed analysis",
       icon: Brain,
       speed: "Medium",
       quality: "High",
       color: "from-purple-500 to-pink-500"
     },
     {
-      id: "rapid-proto",
-      name: "Rapid Proto",
-      description: "Fast prototyping with good quality results",
+      id: "gemini-vision",
+      name: "Gemini Vision",
+      description: "Fast multimodal processing with good quality results",
       icon: Zap,
       speed: "Very Fast",
       quality: "Good",
       color: "from-green-500 to-emerald-500"
     },
     {
-      id: "precision-craft",
-      name: "Precision Craft",
-      description: "Ultra-high precision for detailed engineering models",
+      id: "llava-vision",
+      name: "LLaVA Vision",
+      description: "Ultra-high precision for detailed visual understanding",
       icon: Cog,
       speed: "Slow",
       quality: "Ultra High",
