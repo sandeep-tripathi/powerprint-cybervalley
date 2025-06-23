@@ -20,15 +20,23 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
     }
   });
 
+  // Create materials for different faces
+  const materials = [
+    new THREE.MeshStandardMaterial({ color: "#22C55E", roughness: 0.3, metalness: 0.7 }), // Right - Green
+    new THREE.MeshStandardMaterial({ color: "#22C55E", roughness: 0.3, metalness: 0.7 }), // Left - Green
+    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Top - Purple
+    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Bottom - Purple
+    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Front - Purple
+    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Back - Purple
+  ];
+
   return (
     <group scale={scale} rotation={rotation}>
       <mesh ref={cubeRef}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial 
-          color="#7C3AED" 
-          roughness={0.3}
-          metalness={0.7}
-        />
+        <boxGeometry args={[1.8, 1.8, 1.8]} />
+        {materials.map((material, index) => (
+          <primitive key={index} object={material} attach={`material-${index}`} />
+        ))}
       </mesh>
     </group>
   );
