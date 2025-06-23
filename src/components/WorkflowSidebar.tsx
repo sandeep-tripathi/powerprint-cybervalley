@@ -9,7 +9,6 @@ interface WorkflowSidebarProps {
 const WorkflowSidebar = ({ activeTab, setActiveTab }: WorkflowSidebarProps) => {
   const tabs = [
     { id: "generate", label: "Generate", icon: Zap },
-    { id: "gallery", label: "Gallery", icon: Layers },
     { id: "history", label: "History", icon: History },
   ];
 
