@@ -24,10 +24,10 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
   const materials = [
     new THREE.MeshStandardMaterial({ color: "#22C55E", roughness: 0.3, metalness: 0.7 }), // Right - Green
     new THREE.MeshStandardMaterial({ color: "#22C55E", roughness: 0.3, metalness: 0.7 }), // Left - Green
-    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Top - Purple
-    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Bottom - Purple
-    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Front - Purple
-    new THREE.MeshStandardMaterial({ color: "#7C3AED", roughness: 0.3, metalness: 0.7 }), // Back - Purple
+    new THREE.MeshStandardMaterial({ color: "#3B82F6", roughness: 0.3, metalness: 0.7 }), // Top - Blue
+    new THREE.MeshStandardMaterial({ color: "#3B82F6", roughness: 0.3, metalness: 0.7 }), // Bottom - Blue
+    new THREE.MeshStandardMaterial({ color: "#3B82F6", roughness: 0.3, metalness: 0.7 }), // Front - Blue
+    new THREE.MeshStandardMaterial({ color: "#3B82F6", roughness: 0.3, metalness: 0.7 }), // Back - Blue
   ];
 
   return (
