@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -289,8 +288,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
               
               <SlicedCube scale={[2, 2, 2]} animate={true} />
               
-              {/* Axis Helper */}
-              <axesHelper args={[3]} />
+              {/* Enhanced 3D Axis Helper - larger and more visible */}
+              <axesHelper args={[5]} />
               
               <OrbitControls 
                 enablePan={true}
