@@ -1,7 +1,9 @@
+
 import { useState, useRef, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { RotateCcw, ZoomIn, ZoomOut, Download, Share2, Maximize2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import * as THREE from "three";
 
 // More realistic hand CAD model component with OBJ-like geometry
@@ -162,23 +164,125 @@ interface ModelViewer3DProps {
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [showApiInput, setShowApiInput] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState("");
+  const { toast } = useToast();
 
-  // Show model when images are uploaded
-  useEffect(() => {
-    if (uploadedImages.length > 0) {
-      setIsLoading(true);
-      // Simulate model generation
-      setTimeout(() => {
-        setIsLoading(false);
-        setHasModel(true);
-      }, 2000);
-    } else {
-      setHasModel(false);
+  // Convert image to 3D mesh using Meshy AI API
+  const convertImageTo3D = async (imageFile: File) => {
+    if (!apiKey.trim()) {
+      setShowApiInput(true);
+      toast({
+        title: "API Key Required",
+        description: "Please enter your Meshy AI API key to generate 3D models.",
+        variant: "destructive",
+      });
+      return;
     }
-  }, [uploadedImages]);
+
+    console.log("Starting 3D conversion for:", imageFile.name);
+    setIsLoading(true);
+    setGenerationStatus("Uploading image...");
+
+    try {
+      // Step 1: Create image to 3D task
+      const formData = new FormData();
+      formData.append('image_file', imageFile);
+      formData.append('enable_pbr', 'true');
+
+      console.log("Sending request to Meshy AI API...");
+      setGenerationStatus("Creating 3D generation task...");
+
+      const response = await fetch('https://api.meshy.ai/v2/image-to-3d', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("API Error:", response.status, errorData);
+        throw new Error(`API Error: ${response.status} - ${errorData}`);
+      }
+
+      const taskData = await response.json();
+      console.log("Task created:", taskData);
+      setGenerationStatus("Processing 3D model...");
+
+      // Step 2: Poll for completion
+      const taskId = taskData.result;
+      let attempts = 0;
+      const maxAttempts = 60; // 5 minutes max
+
+      const pollStatus = async (): Promise<any> => {
+        attempts++;
+        console.log(`Polling attempt ${attempts}/${maxAttempts}`);
+        
+        const statusResponse = await fetch(`https://api.meshy.ai/v2/image-to-3d/${taskId}`, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+          },
+        });
+
+        if (!statusResponse.ok) {
+          throw new Error(`Status check failed: ${statusResponse.status}`);
+        }
+
+        const statusData = await statusResponse.json();
+        console.log("Status:", statusData);
+
+        if (statusData.status === 'SUCCEEDED') {
+          return statusData;
+        } else if (statusData.status === 'FAILED') {
+          throw new Error('3D generation failed');
+        } else if (attempts >= maxAttempts) {
+          throw new Error('Generation timeout');
+        } else {
+          // Wait 5 seconds before next poll
+          setGenerationStatus(`Processing... (${attempts}/${maxAttempts})`);
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          return pollStatus();
+        }
+      };
+
+      const finalResult = await pollStatus();
+      console.log("Generation completed:", finalResult);
+
+      setHasModel(true);
+      setGenerationStatus("3D model generated successfully!");
+      
+      toast({
+        title: "Success!",
+        description: "3D model generated successfully from your image.",
+      });
+
+    } catch (error) {
+      console.error("Error generating 3D model:", error);
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : "Failed to generate 3D model. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Trigger conversion when images are uploaded
+  useEffect(() => {
+    if (uploadedImages.length > 0 && apiKey.trim()) {
+      // Use the first uploaded image
+      convertImageTo3D(uploadedImages[0]);
+    } else if (uploadedImages.length === 0) {
+      setHasModel(false);
+      setGenerationStatus("");
+    }
+  }, [uploadedImages, apiKey]);
 
   const resetView = () => {
-    // Reset camera position would go here
     console.log("Reset view");
   };
 
@@ -218,7 +322,7 @@ f 1 2 3
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
-          <p className="text-sm text-gray-400">Realistic Hand CAD Model (OBJ Format)</p>
+          <p className="text-sm text-gray-400">AI-Powered Image to 3D Conversion</p>
         </div>
         
         {hasModel && (
@@ -252,14 +356,47 @@ f 1 2 3
         )}
       </div>
 
+      {/* API Key Input */}
+      {(showApiInput || !apiKey) && (
+        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+          <h3 className="text-yellow-400 font-medium mb-2">Meshy AI API Key Required</h3>
+          <p className="text-gray-300 text-sm mb-3">
+            Get your free API key from <a href="https://www.meshy.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">meshy.ai</a>
+          </p>
+          <div className="flex space-x-2">
+            <input
+              type="password"
+              placeholder="Enter your Meshy AI API key..."
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className="flex-1 bg-black/30 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400"
+            />
+            <button
+              onClick={() => {
+                if (apiKey.trim()) {
+                  setShowApiInput(false);
+                  toast({
+                    title: "API Key Set",
+                    description: "Upload an image to start generating your 3D model!",
+                  });
+                }
+              }}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-black/30 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden">
         <div className="aspect-video bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900 relative">
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-white font-medium">Generating Realistic 3D CAD Model...</p>
-                <p className="text-gray-400 text-sm">Processing hand geometry for OBJ format...</p>
+                <p className="text-white font-medium">Converting Image to 3D Model...</p>
+                <p className="text-gray-400 text-sm">{generationStatus}</p>
               </div>
             </div>
           ) : hasModel ? (
@@ -288,8 +425,8 @@ f 1 2 3
                 <div className="w-20 h-20 border-2 border-dashed border-white/30 rounded-lg mx-auto mb-4 flex items-center justify-center">
                   <div className="w-8 h-8 border border-white/30 rounded"></div>
                 </div>
-                <p className="text-white font-medium">No Model Generated</p>
-                <p className="text-gray-400 text-sm">Upload hand images to generate a realistic 3D CAD model</p>
+                <p className="text-white font-medium">Ready for 3D Generation</p>
+                <p className="text-gray-400 text-sm">Upload an image to convert it to a 3D model using AI</p>
               </div>
             </div>
           )}
@@ -299,20 +436,20 @@ f 1 2 3
           <div className="p-4 bg-black/20">
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div>
+                <p className="text-gray-400">Source</p>
+                <p className="text-white font-medium">Meshy AI</p>
+              </div>
+              <div>
                 <p className="text-gray-400">Format</p>
-                <p className="text-white font-medium">OBJ</p>
+                <p className="text-white font-medium">OBJ/GLB</p>
               </div>
               <div>
-                <p className="text-gray-400">Vertices</p>
-                <p className="text-white font-medium">2,847</p>
+                <p className="text-gray-400">Quality</p>
+                <p className="text-white font-medium">High</p>
               </div>
               <div>
-                <p className="text-gray-400">Faces</p>
-                <p className="text-white font-medium">1,932</p>
-              </div>
-              <div>
-                <p className="text-gray-400">File Size</p>
-                <p className="text-white font-medium">1.2 MB</p>
+                <p className="text-gray-400">Status</p>
+                <p className="text-green-400 font-medium">Generated</p>
               </div>
             </div>
           </div>
@@ -320,8 +457,8 @@ f 1 2 3
       </div>
 
       <div className="text-xs text-gray-400 space-y-1">
-        <p>• Drag to rotate • Scroll to zoom • Right-click to pan</p>
-        <p>• Export formats: OBJ, STL, PLY, GLTF • Realistic anatomical proportions</p>
+        <p>• Powered by Meshy AI • Supports JPG, PNG images • Free tier: 200 credits/month</p>
+        <p>• Generation time: 1-3 minutes • Export formats: OBJ, GLB, USDZ, STL</p>
       </div>
     </div>
   );

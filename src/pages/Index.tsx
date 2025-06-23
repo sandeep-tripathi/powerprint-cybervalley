@@ -26,11 +26,29 @@ const Index = () => {
             <div className="space-y-8">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-white mb-4">
-                  Create Amazing 3D CAD Models
+                  AI-Powered Image to 3D Model Conversion
                 </h1>
                 <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                  Transform your images into professional 3D CAD models using advanced AI technology
+                  Transform your images into professional 3D models using Meshy AI's advanced technology
                 </p>
+              </div>
+
+              {/* API Info Banner */}
+              <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-white text-xs font-bold">i</span>
+                  </div>
+                  <div>
+                    <h3 className="text-blue-400 font-medium mb-1">Free API Integration</h3>
+                    <p className="text-gray-300 text-sm">
+                      This app uses Meshy AI's free API (200 credits/month). 
+                      <a href="https://www.meshy.ai/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline ml-1">
+                        Get your free API key here →
+                      </a>
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -51,10 +69,14 @@ const Index = () => {
                   />
                   
                   <button 
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
-                    disabled={!uploadedImages.length || !selectedModel || !selectedInstance}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled={!uploadedImages.length}
+                    onClick={() => {
+                      // The 3D generation will be triggered automatically when images are uploaded
+                      console.log("Generate button clicked - processing will start automatically");
+                    }}
                   >
-                    Generate 3D Model
+                    {uploadedImages.length > 0 ? "Processing Image..." : "Upload Image to Generate"}
                   </button>
                 </div>
 
