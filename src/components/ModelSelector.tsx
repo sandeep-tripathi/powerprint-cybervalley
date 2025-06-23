@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Brain, Zap, Target, Cog } from "lucide-react";
+import { Brain, Zap, Target, Cog, Eye } from "lucide-react";
 
 interface ModelSelectorProps {
   selectedModel: string;
@@ -44,6 +44,15 @@ const ModelSelector = ({ selectedModel, setSelectedModel }: ModelSelectorProps) 
       speed: "Slow",
       quality: "Ultra High",
       color: "from-orange-500 to-red-500"
+    },
+    {
+      id: "custom-vision",
+      name: "Custom Vision",
+      description: "Customizable vision model with flexible configuration options",
+      icon: Eye,
+      speed: "Variable",
+      quality: "Configurable",
+      color: "from-indigo-500 to-purple-500"
     }
   ];
 

@@ -166,8 +166,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">3D Model Viewer</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
+          <p className="text-sm text-gray-300">
             AI-Powered Image to 3D Conversion
           </p>
         </div>
