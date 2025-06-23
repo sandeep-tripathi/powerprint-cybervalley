@@ -3,6 +3,51 @@ import { useState } from "react";
 import { Search, Bell, User, Settings, Key } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+const SlicedCubeLogo = () => (
+  <svg width="40" height="40" viewBox="0 0 40 40" className="w-10 h-10">
+    {/* Top face of cube */}
+    <path 
+      d="M20 5 L35 12 L20 19 L5 12 Z" 
+      fill="url(#gradient1)" 
+      stroke="rgba(255,255,255,0.3)" 
+      strokeWidth="0.5"
+    />
+    {/* Left face */}
+    <path 
+      d="M5 12 L5 28 L20 35 L20 19 Z" 
+      fill="url(#gradient2)" 
+      stroke="rgba(255,255,255,0.3)" 
+      strokeWidth="0.5"
+    />
+    {/* Right face */}
+    <path 
+      d="M20 19 L20 35 L35 28 L35 12 Z" 
+      fill="url(#gradient3)" 
+      stroke="rgba(255,255,255,0.3)" 
+      strokeWidth="0.5"
+    />
+    {/* Slice lines */}
+    <line x1="20" y1="5" x2="20" y2="35" stroke="rgba(255,255,255,0.6)" strokeWidth="1" />
+    <line x1="12.5" y1="8.5" x2="12.5" y2="31.5" stroke="rgba(255,255,255,0.4)" strokeWidth="0.8" />
+    <line x1="27.5" y1="8.5" x2="27.5" y2="31.5" stroke="rgba(255,255,255,0.4)" strokeWidth="0.8" />
+    
+    <defs>
+      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#8B5CF6" />
+        <stop offset="100%" stopColor="#A855F7" />
+      </linearGradient>
+      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#6366F1" />
+        <stop offset="100%" stopColor="#8B5CF6" />
+      </linearGradient>
+      <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#3B82F6" />
+        <stop offset="100%" stopColor="#6366F1" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
+
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { toast } = useToast();
@@ -37,9 +82,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
-              </div>
+              <SlicedCubeLogo />
               <h1 className="text-2xl font-bold text-white">PowerPrint</h1>
             </div>
             
