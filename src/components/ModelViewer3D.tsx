@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -262,8 +261,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
         </div>
       )}
 
-      <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
-        <div className="aspect-video bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 relative">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="aspect-video bg-white relative">
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
