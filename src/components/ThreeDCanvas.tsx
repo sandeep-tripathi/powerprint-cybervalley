@@ -11,7 +11,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (canvasRef.current && uploadedImages.length > 0) {
+    if (canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       
@@ -19,42 +19,66 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Draw a simple 3D-looking cube as placeholder
-        ctx.fillStyle = '#4338ca';
-        ctx.fillRect(100, 100, 200, 200);
-        
-        ctx.fillStyle = '#6366f1';
-        ctx.beginPath();
-        ctx.moveTo(300, 100);
-        ctx.lineTo(350, 50);
-        ctx.lineTo(350, 250);
-        ctx.lineTo(300, 300);
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.fillStyle = '#8b5cf6';
-        ctx.beginPath();
-        ctx.moveTo(100, 100);
-        ctx.lineTo(150, 50);
-        ctx.lineTo(350, 50);
-        ctx.lineTo(300, 100);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Add text
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '16px Arial';
-        ctx.fillText('3D Model Generated', 150, 350);
+        if (uploadedImages.length > 0) {
+          // Draw cubes for each uploaded image
+          uploadedImages.forEach((image, index) => {
+            const spacing = 120;
+            const startX = 50 + (index % 3) * spacing; // 3 cubes per row
+            const startY = 80 + Math.floor(index / 3) * spacing;
+            
+            // Draw cube faces with green and blue colors
+            drawCube(ctx, startX, startY, image.name);
+          });
+          
+          // Add text
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '14px Arial';
+          ctx.fillText(`3D Models Generated (${uploadedImages.length})`, 50, canvas.height - 30);
+        }
       }
     }
   }, [uploadedImages]);
+
+  const drawCube = (ctx: CanvasRenderingContext2D, x: number, y: number, imageName: string) => {
+    const size = 60;
+    
+    // Front face (green)
+    ctx.fillStyle = '#22C55E';
+    ctx.fillRect(x, y, size, size);
+    
+    // Right face (blue)
+    ctx.fillStyle = '#3B82F6';
+    ctx.beginPath();
+    ctx.moveTo(x + size, y);
+    ctx.lineTo(x + size + 20, y - 20);
+    ctx.lineTo(x + size + 20, y + size - 20);
+    ctx.lineTo(x + size, y + size);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Top face (lighter blue)
+    ctx.fillStyle = '#60A5FA';
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 20, y - 20);
+    ctx.lineTo(x + size + 20, y - 20);
+    ctx.lineTo(x + size, y);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Add image name below cube
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px Arial';
+    const truncatedName = imageName.length > 12 ? imageName.substring(0, 12) + '...' : imageName;
+    ctx.fillText(truncatedName, x, y + size + 15);
+  };
 
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white font-medium">Converting Image to 3D Model...</p>
+          <p className="text-white font-medium">Converting Images to 3D Models...</p>
           <p className="text-gray-300 text-sm">{generationStatus}</p>
         </div>
       </div>
@@ -69,7 +93,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
             <div className="w-8 h-8 border border-gray-500 rounded"></div>
           </div>
           <p className="text-white font-medium">Ready for 3D Generation</p>
-          <p className="text-gray-400 text-sm">Upload an image to convert it to a 3D model using AI</p>
+          <p className="text-gray-400 text-sm">Upload images to convert them to 3D models using AI</p>
         </div>
       </div>
     );
