@@ -6,10 +6,16 @@ import { useFrame } from "@react-three/fiber";
 interface SlicedCubeProps {
   scale?: [number, number, number];
   rotation?: [number, number, number];
+  position?: [number, number, number];
   animate?: boolean;
 }
 
-const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }: SlicedCubeProps) => {
+const SlicedCube = ({ 
+  scale = [1, 1, 1], 
+  rotation = [0, 0, 0], 
+  position = [0, 0, 0],
+  animate = false 
+}: SlicedCubeProps) => {
   const cubeRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -31,7 +37,7 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
   ];
 
   return (
-    <group scale={scale} rotation={rotation}>
+    <group scale={scale} rotation={rotation} position={position}>
       <mesh ref={cubeRef}>
         <boxGeometry args={[1.8, 1.8, 1.8]} />
         {materials.map((material, index) => (

@@ -1,5 +1,7 @@
 
-import { useEffect, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Grid } from "@react-three/drei";
+import SlicedCube from "./SlicedCube";
 
 interface ThreeDCanvasProps {
   isLoading: boolean;
@@ -8,71 +10,6 @@ interface ThreeDCanvasProps {
 }
 
 const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCanvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        if (uploadedImages.length > 0) {
-          // Draw cubes for each uploaded image
-          uploadedImages.forEach((image, index) => {
-            const spacing = 120;
-            const startX = 50 + (index % 3) * spacing; // 3 cubes per row
-            const startY = 80 + Math.floor(index / 3) * spacing;
-            
-            // Draw cube faces with green and blue colors
-            drawCube(ctx, startX, startY, image.name);
-          });
-          
-          // Add text
-          ctx.fillStyle = '#ffffff';
-          ctx.font = '14px Arial';
-          ctx.fillText(`3D Models Generated (${uploadedImages.length})`, 50, canvas.height - 30);
-        }
-      }
-    }
-  }, [uploadedImages]);
-
-  const drawCube = (ctx: CanvasRenderingContext2D, x: number, y: number, imageName: string) => {
-    const size = 60;
-    
-    // Front face (green)
-    ctx.fillStyle = '#22C55E';
-    ctx.fillRect(x, y, size, size);
-    
-    // Right face (blue)
-    ctx.fillStyle = '#3B82F6';
-    ctx.beginPath();
-    ctx.moveTo(x + size, y);
-    ctx.lineTo(x + size + 20, y - 20);
-    ctx.lineTo(x + size + 20, y + size - 20);
-    ctx.lineTo(x + size, y + size);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Top face (lighter blue)
-    ctx.fillStyle = '#60A5FA';
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 20, y - 20);
-    ctx.lineTo(x + size + 20, y - 20);
-    ctx.lineTo(x + size, y);
-    ctx.closePath();
-    ctx.fill();
-    
-    // Add image name below cube
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '10px Arial';
-    const truncatedName = imageName.length > 12 ? imageName.substring(0, 12) + '...' : imageName;
-    ctx.fillText(truncatedName, x, y + size + 15);
-  };
-
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
@@ -99,13 +36,71 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
     );
   }
 
+  // Calculate positions for cubes in a grid layout
+  const getCubePosition = (index: number): [number, number, number] => {
+    const spacing = 3;
+    const cubesPerRow = 3;
+    const x = (index % cubesPerRow) * spacing - (cubesPerRow - 1) * spacing / 2;
+    const z = Math.floor(index / cubesPerRow) * spacing - Math.floor(uploadedImages.length / cubesPerRow) * spacing / 2;
+    return [x, 1, z];
+  };
+
   return (
-    <canvas 
-      ref={canvasRef} 
-      width={500} 
-      height={400}
-      className="w-full h-full bg-gray-900 rounded-lg"
-    />
+    <div className="w-full h-full bg-gray-900 rounded-lg">
+      <Canvas camera={{ position: [8, 8, 8], fov: 60 }}>
+        {/* Lighting */}
+        <ambientLight intensity={0.4} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} />
+
+        {/* 3D Grid */}
+        <Grid
+          args={[20, 20]}
+          cellSize={1}
+          cellThickness={0.5}
+          cellColor="#444444"
+          sectionSize={5}
+          sectionThickness={1}
+          sectionColor="#666666"
+          fadeDistance={30}
+          fadeStrength={1}
+          infiniteGrid
+        />
+
+        {/* Render a cube for each uploaded image */}
+        {uploadedImages.map((image, index) => {
+          const position = getCubePosition(index);
+          return (
+            <SlicedCube
+              key={index}
+              position={position}
+              scale={[1, 1, 1]}
+              rotation={[0, index * 0.5, 0]}
+              animate={true}
+            />
+          );
+        })}
+
+        {/* Orbit controls for camera interaction */}
+        <OrbitControls
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={3}
+          maxDistance={20}
+        />
+      </Canvas>
+
+      {/* Overlay text */}
+      <div className="absolute bottom-4 left-4">
+        <p className="text-white font-medium text-sm">
+          3D Models Generated ({uploadedImages.length})
+        </p>
+        <p className="text-gray-300 text-xs">
+          Click and drag to rotate • Scroll to zoom
+        </p>
+      </div>
+    </div>
   );
 };
 
