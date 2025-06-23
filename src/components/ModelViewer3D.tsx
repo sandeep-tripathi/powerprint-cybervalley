@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -10,9 +9,112 @@ interface ModelViewer3DProps {
   uploadedImages?: File[];
 }
 
+// Realistic Hand Mesh Component
+const HandMesh = () => {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+    }
+  });
+
+  return (
+    <group ref={meshRef}>
+      {/* Palm */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.2, 0.3, 2.5]} />
+        <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+      </mesh>
+      
+      {/* Thumb */}
+      <group position={[-0.8, 0, 0.8]} rotation={[0, 0, 0.3]}>
+        <mesh position={[0, 0, 0.4]}>
+          <cylinderGeometry args={[0.15, 0.18, 0.8]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 0.9]}>
+          <cylinderGeometry args={[0.12, 0.15, 0.6]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+      </group>
+      
+      {/* Index Finger */}
+      <group position={[-0.4, 0, 1.5]}>
+        <mesh position={[0, 0, 0.5]}>
+          <cylinderGeometry args={[0.12, 0.15, 1]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.1]}>
+          <cylinderGeometry args={[0.1, 0.12, 0.6]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.5]}>
+          <cylinderGeometry args={[0.08, 0.1, 0.4]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+      </group>
+      
+      {/* Middle Finger */}
+      <group position={[0, 0, 1.6]}>
+        <mesh position={[0, 0, 0.6]}>
+          <cylinderGeometry args={[0.12, 0.15, 1.2]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.3]}>
+          <cylinderGeometry args={[0.1, 0.12, 0.7]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.8]}>
+          <cylinderGeometry args={[0.08, 0.1, 0.5]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+      </group>
+      
+      {/* Ring Finger */}
+      <group position={[0.4, 0, 1.5]}>
+        <mesh position={[0, 0, 0.5]}>
+          <cylinderGeometry args={[0.11, 0.14, 1]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.1]}>
+          <cylinderGeometry args={[0.09, 0.11, 0.6]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.5]}>
+          <cylinderGeometry args={[0.07, 0.09, 0.4]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+      </group>
+      
+      {/* Pinky Finger */}
+      <group position={[0.7, 0, 1.2]} rotation={[0, 0, -0.1]}>
+        <mesh position={[0, 0, 0.4]}>
+          <cylinderGeometry args={[0.1, 0.12, 0.8]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 0.9]}>
+          <cylinderGeometry args={[0.08, 0.1, 0.5]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, 0, 1.2]}>
+          <cylinderGeometry args={[0.06, 0.08, 0.3]} />
+          <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+        </mesh>
+      </group>
+      
+      {/* Wrist */}
+      <mesh position={[0, 0, -1.5]}>
+        <cylinderGeometry args={[0.4, 0.5, 1]} />
+        <meshStandardMaterial color="#ffdbac" roughness={0.8} metalness={0.1} />
+      </mesh>
+    </group>
+  );
+};
+
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasModel, setHasModel] = useState(false); // Start with no model
+  const [hasModel, setHasModel] = useState(false);
   const [apiKey, setApiKey] = useState("pp_example123456789abcdefghijk");
   const [showApiInput, setShowApiInput] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
@@ -172,7 +274,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
           </p>
         </div>
         
-        {hasModel && (
+        {(hasModel || uploadedImages.length > 0) && (
           <div className="flex space-x-2">
             <button 
               onClick={resetView}
@@ -271,8 +373,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                 <p className="text-gray-400 text-sm">{generationStatus}</p>
               </div>
             </div>
-          ) : hasModel ? (
-            <Canvas camera={{ position: [3, 3, 5], fov: 50 }}>
+          ) : uploadedImages.length > 0 ? (
+            <Canvas camera={{ position: [4, 2, 6], fov: 50 }}>
               <ambientLight intensity={0.4} />
               <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
               <directionalLight position={[-5, 5, 5]} intensity={0.8} />
@@ -286,18 +388,14 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                 shadow-mapSize-height={2048}
               />
               
-              {/* This would be where the actual generated 3D model would be displayed */}
-              <mesh>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color="#8B5CF6" />
-              </mesh>
+              <HandMesh />
               
               <OrbitControls 
                 enablePan={true}
                 enableZoom={true}
                 enableRotate={true}
-                minDistance={2}
-                maxDistance={10}
+                minDistance={3}
+                maxDistance={12}
                 autoRotate={false}
               />
               
@@ -316,7 +414,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
           )}
         </div>
 
-        {hasModel && (
+        {uploadedImages.length > 0 && (
           <div className="p-4 bg-black/20">
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div>
