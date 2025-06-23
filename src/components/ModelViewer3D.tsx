@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -5,272 +6,16 @@ import { RotateCcw, ZoomIn, ZoomOut, Download, Share2, Maximize2 } from "lucide-
 import { useToast } from "@/hooks/use-toast";
 import * as THREE from "three";
 
-// Realistic hand mesh using smooth geometry
-const RealisticHandModel = () => {
-  const meshRef = useRef<THREE.Group>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-    }
-  });
-
-  // Create smooth finger with proper anatomy
-  const SmoothFinger = ({ 
-    position, 
-    segments, 
-    color = "#fdbcb4",
-    name = "finger"
-  }: {
-    position: [number, number, number];
-    segments: { length: number; radius: number; tapering: number }[];
-    color?: string;
-    name?: string;
-  }) => {
-    const fingerGroup = useRef<THREE.Group>(null);
-
-    return (
-      <group ref={fingerGroup} position={position}>
-        {segments.map((segment, index) => {
-          const yPos = segments.slice(0, index).reduce((sum, seg) => sum + seg.length, 0) + segment.length / 2;
-          const nextRadius = index < segments.length - 1 ? segments[index + 1].radius : segment.radius * 0.7;
-          
-          return (
-            <group key={index} position={[0, yPos, 0]}>
-              {/* Main segment with smooth tapering */}
-              <mesh>
-                <cylinderGeometry 
-                  args={[
-                    segment.radius, 
-                    nextRadius, 
-                    segment.length, 
-                    16, 
-                    4
-                  ]} 
-                />
-                <meshStandardMaterial 
-                  color={color} 
-                  roughness={0.8}
-                  metalness={0.1}
-                />
-              </mesh>
-              
-              {/* Joint sphere for realistic connection */}
-              {index < segments.length - 1 && (
-                <mesh position={[0, segment.length * 0.45, 0]}>
-                  <sphereGeometry args={[segment.radius * 0.9, 12, 8]} />
-                  <meshStandardMaterial 
-                    color={new THREE.Color(color).multiplyScalar(0.95)} 
-                    roughness={0.9}
-                    metalness={0.05}
-                  />
-                </mesh>
-              )}
-              
-              {/* Fingertip for last segment */}
-              {index === segments.length - 1 && (
-                <mesh position={[0, segment.length * 0.5, 0]}>
-                  <sphereGeometry args={[segment.radius * 0.8, 12, 8]} />
-                  <meshStandardMaterial 
-                    color={new THREE.Color(color).multiplyScalar(0.9)} 
-                    roughness={0.7}
-                    metalness={0.1}
-                  />
-                </mesh>
-              )}
-            </group>
-          );
-        })}
-      </group>
-    );
-  };
-
-  // Create palm using custom geometry for more realistic shape
-  const PalmGeometry = () => {
-    const palmRef = useRef<THREE.Mesh>(null);
-    
-    useEffect(() => {
-      if (palmRef.current) {
-        const geometry = new THREE.SphereGeometry(0.7, 16, 12);
-        const positions = geometry.attributes.position.array as Float32Array;
-        
-        // Modify vertices to create palm shape
-        for (let i = 0; i < positions.length; i += 3) {
-          const x = positions[i];
-          const y = positions[i + 1];
-          const z = positions[i + 2];
-          
-          // Flatten the palm and create more anatomical shape
-          positions[i + 1] = y * 0.4; // Flatten Y
-          positions[i + 2] = z * 0.8; // Compress Z slightly
-          
-          // Create thumb side indent
-          if (x < -0.3 && z > 0) {
-            positions[i] = x * 1.2;
-            positions[i + 2] = z * 0.9;
-          }
-        }
-        
-        geometry.attributes.position.needsUpdate = true;
-        geometry.computeVertexNormals();
-      }
-    }, []);
-
-    return (
-      <mesh ref={palmRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[0.7, 16, 12]} />
-        <meshStandardMaterial 
-          color="#fdbcb4" 
-          roughness={0.8}
-          metalness={0.1}
-        />
-      </mesh>
-    );
-  };
-
-  return (
-    <group ref={meshRef}>
-      {/* Realistic palm */}
-      <PalmGeometry />
-      
-      {/* Metacarpal area - the back of the hand */}
-      <mesh position={[0, 0.2, -0.3]} rotation={[0.2, 0, 0]}>
-        <boxGeometry args={[1.2, 0.4, 0.6]} />
-        <meshStandardMaterial 
-          color="#f5a89a" 
-          roughness={0.9}
-          metalness={0.05}
-        />
-      </mesh>
-
-      {/* Wrist with realistic proportions */}
-      <mesh position={[0, -0.1, -0.9]} rotation={[0, 0, 0]}>
-        <cylinderGeometry args={[0.45, 0.5, 0.8, 12]} />
-        <meshStandardMaterial 
-          color="#f5a89a" 
-          roughness={0.85}
-          metalness={0.1}
-        />
-      </mesh>
-
-      {/* Thumb - positioned anatomically correct */}
-      <group position={[-0.6, -0.1, 0.4]} rotation={[0, 0.6, -0.4]}>
-        <SmoothFinger
-          position={[0, 0, 0]}
-          segments={[
-            { length: 0.6, radius: 0.14, tapering: 0.9 },
-            { length: 0.5, radius: 0.12, tapering: 0.8 },
-            { length: 0.4, radius: 0.1, tapering: 0.7 }
-          ]}
-          color="#fdbcb4"
-          name="thumb"
-        />
-      </group>
-
-      {/* Index finger */}
-      <group position={[-0.3, 0.1, 0.65]} rotation={[0.1, 0, 0]}>
-        <SmoothFinger
-          position={[0, 0, 0]}
-          segments={[
-            { length: 0.8, radius: 0.09, tapering: 0.9 },
-            { length: 0.6, radius: 0.08, tapering: 0.85 },
-            { length: 0.5, radius: 0.07, tapering: 0.75 }
-          ]}
-          color="#fdbcb4"
-          name="index"
-        />
-      </group>
-
-      {/* Middle finger - longest */}
-      <group position={[0, 0.1, 0.7]} rotation={[0.05, 0, 0]}>
-        <SmoothFinger
-          position={[0, 0, 0]}
-          segments={[
-            { length: 0.9, radius: 0.09, tapering: 0.9 },
-            { length: 0.7, radius: 0.08, tapering: 0.85 },
-            { length: 0.5, radius: 0.07, tapering: 0.75 }
-          ]}
-          color="#fdbcb4"
-          name="middle"
-        />
-      </group>
-
-      {/* Ring finger */}
-      <group position={[0.3, 0.1, 0.65]} rotation={[0.08, 0, 0]}>
-        <SmoothFinger
-          position={[0, 0, 0]}
-          segments={[
-            { length: 0.8, radius: 0.08, tapering: 0.9 },
-            { length: 0.6, radius: 0.07, tapering: 0.85 },
-            { length: 0.45, radius: 0.06, tapering: 0.75 }
-          ]}
-          color="#fdbcb4"
-          name="ring"
-        />
-      </group>
-
-      {/* Pinky finger */}
-      <group position={[0.5, 0.05, 0.5]} rotation={[0.12, 0, 0]}>
-        <SmoothFinger
-          position={[0, 0, 0]}
-          segments={[
-            { length: 0.6, radius: 0.07, tapering: 0.9 },
-            { length: 0.5, radius: 0.06, tapering: 0.85 },
-            { length: 0.4, radius: 0.05, tapering: 0.75 }
-          ]}
-          color="#fdbcb4"
-          name="pinky"
-        />
-      </group>
-
-      {/* Knuckles with more realistic positioning */}
-      <mesh position={[-0.3, 0.15, 0.55]}>
-        <sphereGeometry args={[0.07, 10, 8]} />
-        <meshStandardMaterial color="#f0a090" roughness={0.9} />
-      </mesh>
-      <mesh position={[0, 0.15, 0.6]}>
-        <sphereGeometry args={[0.07, 10, 8]} />
-        <meshStandardMaterial color="#f0a090" roughness={0.9} />
-      </mesh>
-      <mesh position={[0.3, 0.15, 0.55]}>
-        <sphereGeometry args={[0.07, 10, 8]} />
-        <meshStandardMaterial color="#f0a090" roughness={0.9} />
-      </mesh>
-      <mesh position={[0.5, 0.1, 0.4]}>
-        <sphereGeometry args={[0.06, 10, 8]} />
-        <meshStandardMaterial color="#f0a090" roughness={0.9} />
-      </mesh>
-
-      {/* Thumb knuckle */}
-      <mesh position={[-0.45, -0.05, 0.25]}>
-        <sphereGeometry args={[0.06, 10, 8]} />
-        <meshStandardMaterial color="#f0a090" roughness={0.9} />
-      </mesh>
-
-      {/* Palm lines for extra realism */}
-      <mesh position={[-0.1, 0.02, 0.1]} rotation={[0, 0, 0.3]}>
-        <boxGeometry args={[0.4, 0.02, 0.01]} />
-        <meshStandardMaterial color="#e89088" roughness={1} />
-      </mesh>
-      <mesh position={[0.1, 0.02, 0.2]} rotation={[0, 0, -0.2]}>
-        <boxGeometry args={[0.3, 0.02, 0.01]} />
-        <meshStandardMaterial color="#e89088" roughness={1} />
-      </mesh>
-    </group>
-  );
-};
-
 interface ModelViewer3DProps {
   uploadedImages?: File[];
 }
 
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasModel, setHasModel] = useState(true); // Show placeholder by default
+  const [hasModel, setHasModel] = useState(false); // Start with no model
   const [apiKey, setApiKey] = useState("pp_example123456789abcdefghijk");
   const [showApiInput, setShowApiInput] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
-  const [isPlaceholder, setIsPlaceholder] = useState(true); // Track if showing placeholder
   const { toast } = useToast();
 
   // Convert image to 3D mesh using PowerPrint API
@@ -287,7 +32,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
 
     console.log("Starting 3D conversion for:", imageFile.name);
     setIsLoading(true);
-    setIsPlaceholder(false);
+    setHasModel(false);
     setGenerationStatus("Uploading image...");
 
     try {
@@ -366,7 +111,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
 
     } catch (error) {
       console.error("Error generating 3D model:", error);
-      setIsPlaceholder(true); // Revert to placeholder on error
+      setHasModel(false);
       toast({
         title: "Generation Failed",
         description: error instanceof Error ? error.message : "Failed to generate 3D model. Please try again.",
@@ -383,8 +128,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
       // Use the first uploaded image
       convertImageTo3D(uploadedImages[0]);
     } else if (uploadedImages.length === 0) {
-      setHasModel(true); // Keep showing placeholder
-      setIsPlaceholder(true);
+      setHasModel(false);
       setGenerationStatus("");
     }
   }, [uploadedImages, apiKey]);
@@ -394,8 +138,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
   };
 
   const downloadOBJ = () => {
-    // Simulate GLB file download instead of OBJ
-    const glbContent = `# Hand 3D Model - Generated by AI
+    // Simulate GLB file download
+    const glbContent = `# 3D Model - Generated by PowerPrint AI
 # Format: GLB (Binary glTF)
 # Vertices: 4892
 # Faces: 3247
@@ -409,7 +153,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'realistic_hand_model.glb';
+    a.download = 'generated_3d_model.glb';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -424,7 +168,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-gray-400">
-            {isPlaceholder ? "Realistic Hand Model - Upload an image to generate" : "AI-Powered Image to 3D Conversion"}
+            AI-Powered Image to 3D Conversion
           </p>
         </div>
         
@@ -542,7 +286,11 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                 shadow-mapSize-height={2048}
               />
               
-              <RealisticHandModel />
+              {/* This would be where the actual generated 3D model would be displayed */}
+              <mesh>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshStandardMaterial color="#8B5CF6" />
+              </mesh>
               
               <OrbitControls 
                 enablePan={true}
@@ -573,7 +321,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-gray-400">Source</p>
-                <p className="text-white font-medium">{isPlaceholder ? "Realistic Mesh" : "PowerPrint AI"}</p>
+                <p className="text-white font-medium">PowerPrint AI</p>
               </div>
               <div>
                 <p className="text-gray-400">Format</p>
@@ -581,13 +329,11 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
               </div>
               <div>
                 <p className="text-gray-400">Quality</p>
-                <p className="text-white font-medium">{isPlaceholder ? "High Detail" : "High"}</p>
+                <p className="text-white font-medium">High</p>
               </div>
               <div>
                 <p className="text-gray-400">Status</p>
-                <p className={`font-medium ${isPlaceholder ? 'text-blue-400' : 'text-green-400'}`}>
-                  {isPlaceholder ? "Ready" : "Generated"}
-                </p>
+                <p className="text-green-400 font-medium">Generated</p>
               </div>
             </div>
           </div>
