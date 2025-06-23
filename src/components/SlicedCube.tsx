@@ -67,7 +67,7 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
 
   return (
     <group ref={groupRef} scale={scale} rotation={rotation}>
-      {/* Flying cube faces with green and blue colors */}
+      {/* Flying cube faces with green and grey colors */}
       
       {/* Face 1 - Green */}
       <mesh ref={face1Ref} position={[0.5, 0, 0]}>
@@ -81,11 +81,11 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
         />
       </mesh>
       
-      {/* Face 2 - Blue */}
+      {/* Face 2 - Grey */}
       <mesh ref={face2Ref} position={[-0.5, 0, 0]}>
         <planeGeometry args={[0.8, 0.8]} />
         <meshStandardMaterial 
-          color="#3B82F6" 
+          color="#6B7280" 
           roughness={0.2} 
           metalness={0.3}
           transparent={true}
@@ -105,11 +105,11 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
         />
       </mesh>
       
-      {/* Face 4 - Blue (different shade) */}
+      {/* Face 4 - Grey (different shade) */}
       <mesh ref={face4Ref} position={[0, -0.5, 0]} rotation={[Math.PI/2, 0, 0]}>
         <planeGeometry args={[0.8, 0.8]} />
         <meshStandardMaterial 
-          color="#1D4ED8" 
+          color="#4B5563" 
           roughness={0.2} 
           metalness={0.3}
           transparent={true}
@@ -129,11 +129,11 @@ const SlicedCube = ({ scale = [1, 1, 1], rotation = [0, 0, 0], animate = false }
         />
       </mesh>
       
-      {/* Face 6 - Blue (lighter) */}
+      {/* Face 6 - Grey (lighter) */}
       <mesh ref={face6Ref} position={[0, 0, -0.5]} rotation={[0, Math.PI/2, 0]}>
         <planeGeometry args={[0.8, 0.8]} />
         <meshStandardMaterial 
-          color="#60A5FA" 
+          color="#9CA3AF" 
           roughness={0.2} 
           metalness={0.3}
           transparent={true}
