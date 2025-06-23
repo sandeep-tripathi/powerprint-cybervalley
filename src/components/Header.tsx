@@ -1,6 +1,6 @@
 
 import { Canvas } from "@react-three/fiber";
-import MiniHandMesh from "@/components/MiniHandMesh";
+import SlicedCube from "@/components/SlicedCube";
 import UserProfileDropdown from "@/components/UserProfileDropdown";
 import Navigation from "@/components/Navigation";
 import SearchBar from "@/components/SearchBar";
@@ -17,7 +17,7 @@ const Header = () => {
                 <Canvas camera={{ position: [4, 2, 6], fov: 50 }}>
                   <ambientLight intensity={0.6} />
                   <directionalLight position={[5, 5, 5]} intensity={1} />
-                  <MiniHandMesh />
+                  <SlicedCube scale={[0.8, 0.8, 0.8]} rotation={[0.2, 0.3, 0]} />
                 </Canvas>
               </div>
               <h1 className="text-2xl font-bold text-white">PowerPrint</h1>
