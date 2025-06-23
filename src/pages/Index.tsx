@@ -15,7 +15,7 @@ const Index = () => {
   const [selectedInstance, setSelectedInstance] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
       <Header />
       
       <div className="flex">
@@ -25,23 +25,23 @@ const Index = () => {
           {activeTab === "generate" && (
             <div className="space-y-8">
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                <h1 className="text-4xl font-bold text-slate-900 mb-4">
                   AI-Powered Image to 3D Model Conversion
                 </h1>
-                <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+                <p className="text-xl text-slate-700 max-w-2xl mx-auto">
                   Transform your images into professional 3D models using PowerPrint's advanced AI technology
                 </p>
               </div>
 
               {/* API Info Banner */}
-              <div className="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <span className="text-white text-xs font-bold">i</span>
                   </div>
                   <div>
-                    <h3 className="text-gray-700 font-medium mb-1">Free API Integration</h3>
-                    <p className="text-gray-600 text-sm">
+                    <h3 className="text-blue-800 font-medium mb-1">Free API Integration</h3>
+                    <p className="text-blue-700 text-sm">
                       This app uses PowerPrint's free API (500 credits/month). 
                       Click on your username to generate a new API key instantly!
                     </p>
@@ -67,7 +67,7 @@ const Index = () => {
                   />
                   
                   <button 
-                    className="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     disabled={!uploadedImages.length}
                     onClick={() => {
                       // The 3D generation will be triggered automatically when images are uploaded
@@ -91,8 +91,8 @@ const Index = () => {
 
           {activeTab === "history" && (
             <div className="text-center py-20">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Generation History</h2>
-              <p className="text-gray-600">Your recent 3D model generations will appear here</p>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Generation History</h2>
+              <p className="text-slate-600">Your recent 3D model generations will appear here</p>
             </div>
           )}
         </main>
