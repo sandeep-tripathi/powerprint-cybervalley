@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -262,13 +263,13 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
       )}
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="aspect-video bg-white relative">
+        <div className="aspect-video bg-black relative">
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-12 h-12 border-4 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-900 font-medium">Converting Image to 3D Model...</p>
-                <p className="text-gray-600 text-sm">{generationStatus}</p>
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-white font-medium">Converting Image to 3D Model...</p>
+                <p className="text-gray-300 text-sm">{generationStatus}</p>
               </div>
             </div>
           ) : uploadedImages.length > 0 ? (
@@ -288,6 +289,9 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
               
               <SlicedCube scale={[2, 2, 2]} animate={true} />
               
+              {/* Axis Helper */}
+              <axesHelper args={[3]} />
+              
               <OrbitControls 
                 enablePan={true}
                 enableZoom={true}
@@ -297,16 +301,16 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                 autoRotate={false}
               />
               
-              <gridHelper args={[10, 10, 0x9CA3AF, 0xE5E7EB]} />
+              <gridHelper args={[10, 10, 0x444444, 0x666666]} />
             </Canvas>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <div className="w-8 h-8 border border-gray-300 rounded"></div>
+                <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <div className="w-8 h-8 border border-gray-500 rounded"></div>
                 </div>
-                <p className="text-gray-900 font-medium">Ready for 3D Generation</p>
-                <p className="text-gray-600 text-sm">Upload an image to convert it to a 3D model using AI</p>
+                <p className="text-white font-medium">Ready for 3D Generation</p>
+                <p className="text-gray-400 text-sm">Upload an image to convert it to a 3D model using AI</p>
               </div>
             </div>
           )}
