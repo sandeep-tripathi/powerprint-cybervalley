@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -24,18 +25,18 @@ const HandMesh = () => {
       {/* Palm */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.2, 0.3, 2.5]} />
-        <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+        <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
       </mesh>
       
       {/* Thumb */}
       <group position={[-0.8, 0, 0.8]} rotation={[0, 0, 0.3]}>
         <mesh position={[0, 0, 0.4]}>
           <cylinderGeometry args={[0.15, 0.18, 0.8]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 0.9]}>
           <cylinderGeometry args={[0.12, 0.15, 0.6]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
       </group>
       
@@ -43,15 +44,15 @@ const HandMesh = () => {
       <group position={[-0.4, 0, 1.5]}>
         <mesh position={[0, 0, 0.5]}>
           <cylinderGeometry args={[0.12, 0.15, 1]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.1]}>
           <cylinderGeometry args={[0.1, 0.12, 0.6]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.5]}>
           <cylinderGeometry args={[0.08, 0.1, 0.4]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
       </group>
       
@@ -59,15 +60,15 @@ const HandMesh = () => {
       <group position={[0, 0, 1.6]}>
         <mesh position={[0, 0, 0.6]}>
           <cylinderGeometry args={[0.12, 0.15, 1.2]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.3]}>
           <cylinderGeometry args={[0.1, 0.12, 0.7]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.8]}>
           <cylinderGeometry args={[0.08, 0.1, 0.5]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
       </group>
       
@@ -75,15 +76,15 @@ const HandMesh = () => {
       <group position={[0.4, 0, 1.5]}>
         <mesh position={[0, 0, 0.5]}>
           <cylinderGeometry args={[0.11, 0.14, 1]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.1]}>
           <cylinderGeometry args={[0.09, 0.11, 0.6]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.5]}>
           <cylinderGeometry args={[0.07, 0.09, 0.4]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
       </group>
       
@@ -91,22 +92,22 @@ const HandMesh = () => {
       <group position={[0.7, 0, 1.2]} rotation={[0, 0, -0.1]}>
         <mesh position={[0, 0, 0.4]}>
           <cylinderGeometry args={[0.1, 0.12, 0.8]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 0.9]}>
           <cylinderGeometry args={[0.08, 0.1, 0.5]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
         <mesh position={[0, 0, 1.2]}>
           <cylinderGeometry args={[0.06, 0.08, 0.3]} />
-          <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+          <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
         </mesh>
       </group>
       
       {/* Wrist */}
       <mesh position={[0, 0, -1.5]}>
         <cylinderGeometry args={[0.4, 0.5, 1]} />
-        <meshStandardMaterial color="#60A5FA" roughness={0.8} metalness={0.1} />
+        <meshStandardMaterial color="#6B7280" roughness={0.8} metalness={0.1} />
       </mesh>
     </group>
   );
@@ -268,8 +269,8 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-blue-900">3D Model Viewer</h2>
-          <p className="text-sm text-blue-600">
+          <h2 className="text-2xl font-bold text-gray-900">3D Model Viewer</h2>
+          <p className="text-sm text-gray-600">
             AI-Powered Image to 3D Conversion
           </p>
         </div>
@@ -278,27 +279,27 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
           <div className="flex space-x-2">
             <button 
               onClick={resetView}
-              className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors"
+              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
-              <RotateCcw className="w-5 h-5 text-blue-700" />
+              <RotateCcw className="w-5 h-5 text-gray-700" />
             </button>
-            <button className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors">
-              <ZoomIn className="w-5 h-5 text-blue-700" />
+            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <ZoomIn className="w-5 h-5 text-gray-700" />
             </button>
-            <button className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors">
-              <ZoomOut className="w-5 h-5 text-blue-700" />
+            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <ZoomOut className="w-5 h-5 text-gray-700" />
             </button>
-            <button className="p-2 bg-blue-100 hover:bg-blue-200 rounded-lg transition-colors">
-              <Maximize2 className="w-5 h-5 text-blue-700" />
+            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <Maximize2 className="w-5 h-5 text-gray-700" />
             </button>
             <button 
               onClick={downloadOBJ}
-              className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              className="p-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
               title="Download OBJ file"
             >
               <Download className="w-5 h-5 text-white" />
             </button>
-            <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">
+            <button className="p-2 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors">
               <Share2 className="w-5 h-5 text-white" />
             </button>
           </div>
@@ -309,7 +310,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
       {showApiInput && (
         <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
           <h3 className="text-yellow-700 font-medium mb-2">PowerPrint API Key</h3>
-          <p className="text-blue-700 text-sm mb-3">
+          <p className="text-gray-700 text-sm mb-3">
             Update your PowerPrint API key if needed, or generate a new one by clicking your username
           </p>
           <div className="flex space-x-2">
@@ -318,7 +319,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
               placeholder="Enter your PowerPrint API key..."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              className="flex-1 bg-white border border-blue-300 rounded-lg px-3 py-2 text-blue-900 placeholder-blue-400"
+              className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400"
             />
             <button
               onClick={() => {
@@ -330,7 +331,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                   });
                 }
               }}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-white font-medium"
             >
               Save
             </button>
@@ -348,14 +349,14 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
               </div>
               <div>
                 <h3 className="text-green-700 font-medium mb-1">API Ready</h3>
-                <p className="text-blue-700 text-sm">
+                <p className="text-gray-700 text-sm">
                   PowerPrint API key is configured. Upload an image to start generating 3D models!
                 </p>
               </div>
             </div>
             <button
               onClick={() => setShowApiInput(true)}
-              className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+              className="text-gray-600 hover:text-gray-500 text-sm font-medium"
             >
               Change Key
             </button>
@@ -363,14 +364,14 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
         </div>
       )}
 
-      <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-blue-200 overflow-hidden">
-        <div className="aspect-video bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 relative">
+      <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div className="aspect-video bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 relative">
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-blue-900 font-medium">Converting Image to 3D Model...</p>
-                <p className="text-blue-600 text-sm">{generationStatus}</p>
+                <div className="w-12 h-12 border-4 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-900 font-medium">Converting Image to 3D Model...</p>
+                <p className="text-gray-600 text-sm">{generationStatus}</p>
               </div>
             </div>
           ) : uploadedImages.length > 0 ? (
@@ -399,38 +400,38 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
                 autoRotate={false}
               />
               
-              <gridHelper args={[10, 10, 0x93C5FD, 0xDDD6FE]} />
+              <gridHelper args={[10, 10, 0x9CA3AF, 0xE5E7EB]} />
             </Canvas>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-20 h-20 border-2 border-dashed border-blue-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <div className="w-8 h-8 border border-blue-300 rounded"></div>
+                <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <div className="w-8 h-8 border border-gray-300 rounded"></div>
                 </div>
-                <p className="text-blue-900 font-medium">Ready for 3D Generation</p>
-                <p className="text-blue-600 text-sm">Upload an image to convert it to a 3D model using AI</p>
+                <p className="text-gray-900 font-medium">Ready for 3D Generation</p>
+                <p className="text-gray-600 text-sm">Upload an image to convert it to a 3D model using AI</p>
               </div>
             </div>
           )}
         </div>
 
         {uploadedImages.length > 0 && (
-          <div className="p-4 bg-blue-50/50">
+          <div className="p-4 bg-gray-50/50">
             <div className="grid grid-cols-4 gap-4 text-sm">
               <div>
-                <p className="text-blue-600">Source</p>
-                <p className="text-blue-900 font-medium">PowerPrint AI</p>
+                <p className="text-gray-600">Source</p>
+                <p className="text-gray-900 font-medium">PowerPrint AI</p>
               </div>
               <div>
-                <p className="text-blue-600">Format</p>
-                <p className="text-blue-900 font-medium">PLY/STL/OBJ</p>
+                <p className="text-gray-600">Format</p>
+                <p className="text-gray-900 font-medium">PLY/STL/OBJ</p>
               </div>
               <div>
-                <p className="text-blue-600">Quality</p>
-                <p className="text-blue-900 font-medium">High</p>
+                <p className="text-gray-600">Quality</p>
+                <p className="text-gray-900 font-medium">High</p>
               </div>
               <div>
-                <p className="text-blue-600">Status</p>
+                <p className="text-gray-600">Status</p>
                 <p className="text-green-600 font-medium">Generated</p>
               </div>
             </div>
@@ -438,7 +439,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
         )}
       </div>
 
-      <div className="text-xs text-blue-600 space-y-1">
+      <div className="text-xs text-gray-600 space-y-1">
         <p>• Powered by PowerPrint AI • Supports JPG, PNG images • Free tier: 500 credits/month</p>
         <p>• Generation time: 1-3 minutes • Export formats: PLY, STL, OBJ</p>
       </div>
