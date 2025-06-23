@@ -1,137 +1,34 @@
-import { useState, useRef, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { RotateCcw, ZoomIn, ZoomOut, Download, Share2, Maximize2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import SlicedCube from "@/components/SlicedCube";
-import * as THREE from "three";
+
+import { useApiKey } from "@/hooks/useApiKey";
+import { use3DGeneration } from "@/hooks/use3DGeneration";
+import ApiStatus from "@/components/ApiStatus";
+import ViewerControls from "@/components/ViewerControls";
+import ThreeDCanvas from "@/components/ThreeDCanvas";
+import ModelInfo from "@/components/ModelInfo";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
 }
 
 const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasModel, setHasModel] = useState(false);
-  const [apiKey, setApiKey] = useState("pp_example123456789abcdefghijk");
-  const [showApiInput, setShowApiInput] = useState(false);
-  const [generationStatus, setGenerationStatus] = useState("");
-  const { toast } = useToast();
+  const {
+    apiKey,
+    setApiKey,
+    showApiInput,
+    setShowApiInput,
+    updateApiKey,
+    showApiKeyInput,
+  } = useApiKey();
 
-  // Convert image to 3D mesh using PowerPrint API
-  const convertImageTo3D = async (imageFile: File) => {
-    if (!apiKey.trim()) {
-      setShowApiInput(true);
-      toast({
-        title: "API Key Required",
-        description: "Please enter your PowerPrint API key to generate 3D models.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    console.log("Starting 3D conversion for:", imageFile.name);
-    setIsLoading(true);
-    setHasModel(false);
-    setGenerationStatus("Uploading image...");
-
-    try {
-      // Step 1: Create image to 3D task
-      const formData = new FormData();
-      formData.append('image_file', imageFile);
-      formData.append('enable_pbr', 'true');
-
-      console.log("Sending request to PowerPrint API...");
-      setGenerationStatus("Creating 3D generation task...");
-
-      const response = await fetch('https://api.powerprint.ai/v2/image-to-3d', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error("API Error:", response.status, errorData);
-        throw new Error(`API Error: ${response.status} - ${errorData}`);
-      }
-
-      const taskData = await response.json();
-      console.log("Task created:", taskData);
-      setGenerationStatus("Processing 3D model...");
-
-      // Step 2: Poll for completion
-      const taskId = taskData.result;
-      let attempts = 0;
-      const maxAttempts = 60; // 5 minutes max
-
-      const pollStatus = async (): Promise<any> => {
-        attempts++;
-        console.log(`Polling attempt ${attempts}/${maxAttempts}`);
-        
-        const statusResponse = await fetch(`https://api.powerprint.ai/v2/image-to-3d/${taskId}`, {
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-          },
-        });
-
-        if (!statusResponse.ok) {
-          throw new Error(`Status check failed: ${statusResponse.status}`);
-        }
-
-        const statusData = await statusResponse.json();
-        console.log("Status:", statusData);
-
-        if (statusData.status === 'SUCCEEDED') {
-          return statusData;
-        } else if (statusData.status === 'FAILED') {
-          throw new Error('3D generation failed');
-        } else if (attempts >= maxAttempts) {
-          throw new Error('Generation timeout');
-        } else {
-          // Wait 5 seconds before next poll
-          setGenerationStatus(`Processing... (${attempts}/${maxAttempts})`);
-          await new Promise(resolve => setTimeout(resolve, 5000));
-          return pollStatus();
-        }
-      };
-
-      const finalResult = await pollStatus();
-      console.log("Generation completed:", finalResult);
-
-      setHasModel(true);
-      setGenerationStatus("3D model generated successfully!");
-      
-      toast({
-        title: "Success!",
-        description: "3D model generated successfully from your image.",
-      });
-
-    } catch (error) {
-      console.error("Error generating 3D model:", error);
-      setHasModel(false);
-      toast({
-        title: "Generation Failed",
-        description: error instanceof Error ? error.message : "Failed to generate 3D model. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Trigger conversion when images are uploaded
-  useEffect(() => {
-    if (uploadedImages.length > 0 && apiKey.trim()) {
-      // Use the first uploaded image
-      convertImageTo3D(uploadedImages[0]);
-    } else if (uploadedImages.length === 0) {
-      setHasModel(false);
-      setGenerationStatus("");
-    }
-  }, [uploadedImages, apiKey]);
+  const {
+    isLoading,
+    hasModel,
+    generationStatus,
+  } = use3DGeneration({
+    apiKey,
+    showApiKeyInput,
+    uploadedImages,
+  });
 
   const resetView = () => {
     console.log("Reset view");
@@ -172,171 +69,32 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
           </p>
         </div>
         
-        {(hasModel || uploadedImages.length > 0) && (
-          <div className="flex space-x-2">
-            <button 
-              onClick={resetView}
-              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              <RotateCcw className="w-5 h-5 text-gray-700" />
-            </button>
-            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-              <ZoomIn className="w-5 h-5 text-gray-700" />
-            </button>
-            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-              <ZoomOut className="w-5 h-5 text-gray-700" />
-            </button>
-            <button className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-              <Maximize2 className="w-5 h-5 text-gray-700" />
-            </button>
-            <button 
-              onClick={downloadOBJ}
-              className="p-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
-              title="Download OBJ file"
-            >
-              <Download className="w-5 h-5 text-white" />
-            </button>
-            <button className="p-2 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors">
-              <Share2 className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        )}
+        <ViewerControls
+          hasModel={hasModel}
+          uploadedImages={uploadedImages}
+          onResetView={resetView}
+          onDownloadOBJ={downloadOBJ}
+        />
       </div>
 
-      {/* API Key Input - now hidden by default since we have a key */}
-      {showApiInput && (
-        <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
-          <h3 className="text-yellow-700 font-medium mb-2">PowerPrint API Key</h3>
-          <p className="text-gray-700 text-sm mb-3">
-            Update your PowerPrint API key if needed, or generate a new one by clicking your username
-          </p>
-          <div className="flex space-x-2">
-            <input
-              type="password"
-              placeholder="Enter your PowerPrint API key..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400"
-            />
-            <button
-              onClick={() => {
-                if (apiKey.trim()) {
-                  setShowApiInput(false);
-                  toast({
-                    title: "API Key Updated",
-                    description: "Your API key has been updated successfully!",
-                  });
-                }
-              }}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-white font-medium"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Success banner showing API is ready */}
-      {!showApiInput && (
-        <div className="bg-green-50 border border-green-300 rounded-lg p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-3">
-              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-white text-xs font-bold">✓</span>
-              </div>
-              <div>
-                <h3 className="text-green-700 font-medium mb-1">API Ready</h3>
-                <p className="text-gray-700 text-sm">
-                  PowerPrint API key is configured. Upload an image to start generating 3D models!
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowApiInput(true)}
-              className="text-gray-600 hover:text-gray-500 text-sm font-medium"
-            >
-              Change Key
-            </button>
-          </div>
-        </div>
-      )}
+      <ApiStatus
+        showApiInput={showApiInput}
+        apiKey={apiKey}
+        setApiKey={setApiKey}
+        updateApiKey={updateApiKey}
+        setShowApiInput={setShowApiInput}
+      />
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="aspect-video bg-black relative">
-          {isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-white font-medium">Converting Image to 3D Model...</p>
-                <p className="text-gray-300 text-sm">{generationStatus}</p>
-              </div>
-            </div>
-          ) : uploadedImages.length > 0 ? (
-            <Canvas camera={{ position: [4, 2, 6], fov: 50 }}>
-              <ambientLight intensity={0.4} />
-              <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
-              <directionalLight position={[-5, 5, 5]} intensity={0.8} />
-              <pointLight position={[-10, -10, -5]} intensity={0.6} />
-              <spotLight 
-                position={[0, 10, 0]} 
-                angle={0.3} 
-                intensity={1.2} 
-                castShadow 
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
-              />
-              
-              <SlicedCube scale={[2, 2, 2]} animate={true} />
-              
-              {/* Enhanced 3D Axis Helper - larger and more visible */}
-              <axesHelper args={[5]} />
-              
-              <OrbitControls 
-                enablePan={true}
-                enableZoom={true}
-                enableRotate={true}
-                minDistance={3}
-                maxDistance={12}
-                autoRotate={false}
-              />
-              
-              <gridHelper args={[10, 10, 0x444444, 0x666666]} />
-            </Canvas>
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <div className="w-8 h-8 border border-gray-500 rounded"></div>
-                </div>
-                <p className="text-white font-medium">Ready for 3D Generation</p>
-                <p className="text-gray-400 text-sm">Upload an image to convert it to a 3D model using AI</p>
-              </div>
-            </div>
-          )}
+          <ThreeDCanvas
+            isLoading={isLoading}
+            generationStatus={generationStatus}
+            uploadedImages={uploadedImages}
+          />
         </div>
 
-        {uploadedImages.length > 0 && (
-          <div className="p-4 bg-gray-50/50">
-            <div className="grid grid-cols-4 gap-4 text-sm">
-              <div>
-                <p className="text-gray-600">Source</p>
-                <p className="text-gray-900 font-medium">PowerPrint AI</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Format</p>
-                <p className="text-gray-900 font-medium">PLY/STL/OBJ</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Quality</p>
-                <p className="text-gray-900 font-medium">High</p>
-              </div>
-              <div>
-                <p className="text-gray-600">Status</p>
-                <p className="text-green-600 font-medium">Generated</p>
-              </div>
-            </div>
-          </div>
-        )}
+        <ModelInfo uploadedImages={uploadedImages} />
       </div>
 
       <div className="text-xs text-gray-600 space-y-1">
