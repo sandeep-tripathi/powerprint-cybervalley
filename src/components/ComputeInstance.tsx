@@ -1,5 +1,9 @@
 
-import { Cpu, Zap, Award, Cloud } from "lucide-react";
+import { Cpu, Zap, Award, Cloud, ChevronDown } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface ComputeInstanceProps {
   selectedInstance: string;
@@ -7,6 +11,12 @@ interface ComputeInstanceProps {
 }
 
 const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInstanceProps) => {
+  const [selectedProviders, setSelectedProviders] = useState<{[key: string]: string}>({
+    basic: "AWS",
+    pro: "Azure", 
+    enterprise: "Google Cloud"
+  });
+
   const instances = [
     {
       id: "basic",
@@ -16,9 +26,11 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       speed: "3-5 min",
       price: "Free",
       color: "from-gray-500 to-gray-600",
-      cloudProvider: "AWS",
-      instanceType: "t3.large",
-      specs: "Intel Xeon, 2 vCPUs, 8GB RAM"
+      providers: {
+        "AWS": { instanceType: "t3.large", specs: "Intel Xeon, 2 vCPUs, 8GB RAM" },
+        "Azure": { instanceType: "Standard_B2s", specs: "Intel Xeon, 2 vCPUs, 4GB RAM" },
+        "Google Cloud": { instanceType: "e2-standard-2", specs: "Intel Skylake, 2 vCPUs, 8GB RAM" }
+      }
     },
     {
       id: "pro",
@@ -29,9 +41,11 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       price: "$0.50/run",
       color: "from-blue-500 to-cyan-500",
       popular: true,
-      cloudProvider: "Azure",
-      instanceType: "Standard_NC6s_v3",
-      specs: "NVIDIA V100, 6 vCPUs, 112GB RAM"
+      providers: {
+        "AWS": { instanceType: "p3.2xlarge", specs: "NVIDIA V100, 8 vCPUs, 61GB RAM" },
+        "Azure": { instanceType: "Standard_NC6s_v3", specs: "NVIDIA V100, 6 vCPUs, 112GB RAM" },
+        "Google Cloud": { instanceType: "n1-standard-8 + T4", specs: "NVIDIA T4, 8 vCPUs, 30GB RAM" }
+      }
     },
     {
       id: "enterprise",
@@ -41,23 +55,32 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       speed: "30-60 sec",
       price: "$2.00/run",
       color: "from-purple-500 to-pink-500",
-      cloudProvider: "Google Cloud",
-      instanceType: "n1-standard-16 + T4",
-      specs: "NVIDIA T4, 16 vCPUs, 60GB RAM"
+      providers: {
+        "AWS": { instanceType: "p4d.2xlarge", specs: "NVIDIA A100, 8 vCPUs, 96GB RAM" },
+        "Azure": { instanceType: "Standard_NC24rs_v3", specs: "NVIDIA V100, 24 vCPUs, 448GB RAM" },
+        "Google Cloud": { instanceType: "n1-standard-16 + A100", specs: "NVIDIA A100, 16 vCPUs, 60GB RAM" }
+      }
     }
   ];
 
   const getProviderLogo = (provider: string) => {
     switch (provider) {
       case "AWS":
-        return "🟠"; // AWS orange
+        return "🟠";
       case "Azure":
-        return "🔵"; // Azure blue
+        return "🔵";
       case "Google Cloud":
-        return "🔴"; // Google red
+        return "🔴";
       default:
         return "☁️";
     }
+  };
+
+  const handleProviderChange = (instanceId: string, provider: string) => {
+    setSelectedProviders(prev => ({
+      ...prev,
+      [instanceId]: provider
+    }));
   };
 
   return (
@@ -67,15 +90,18 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
       <div className="space-y-3">
         {instances.map((instance) => {
           const Icon = instance.icon;
+          const currentProvider = selectedProviders[instance.id];
+          const currentProviderData = instance.providers[currentProvider];
+          
           return (
             <div
               key={instance.id}
-              onClick={() => setSelectedInstance(instance.id)}
               className={`relative p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
                 selectedInstance === instance.id
                   ? "border-purple-500 bg-purple-500/10"
                   : "border-white/20 bg-white/5 hover:border-white/40 hover:bg-white/10"
               }`}
+              onClick={() => setSelectedInstance(instance.id)}
             >
               {instance.popular && (
                 <div className="absolute -top-2 left-4">
@@ -94,11 +120,46 @@ const ComputeInstance = ({ selectedInstance, setSelectedInstance }: ComputeInsta
                   <div>
                     <div className="flex items-center space-x-2">
                       <h3 className="text-white font-semibold">{instance.name}</h3>
-                      <span className="text-lg">{getProviderLogo(instance.cloudProvider)}</span>
-                      <span className="text-xs text-gray-400">{instance.cloudProvider}</span>
+                      
+                      <Popover>
+                        <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 px-2 text-xs border border-white/20 hover:border-white/40"
+                          >
+                            <span className="text-lg mr-1">{getProviderLogo(currentProvider)}</span>
+                            <span className="text-gray-300">{currentProvider}</span>
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 bg-slate-800 border-slate-700" onClick={(e) => e.stopPropagation()}>
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-white">Select Cloud Provider</h4>
+                            <RadioGroup 
+                              value={currentProvider} 
+                              onValueChange={(value) => handleProviderChange(instance.id, value)}
+                            >
+                              {Object.entries(instance.providers).map(([provider, data]) => (
+                                <div key={provider} className="flex items-start space-x-3 p-2 rounded border border-slate-600 hover:border-slate-500">
+                                  <RadioGroupItem value={provider} id={`${instance.id}-${provider}`} className="mt-1" />
+                                  <div className="flex-1">
+                                    <label htmlFor={`${instance.id}-${provider}`} className="flex items-center space-x-2 cursor-pointer">
+                                      <span className="text-lg">{getProviderLogo(provider)}</span>
+                                      <span className="text-white font-medium">{provider}</span>
+                                    </label>
+                                    <p className="text-xs text-gray-400 mt-1">{data.instanceType}</p>
+                                    <p className="text-xs text-gray-500">{data.specs}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </RadioGroup>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <p className="text-gray-400 text-sm">{instance.description}</p>
-                    <p className="text-gray-500 text-xs">{instance.instanceType} • {instance.specs}</p>
+                    <p className="text-gray-500 text-xs">{currentProviderData.instanceType} • {currentProviderData.specs}</p>
                   </div>
                 </div>
                 
