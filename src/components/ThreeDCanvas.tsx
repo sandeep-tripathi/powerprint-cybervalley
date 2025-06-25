@@ -2,6 +2,8 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, Environment } from "@react-three/drei";
 import PowerPrintModel from "./PowerPrintModel";
+import ObjViewer from "./ObjViewer";
+import { ParsedObjData } from "./ObjFileParser";
 
 interface ThreeDCanvasProps {
   isLoading: boolean;
@@ -14,9 +16,19 @@ interface ThreeDCanvasProps {
     vertices: number;
     faces: number;
   } | null;
+  uploadedObj?: {
+    data: ParsedObjData;
+    fileName: string;
+  } | null;
 }
 
-const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedModel }: ThreeDCanvasProps) => {
+const ThreeDCanvas = ({ 
+  isLoading, 
+  generationStatus, 
+  uploadedImages, 
+  generatedModel,
+  uploadedObj 
+}: ThreeDCanvasProps) => {
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
@@ -29,7 +41,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
     );
   }
 
-  if (uploadedImages.length === 0) {
+  if (uploadedImages.length === 0 && !uploadedObj) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
@@ -37,7 +49,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
             <div className="w-8 h-8 border border-gray-500 rounded"></div>
           </div>
           <p className="text-white font-medium">Ready for PowerPrint Generation</p>
-          <p className="text-gray-400 text-sm">Upload images to generate 3D models using the PowerPrint pipeline</p>
+          <p className="text-gray-400 text-sm">Upload images to generate 3D models or upload OBJ files to view</p>
         </div>
       </div>
     );
@@ -77,6 +89,14 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
           />
         )}
 
+        {/* Render uploaded OBJ file */}
+        {uploadedObj && (
+          <ObjViewer
+            objData={uploadedObj.data}
+            animate={true}
+          />
+        )}
+
         {/* Orbit controls for camera interaction */}
         <OrbitControls
           enablePan={true}
@@ -97,6 +117,18 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
             </p>
             <p className="text-purple-300 text-xs">
               {generatedModel.vertices.toLocaleString()} vertices • {generatedModel.faces.toLocaleString()} faces
+            </p>
+            <p className="text-gray-300 text-xs">
+              Click and drag to rotate • Scroll to zoom
+            </p>
+          </div>
+        ) : uploadedObj ? (
+          <div>
+            <p className="text-white font-medium text-sm">
+              OBJ File: {uploadedObj.fileName}
+            </p>
+            <p className="text-purple-300 text-xs">
+              {(uploadedObj.data.vertices.length / 3).toLocaleString()} vertices
             </p>
             <p className="text-gray-300 text-xs">
               Click and drag to rotate • Scroll to zoom
