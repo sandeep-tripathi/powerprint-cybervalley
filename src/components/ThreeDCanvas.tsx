@@ -1,7 +1,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, Environment } from "@react-three/drei";
-import TrellisModel from "./TrellisModel";
+import PowerPrintModel from "./PowerPrintModel";
 
 interface ThreeDCanvasProps {
   isLoading: boolean;
@@ -22,7 +22,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white font-medium">Trellis Pipeline Processing...</p>
+          <p className="text-white font-medium">PowerPrint Pipeline Processing...</p>
           <p className="text-purple-300 text-sm">{generationStatus}</p>
         </div>
       </div>
@@ -36,8 +36,8 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
           <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
             <div className="w-8 h-8 border border-gray-500 rounded"></div>
           </div>
-          <p className="text-white font-medium">Ready for Trellis Generation</p>
-          <p className="text-gray-400 text-sm">Upload images to generate 3D models using the Trellis pipeline</p>
+          <p className="text-white font-medium">Ready for PowerPrint Generation</p>
+          <p className="text-gray-400 text-sm">Upload images to generate 3D models using the PowerPrint pipeline</p>
         </div>
       </div>
     );
@@ -69,9 +69,9 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
           infiniteGrid
         />
 
-        {/* Render the generated Trellis model */}
+        {/* Render the generated PowerPrint model */}
         {generatedModel && (
-          <TrellisModel
+          <PowerPrintModel
             modelData={generatedModel}
             animate={true}
           />
@@ -93,7 +93,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
         {generatedModel ? (
           <div>
             <p className="text-white font-medium text-sm">
-              Trellis Model Generated
+              PowerPrint Model Generated
             </p>
             <p className="text-purple-300 text-xs">
               {generatedModel.vertices.toLocaleString()} vertices • {generatedModel.faces.toLocaleString()} faces
@@ -104,12 +104,9 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
           </div>
         ) : (
           <p className="text-gray-400 text-sm">
-            Waiting for Trellis pipeline...
+            Waiting for PowerPrint pipeline...
           </p>
         )}
       </div>
     </div>
   );
-};
-
-export default ThreeDCanvas;

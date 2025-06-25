@@ -21,21 +21,21 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
   } | null>(null);
   const { toast } = useToast();
 
-  const processImagesWithTrellisPipeline = async (images: File[]) => {
+  const processImagesWithPowerPrintPipeline = async (images: File[]) => {
     if (!apiKey.trim()) {
       showApiKeyInput();
       return;
     }
 
-    console.log("Starting Trellis pipeline for", images.length, "images");
+    console.log("Starting PowerPrint pipeline for", images.length, "images");
     setIsLoading(true);
     setHasModel(false);
-    setGenerationStatus("Initializing Trellis pipeline...");
+    setGenerationStatus("Initializing PowerPrint pipeline...");
 
     try {
-      // Simulate the advanced Trellis pipeline processing
+      // Simulate the advanced PowerPrint pipeline processing
       const pipelineSteps = [
-        { status: "Loading Trellis model weights...", duration: 1500 },
+        { status: "Loading PowerPrint model weights...", duration: 1500 },
         { status: "Processing multi-view image analysis...", duration: 2500 },
         { status: "Extracting depth information and normal maps...", duration: 3000 },
         { status: "Generating 3D Gaussian splatting representation...", duration: 3500 },
@@ -61,8 +61,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
 
       const generatedModelData = {
         meshData: {
-          // Simulated mesh data that would come from Trellis
-          type: "trellis_generated",
+          // Simulated mesh data that would come from PowerPrint
+          type: "powerprint_generated",
           algorithm: "gaussian_splatting_to_mesh",
           inputImages: images.length,
           processingTime: pipelineSteps.reduce((sum, step) => sum + step.duration, 0)
@@ -75,20 +75,20 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
 
       setGeneratedModel(generatedModelData);
       setHasModel(true);
-      setGenerationStatus("Trellis pipeline completed successfully!");
+      setGenerationStatus("PowerPrint pipeline completed successfully!");
       
       toast({
         title: "3D Model Generated!",
-        description: `Generated high-quality 3D model with ${vertices.toLocaleString()} vertices using Trellis pipeline.`,
+        description: `Generated high-quality 3D model with ${vertices.toLocaleString()} vertices using PowerPrint pipeline.`,
       });
 
     } catch (error) {
-      console.error("Error in Trellis pipeline:", error);
+      console.error("Error in PowerPrint pipeline:", error);
       setHasModel(false);
       setGeneratedModel(null);
       toast({
         title: "Pipeline Failed",
-        description: error instanceof Error ? error.message : "Failed to generate 3D model using Trellis pipeline.",
+        description: error instanceof Error ? error.message : "Failed to generate 3D model using PowerPrint pipeline.",
         variant: "destructive",
       });
     } finally {
@@ -99,7 +99,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
   // Trigger pipeline when images are uploaded
   useEffect(() => {
     if (uploadedImages.length > 0 && apiKey.trim()) {
-      processImagesWithTrellisPipeline(uploadedImages);
+      processImagesWithPowerPrintPipeline(uploadedImages);
     } else if (uploadedImages.length === 0) {
       setHasModel(false);
       setGenerationStatus("");
@@ -112,6 +112,6 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
     hasModel,
     generationStatus,
     generatedModel,
-    processImagesWithTrellisPipeline,
+    processImagesWithPowerPrintPipeline,
   };
 };
