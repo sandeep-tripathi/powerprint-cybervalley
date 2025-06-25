@@ -145,10 +145,8 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
 
   return (
     <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-white mb-4">AI Model</h2>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
-          AI Model
-        </label>
         <Select value={selectedModel} onValueChange={setSelectedModel}>
           <SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
             <SelectValue placeholder="Select an AI model..." />

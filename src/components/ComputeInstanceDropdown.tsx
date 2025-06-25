@@ -49,10 +49,8 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
 
   return (
     <div className="space-y-4">
+      <h2 className="text-2xl font-bold text-white mb-4">Compute Instance</h2>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
-          Compute Instance
-        </label>
         <Select value={selectedInstance} onValueChange={setSelectedInstance}>
           <SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
             <SelectValue placeholder="Select compute instance..." />
