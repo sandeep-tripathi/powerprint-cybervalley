@@ -110,3 +110,6 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedMo
       </div>
     </div>
   );
+};
+
+export default ThreeDCanvas;
