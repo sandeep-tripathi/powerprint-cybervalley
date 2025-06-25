@@ -202,7 +202,7 @@ export class Mesh2DTo3DConverter {
     
     mesh.normals = normals;
   }
-
+/*
   private calculateBoundingBox(vertices: Float32Array): GeneratedMesh['boundingBox'] {
     let minX = Infinity, minY = Infinity, minZ = Infinity;
     let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
@@ -225,7 +225,7 @@ export class Mesh2DTo3DConverter {
       max: { x: maxX, y: maxY, z: maxZ }
     };
   }
-
+*/
   dispose(): void {
     // Clean up resources
     this.canvas.remove();
