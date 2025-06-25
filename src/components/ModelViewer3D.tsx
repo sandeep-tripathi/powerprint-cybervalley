@@ -80,13 +80,14 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-purple-300">
-            Advanced PowerPrint Pipeline • Image-to-3D Generation
+            Advanced PowerPrint Pipeline • Image-to-3D Generation • 3D Printing Ready
           </p>
         </div>
         
         <ViewerControls
           hasModel={hasModel}
           uploadedImages={uploadedImages}
+          generatedModel={generatedModel}
           onResetView={resetView}
           onDownloadOBJ={downloadOBJ}
         />
@@ -115,7 +116,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
       <div className="text-xs text-purple-200 space-y-1">
         <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis</p>
-        <p>• Automatic mesh optimization • High-quality texture synthesis • Export: PLY, STL, OBJ, GLB</p>
+        <p>• Automatic mesh optimization • High-quality texture synthesis • Export: PLY, STL, OBJ, GLB • 3D Print Ready</p>
         {generatedModel && (
           <p>• Model Stats: {generatedModel.vertices.toLocaleString()} vertices, {generatedModel.faces.toLocaleString()} faces, Complexity: {generatedModel.complexity}</p>
         )}
