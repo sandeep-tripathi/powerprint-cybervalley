@@ -1,23 +1,29 @@
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Grid } from "@react-three/drei";
-import SlicedCube from "./SlicedCube";
+import { OrbitControls, Grid, Environment } from "@react-three/drei";
+import TrellisModel from "./TrellisModel";
 
 interface ThreeDCanvasProps {
   isLoading: boolean;
   generationStatus: string;
   uploadedImages: File[];
-  processedImages?: string[];
+  generatedModel?: {
+    meshData: any;
+    textureUrl: string;
+    complexity: number;
+    vertices: number;
+    faces: number;
+  } | null;
 }
 
-const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, processedImages = [] }: ThreeDCanvasProps) => {
+const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, generatedModel }: ThreeDCanvasProps) => {
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white font-medium">Converting Images to 3D Models...</p>
-          <p className="text-gray-300 text-sm">{generationStatus}</p>
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white font-medium">Trellis Pipeline Processing...</p>
+          <p className="text-purple-300 text-sm">{generationStatus}</p>
         </div>
       </div>
     );
@@ -30,29 +36,24 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, processedIm
           <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
             <div className="w-8 h-8 border border-gray-500 rounded"></div>
           </div>
-          <p className="text-white font-medium">Ready for 3D Generation</p>
-          <p className="text-gray-400 text-sm">Upload images to convert them to 3D models using AI</p>
+          <p className="text-white font-medium">Ready for Trellis Generation</p>
+          <p className="text-gray-400 text-sm">Upload images to generate 3D models using the Trellis pipeline</p>
         </div>
       </div>
     );
   }
 
-  // Calculate positions for cubes in a grid layout
-  const getCubePosition = (index: number): [number, number, number] => {
-    const spacing = 3;
-    const cubesPerRow = 3;
-    const x = (index % cubesPerRow) * spacing - (cubesPerRow - 1) * spacing / 2;
-    const z = Math.floor(index / cubesPerRow) * spacing - Math.floor(uploadedImages.length / cubesPerRow) * spacing / 2;
-    return [x, 1, z];
-  };
-
   return (
     <div className="w-full h-full bg-gray-900 rounded-lg">
-      <Canvas camera={{ position: [8, 8, 8], fov: 60 }}>
-        {/* Lighting */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} />
+      <Canvas camera={{ position: [6, 6, 6], fov: 60 }}>
+        {/* Enhanced lighting for better model visualization */}
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[10, 10, 5]} intensity={1.2} />
+        <pointLight position={[-10, -10, -10]} intensity={0.6} />
+        <spotLight position={[0, 15, 0]} intensity={0.8} angle={0.3} />
+
+        {/* Environment for reflections */}
+        <Environment preset="studio" />
 
         {/* 3D Grid */}
         <Grid
@@ -68,21 +69,13 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, processedIm
           infiniteGrid
         />
 
-        {/* Render a cube for each uploaded image */}
-        {uploadedImages.map((image, index) => {
-          const position = getCubePosition(index);
-          const imageUrl = processedImages[index];
-          return (
-            <SlicedCube
-              key={index}
-              position={position}
-              scale={[1, 1, 1]}
-              rotation={[0, index * 0.5, 0]}
-              animate={true}
-              imageUrl={imageUrl}
-            />
-          );
-        })}
+        {/* Render the generated Trellis model */}
+        {generatedModel && (
+          <TrellisModel
+            modelData={generatedModel}
+            animate={true}
+          />
+        )}
 
         {/* Orbit controls for camera interaction */}
         <OrbitControls
@@ -90,18 +83,30 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, processedIm
           enableZoom={true}
           enableRotate={true}
           minDistance={3}
-          maxDistance={20}
+          maxDistance={15}
+          autoRotate={false}
         />
       </Canvas>
 
-      {/* Overlay text */}
+      {/* Overlay text with pipeline info */}
       <div className="absolute bottom-4 left-4">
-        <p className="text-white font-medium text-sm">
-          3D Models Generated ({uploadedImages.length})
-        </p>
-        <p className="text-gray-300 text-xs">
-          Click and drag to rotate • Scroll to zoom
-        </p>
+        {generatedModel ? (
+          <div>
+            <p className="text-white font-medium text-sm">
+              Trellis Model Generated
+            </p>
+            <p className="text-purple-300 text-xs">
+              {generatedModel.vertices.toLocaleString()} vertices • {generatedModel.faces.toLocaleString()} faces
+            </p>
+            <p className="text-gray-300 text-xs">
+              Click and drag to rotate • Scroll to zoom
+            </p>
+          </div>
+        ) : (
+          <p className="text-gray-400 text-sm">
+            Waiting for Trellis pipeline...
+          </p>
+        )}
       </div>
     </div>
   );
