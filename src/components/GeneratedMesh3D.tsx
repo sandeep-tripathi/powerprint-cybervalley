@@ -117,18 +117,6 @@ const GeneratedMesh3D = ({
   return (
     <group>
       <mesh ref={meshRef} geometry={geometry} material={meshMaterial} />
-      
-      {/* Bounding box visualization (optional) */}
-      {false && (
-        <lineSegments>
-          <edgesGeometry args={[new THREE.BoxGeometry(
-            meshData.boundingBox.max.x - meshData.boundingBox.min.x,
-            meshData.boundingBox.max.y - meshData.boundingBox.min.y,
-            meshData.boundingBox.max.z - meshData.boundingBox.min.z
-          )]} />
-          <lineBasicMaterial color="#ffffff" transparent opacity={0.3} />
-        </lineSegments>
-      )}
     </group>
   );
 };
