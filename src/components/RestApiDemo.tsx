@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { PipelineApiService, PipelineSettings, PipelineRequest } from "@/api/pipelineApi";
 import { mockApiServer } from "@/api/mockApiServer";
@@ -8,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Code, Play, Settings, Cloud, Euro } from "lucide-react";
+import { Code, Play, Settings, Cloud, Euro, Copy } from "lucide-react";
 
 const RestApiDemo = () => {
   const [apiResponse, setApiResponse] = useState("");
@@ -82,6 +81,97 @@ const RestApiDemo = () => {
       }, null, 2)
     }
   ];
+
+  const pythonCodeExample = `import requests
+import base64
+import json
+
+# PowerPrint API configuration
+API_KEY = "pp_your_api_key_here"
+BASE_URL = "https://api.powerprint.dev"
+
+# Helper function to encode image to base64
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+# 1. Check API status
+def check_status():
+    response = requests.get(f"{BASE_URL}/api/status")
+    return response.json()
+
+# 2. Get current settings
+def get_settings():
+    response = requests.get(f"{BASE_URL}/api/settings")
+    return response.json()
+
+# 3. Update settings
+def update_settings(model="powerprint-v2", instance="pro"):
+    settings = {
+        "selectedModel": model,
+        "selectedInstance": instance,
+        "apiKey": API_KEY
+    }
+    response = requests.put(
+        f"{BASE_URL}/api/settings",
+        headers={"Content-Type": "application/json"},
+        json=settings
+    )
+    return response.json()
+
+# 4. Process images to 3D model
+def process_images(image_paths):
+    # Encode images to base64
+    encoded_images = []
+    for path in image_paths:
+        encoded_image = encode_image_to_base64(path)
+        encoded_images.append(f"data:image/jpeg;base64,{encoded_image}")
+    
+    # Prepare request payload
+    payload = {
+        "images": encoded_images,
+        "settings": {
+            "selectedModel": "powerprint-v2",
+            "selectedInstance": "pro",
+            "apiKey": API_KEY
+        }
+    }
+    
+    # Send request
+    response = requests.post(
+        f"{BASE_URL}/api/pipeline/process",
+        headers={"Content-Type": "application/json"},
+        json=payload
+    )
+    
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    # Check if API is online
+    status = check_status()
+    print(f"API Status: {status['status']}")
+    
+    # Process a single image
+    image_paths = ["./my_image.jpg"]
+    result = process_images(image_paths)
+    
+    if result["success"]:
+        print("3D model generated successfully!")
+        print(f"Processing time: {result['processingTime']}ms")
+        print(f"Model complexity: {result['modelData']['complexity']}")
+        print(f"Vertices: {result['modelData']['vertices']}")
+        print(f"Faces: {result['modelData']['faces']}")
+    else:
+        print(f"Error: {result['error']}")`;
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: "Python code example has been copied to your clipboard",
+    });
+  };
 
   const executeApiCall = async () => {
     setIsLoading(true);
@@ -166,6 +256,41 @@ const RestApiDemo = () => {
           advanced processing capabilities, and professional 3D model export options.
         </p>
       </div>
+
+      {/* Python Code Example */}
+      <Card className="bg-slate-800 border-slate-600">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Code className="w-5 h-5" />
+              <span>Python Code Example</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => copyToClipboard(pythonCodeExample)}
+              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              Copy Code
+            </Button>
+          </CardTitle>
+          <CardDescription className="text-slate-300">
+            Complete Python example for integrating with the PowerPrint API
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-green-400 text-sm font-mono whitespace-pre">
+              {pythonCodeExample}
+            </pre>
+          </div>
+          <div className="mt-4 text-sm text-slate-400">
+            <p><strong>Requirements:</strong> pip install requests</p>
+            <p><strong>Usage:</strong> Replace API_KEY with your actual PowerPrint API key and update image paths</p>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* API Explorer */}
