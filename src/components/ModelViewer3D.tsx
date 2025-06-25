@@ -1,4 +1,3 @@
-
 import { useApiKey } from "@/hooks/useApiKey";
 import { use3DGeneration } from "@/hooks/use3DGeneration";
 import ApiStatus from "@/components/ApiStatus";
@@ -8,9 +7,10 @@ import ModelInfo from "@/components/ModelInfo";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
+  onModelGenerated?: (modelName: string, imageNames: string[], modelData: any, processingTime: number) => void;
 }
 
-const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
+const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const {
     apiKey,
     setApiKey,
@@ -29,6 +29,7 @@ const ModelViewer3D = ({ uploadedImages = [] }: ModelViewer3DProps) => {
     apiKey,
     showApiKeyInput,
     uploadedImages,
+    onModelGenerated,
   });
 
   const resetView = () => {

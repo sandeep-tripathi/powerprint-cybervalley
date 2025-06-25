@@ -6,9 +6,10 @@ interface Use3DGenerationProps {
   apiKey: string;
   showApiKeyInput: () => void;
   uploadedImages: File[];
+  onModelGenerated?: (modelName: string, imageNames: string[], modelData: any, processingTime: number) => void;
 }
 
-export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use3DGenerationProps) => {
+export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onModelGenerated }: Use3DGenerationProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
@@ -31,6 +32,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
     setIsLoading(true);
     setHasModel(false);
     setGenerationStatus("Initializing PowerPrint pipeline...");
+
+    const startTime = Date.now();
 
     try {
       // Simulate the advanced PowerPrint pipeline processing
@@ -58,6 +61,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
       const modelComplexity = Math.min(images.length * 1000 + 2000, 8000);
       const vertices = Math.floor(modelComplexity * 0.8);
       const faces = Math.floor(modelComplexity * 0.6);
+      const processingTime = Date.now() - startTime;
 
       const generatedModelData = {
         meshData: {
@@ -65,7 +69,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
           type: "powerprint_generated",
           algorithm: "gaussian_splatting_to_mesh",
           inputImages: images.length,
-          processingTime: pipelineSteps.reduce((sum, step) => sum + step.duration, 0)
+          processingTime
         },
         textureUrl,
         complexity: modelComplexity,
@@ -76,6 +80,13 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
       setGeneratedModel(generatedModelData);
       setHasModel(true);
       setGenerationStatus("PowerPrint pipeline completed successfully!");
+      
+      // Add to history
+      if (onModelGenerated) {
+        const modelName = `PowerPrint Model ${new Date().toLocaleDateString()}`;
+        const imageNames = images.map(img => img.name);
+        onModelGenerated(modelName, imageNames, generatedModelData, processingTime);
+      }
       
       toast({
         title: "3D Model Generated!",

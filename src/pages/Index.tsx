@@ -8,13 +8,20 @@ import Marketplace from "@/components/Marketplace";
 import WorkflowSidebar from "@/components/WorkflowSidebar";
 import ModelViewer3D from "@/components/ModelViewer3D";
 import PricingPage from "@/components/PricingPage";
+import GenerationHistory from "@/components/GenerationHistory";
 import Footer from "@/components/Footer";
+import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedInstance, setSelectedInstance] = useState("");
+  const { addToHistory } = useGenerationHistory();
+
+  const handleModelGenerated = (modelName: string, imageNames: string[], modelData: any, processingTime: number) => {
+    addToHistory(modelName, imageNames, modelData, processingTime);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
@@ -81,7 +88,10 @@ const Index = () => {
                 </div>
 
                 <div className="xl:col-span-2">
-                  <ModelViewer3D uploadedImages={uploadedImages} />
+                  <ModelViewer3D 
+                    uploadedImages={uploadedImages}
+                    onModelGenerated={handleModelGenerated}
+                  />
                 </div>
               </div>
             </div>
@@ -96,10 +106,7 @@ const Index = () => {
           )}
 
           {activeTab === "history" && (
-            <div className="text-center py-20">
-              <h2 className="text-2xl font-bold text-white mb-4">Generation History</h2>
-              <p className="text-slate-400">Your recent 3D model generations will appear here</p>
-            </div>
+            <GenerationHistory />
           )}
         </main>
       </div>
