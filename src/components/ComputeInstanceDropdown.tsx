@@ -1,5 +1,5 @@
 
-import { Cpu, Zap, Award, Cloud } from "lucide-react";
+import { Cpu, Zap, Award, Cloud, Monitor } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -42,6 +42,15 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
       speed: "30-60 sec",
       price: "€2.00/run",
       provider: "AWS p4d.2xlarge"
+    },
+    {
+      id: "local",
+      name: "Local Machine",
+      description: "Your computer's hardware",
+      icon: Monitor,
+      speed: "Variable",
+      price: "Free",
+      provider: "Local processing"
     }
   ];
 
@@ -95,15 +104,32 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
         )}
       </div>
 
-      <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
-        <div className="flex items-center space-x-2 mb-2">
-          <Cloud className="w-4 h-4 text-purple-400" />
-          <span className="text-purple-300 font-medium text-sm">Cloud Provider Info</span>
+      {selectedInstance === "local" && (
+        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+          <div className="flex items-center space-x-2 mb-2">
+            <Monitor className="w-4 h-4 text-green-400" />
+            <span className="text-green-300 font-medium text-sm">Local Processing</span>
+          </div>
+          <p className="text-slate-300 text-xs mb-2">
+            Processing will run directly on your computer using available hardware resources.
+          </p>
+          <p className="text-slate-400 text-xs">
+            <strong>Requirements:</strong> Modern browser with WebGL support. Performance depends on your device's CPU/GPU capabilities.
+          </p>
         </div>
-        <p className="text-slate-300 text-xs">
-          Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance.
-        </p>
-      </div>
+      )}
+
+      {selectedInstance !== "local" && (
+        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+          <div className="flex items-center space-x-2 mb-2">
+            <Cloud className="w-4 h-4 text-purple-400" />
+            <span className="text-purple-300 font-medium text-sm">Cloud Provider Info</span>
+          </div>
+          <p className="text-slate-300 text-xs">
+            Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
