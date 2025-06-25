@@ -8,6 +8,7 @@ import Marketplace from "@/components/Marketplace";
 import WorkflowSidebar from "@/components/WorkflowSidebar";
 import ModelViewer3D from "@/components/ModelViewer3D";
 import PricingPage from "@/components/PricingPage";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -16,10 +17,10 @@ const Index = () => {
   const [selectedInstance, setSelectedInstance] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       <Header />
       
-      <div className="flex">
+      <div className="flex flex-1">
         <WorkflowSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
         <main className="flex-1 p-6 ml-64">
@@ -102,6 +103,8 @@ const Index = () => {
           )}
         </main>
       </div>
+      
+      <Footer />
     </div>
   );
 };
