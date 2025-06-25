@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { AdvancedMesh2DTo3DConverter, AdvancedMeshGenerationOptions, GeneratedMesh } from "@/services/advancedMesh2DTo3DConverter";
+import { Mesh2DTo3DConverter, MeshGenerationOptions, GeneratedMesh } from "@/services/mesh2DTo3DConverter";
 
 interface Use3DGenerationProps {
   apiKey: string;
@@ -14,7 +14,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
-  const [processingMethod, setProcessingMethod] = useState<'advanced'>('advanced');
+  const [processingMethod, setProcessingMethod] = useState<'local'>('local');
   const [generatedModel, setGeneratedModel] = useState<{
     meshData: any;
     textureUrl: string;
@@ -24,7 +24,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     realMesh?: GeneratedMesh;
   } | null>(null);
   const { toast } = useToast();
-  const [converter] = useState(() => new AdvancedMesh2DTo3DConverter());
+  const [converter] = useState(() => new Mesh2DTo3DConverter());
 
   // Function to update the generated model
   const updateGeneratedModel = (updatedModel: any) => {
@@ -32,49 +32,40 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     console.log("Model updated with new properties:", updatedModel);
   };
 
-  const processImagesWithAdvancedPipeline = async (images: File[]): Promise<any> => {
-    console.log("Starting advanced AI-inspired 2D to 3D conversion...");
-    setProcessingMethod('advanced');
-    setGenerationStatus("Analyzing image structure with deep learning-inspired techniques...");
+  const processImagesWithLocalPipeline = async (images: File[]): Promise<any> => {
+    console.log("Starting local 2D to 3D conversion...");
+    setProcessingMethod('local');
+    setGenerationStatus("Analyzing image structure...");
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    setGenerationStatus("Applying edge detection and depth estimation...");
+    setGenerationStatus("Creating local 3D extrusion...");
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    setGenerationStatus("Generating sophisticated mesh with neural network-inspired algorithms...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Configure advanced mesh generation options
-    const options: AdvancedMeshGenerationOptions = {
-      extrusionHeight: 0.5,
-      resolution: 64,
+    // Configure local mesh generation options
+    const options: MeshGenerationOptions = {
+      extrusionHeight: 0.2,
+      resolution: 32,
       generateBackface: true,
-      textureResolution: 512,
-      useEdgeDetection: true,
-      useDepthEstimation: true,
-      smoothingIterations: 3
+      textureResolution: 256
     };
     
-    setGenerationStatus("Converting 2D image to 3D mesh using advanced algorithms...");
+    setGenerationStatus("Converting 2D image to 3D mesh locally...");
     const realMesh = await converter.convertImageToMesh(images[0], options);
     
     const textureUrl = URL.createObjectURL(images[0]);
 
     return {
       meshData: {
-        type: "advanced_ai_mesh_generated",
-        algorithm: "deep_learning_inspired_2d_to_3d",
+        type: "local_mesh_generated",
+        algorithm: "local_2d_to_3d_extrusion",
         inputImages: images.length,
-        processingTime: 3500,
+        processingTime: 2000, // Simulated processing time
         propertyChanges: [],
         realMeshStats: {
           vertexCount: realMesh.vertexCount,
           faceCount: realMesh.faceCount,
           hasTexture: realMesh.textureData !== null,
-          boundingBox: realMesh.boundingBox,
-          usedEdgeDetection: options.useEdgeDetection,
-          usedDepthEstimation: options.useDepthEstimation,
-          smoothingIterations: options.smoothingIterations
+          boundingBox: realMesh.boundingBox
         }
       },
       textureUrl,
@@ -94,40 +85,40 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     console.log("Starting PowerPrint pipeline for", images.length, "images");
     setIsLoading(true);
     setHasModel(false);
-    setGenerationStatus("Initializing advanced 2D to 3D conversion...");
+    setGenerationStatus("Initializing 2D to 3D conversion...");
 
     const startTime = Date.now();
     let generatedModelData;
 
     try {
-      console.log("Using advanced AI-inspired processing");
-      generatedModelData = await processImagesWithAdvancedPipeline(images);
+      console.log("Using local processing");
+      generatedModelData = await processImagesWithLocalPipeline(images);
 
       setGeneratedModel(generatedModelData);
       setHasModel(true);
       
       const finalProcessingTime = Date.now() - startTime;
-      setGenerationStatus(`Advanced 2D to 3D conversion completed using ${processingMethod} processing!`);
+      setGenerationStatus(`2D to 3D conversion completed using ${processingMethod} processing!`);
       
       // Add to history
       if (onModelGenerated) {
-        const modelName = `Advanced AI 2D→3D Model ${new Date().toLocaleDateString()}`;
+        const modelName = `Local 2D→3D Model ${new Date().toLocaleDateString()}`;
         const imageNames = images.map(img => img.name);
         onModelGenerated(modelName, imageNames, generatedModelData, finalProcessingTime);
       }
       
       toast({
-        title: `Advanced 3D Mesh Generated!`,
-        description: `Successfully converted 2D image to 3D mesh using AI-inspired algorithms with ${generatedModelData.vertices} vertices and ${generatedModelData.faces} faces.`,
+        title: `3D Mesh Generated with Local Processing!`,
+        description: `Successfully converted 2D image to 3D mesh with ${generatedModelData.vertices} vertices and ${generatedModelData.faces} faces.`,
       });
 
     } catch (error) {
-      console.error("Error in advanced 2D to 3D conversion:", error);
+      console.error("Error in 2D to 3D conversion:", error);
       setHasModel(false);
       setGeneratedModel(null);
       toast({
         title: "Conversion Failed",
-        description: error instanceof Error ? error.message : "Failed to convert 2D image to 3D mesh using advanced algorithms.",
+        description: error instanceof Error ? error.message : "Failed to convert 2D image to 3D mesh.",
         variant: "destructive",
       });
     } finally {
