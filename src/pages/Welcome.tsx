@@ -250,7 +250,7 @@ const Welcome = () => {
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-white mb-4">Powerful Features</h2>
               <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                Everything you need to transform images into professional 3D models
+                Everything you need to transform single image into professional 3D models
               </p>
             </div>
             
