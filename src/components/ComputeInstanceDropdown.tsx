@@ -16,32 +16,95 @@ interface ComputeInstanceDropdownProps {
 const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: ComputeInstanceDropdownProps) => {
   const instances = [
     {
-      id: "basic",
+      id: "basic-aws",
       name: "Basic",
       description: "2 vCPUs, 8GB RAM",
       icon: Cpu,
       speed: "3-5 min",
       price: "Free",
-      provider: "AWS t3.large"
+      provider: "AWS t3.large",
+      cloudProvider: "AWS"
     },
     {
-      id: "pro",
+      id: "basic-google",
+      name: "Basic",
+      description: "2 vCPUs, 8GB RAM",
+      icon: Cpu,
+      speed: "3-5 min",
+      price: "Free",
+      provider: "Google e2-standard-2",
+      cloudProvider: "Google Cloud"
+    },
+    {
+      id: "basic-azure",
+      name: "Basic",
+      description: "2 vCPUs, 8GB RAM",
+      icon: Cpu,
+      speed: "3-5 min",
+      price: "Free",
+      provider: "Azure Standard_D2s_v3",
+      cloudProvider: "Azure"
+    },
+    {
+      id: "pro-aws",
       name: "Pro",
       description: "8 vCPUs, 32GB RAM, GPU",
       icon: Zap,
       speed: "1-2 min",
       price: "$0.50/run",
       provider: "AWS p3.2xlarge",
+      cloudProvider: "AWS",
       popular: true
     },
     {
-      id: "enterprise",
+      id: "pro-google",
+      name: "Pro",
+      description: "8 vCPUs, 32GB RAM, GPU",
+      icon: Zap,
+      speed: "1-2 min",
+      price: "$0.50/run",
+      provider: "Google n1-standard-8 + T4 GPU",
+      cloudProvider: "Google Cloud"
+    },
+    {
+      id: "pro-azure",
+      name: "Pro",
+      description: "8 vCPUs, 32GB RAM, GPU",
+      icon: Zap,
+      speed: "1-2 min",
+      price: "$0.50/run",
+      provider: "Azure Standard_NC8as_T4_v3",
+      cloudProvider: "Azure"
+    },
+    {
+      id: "enterprise-aws",
       name: "Enterprise",
       description: "16 vCPUs, 64GB RAM, High-end GPU",
       icon: Award,
       speed: "30-60 sec",
       price: "$2.00/run",
-      provider: "AWS p4d.2xlarge"
+      provider: "AWS p4d.2xlarge",
+      cloudProvider: "AWS"
+    },
+    {
+      id: "enterprise-google",
+      name: "Enterprise",
+      description: "16 vCPUs, 64GB RAM, High-end GPU",
+      icon: Award,
+      speed: "30-60 sec",
+      price: "$2.00/run",
+      provider: "Google n1-standard-16 + V100 GPU",
+      cloudProvider: "Google Cloud"
+    },
+    {
+      id: "enterprise-azure",
+      name: "Enterprise",
+      description: "16 vCPUs, 64GB RAM, High-end GPU",
+      icon: Award,
+      speed: "30-60 sec",
+      price: "$2.00/run",
+      provider: "Azure Standard_NC24s_v3",
+      cloudProvider: "Azure"
     }
   ];
 
@@ -72,6 +135,9 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-medium">{instance.name}</span>
+                          <span className="text-xs text-blue-400 bg-blue-900/30 px-1.5 py-0.5 rounded">
+                            {instance.cloudProvider}
+                          </span>
                           {instance.popular && (
                             <span className="bg-purple-600 text-xs px-1.5 py-0.5 rounded">Popular</span>
                           )}
@@ -103,7 +169,7 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
           <span className="text-purple-300 font-medium text-sm">Cloud Provider Info</span>
         </div>
         <p className="text-slate-300 text-xs">
-          Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance.
+          Choose your preferred cloud provider. Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance and availability.
         </p>
       </div>
     </div>
