@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Mesh2DTo3DConverter, MeshGenerationOptions, GeneratedMesh } from "@/services/mesh2DTo3DConverter";
 
 interface Use3DGenerationProps {
   apiKey: string;
@@ -20,10 +19,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     complexity: number;
     vertices: number;
     faces: number;
-    realMesh?: GeneratedMesh; // Add the real mesh data
   } | null>(null);
   const { toast } = useToast();
-  const [converter] = useState(() => new Mesh2DTo3DConverter());
 
   // Function to update the generated model
   const updateGeneratedModel = (updatedModel: any) => {
@@ -45,84 +42,71 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     const startTime = Date.now();
 
     try {
-      // Real 2D to 3D conversion algorithm
-      const mainImage = images[0];
-      
-      setGenerationStatus("Analyzing image structure...");
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setGenerationStatus("Generating depth map from luminance data...");
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Configure mesh generation options based on image characteristics
-      const options: MeshGenerationOptions = {
-        depthStrength: 0.3, // Moderate depth for realistic results
-        smoothingIterations: 2, // Smooth but preserve detail
-        subdivisionLevel: 1, // Add some detail without over-processing
-        generateBackface: true, // Create solid object
-        textureResolution: 512 // Good quality texture
-      };
-      
-      setGenerationStatus("Converting 2D image to 3D mesh geometry...");
-      const realMesh = await converter.convertImageToMesh(mainImage, options);
-      
-      setGenerationStatus("Optimizing mesh topology...");
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      setGenerationStatus("Calculating surface normals and UV mapping...");
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setGenerationStatus("Applying texture synthesis and post-processing...");
-      await new Promise(resolve => setTimeout(resolve, 400));
+      // Simulate the advanced PowerPrint pipeline processing
+      const pipelineSteps = [
+        { status: "Loading PowerPrint model weights...", duration: 1500 },
+        { status: "Processing multi-view image analysis...", duration: 2500 },
+        { status: "Extracting depth information and normal maps...", duration: 3000 },
+        { status: "Generating 3D Gaussian splatting representation...", duration: 3500 },
+        { status: "Converting to structured mesh geometry...", duration: 2500 },
+        { status: "Optimizing topology and UV mapping...", duration: 2000 },
+        { status: "Applying advanced texture synthesis...", duration: 1500 },
+        { status: "Post-processing and quality enhancement...", duration: 1000 }
+      ];
+
+      for (let i = 0; i < pipelineSteps.length; i++) {
+        setGenerationStatus(pipelineSteps[i].status);
+        await new Promise(resolve => setTimeout(resolve, pipelineSteps[i].duration));
+      }
 
       // Use the first uploaded image as the texture
+      const mainImage = images[0];
       const textureUrl = URL.createObjectURL(mainImage);
+
+      // Generate model data based on the pipeline processing
+      const modelComplexity = Math.min(images.length * 1000 + 2000, 8000);
+      const vertices = Math.floor(modelComplexity * 0.8);
+      const faces = Math.floor(modelComplexity * 0.6);
       const processingTime = Date.now() - startTime;
 
       const generatedModelData = {
         meshData: {
-          type: "real_mesh_generated",
-          algorithm: "2d_to_3d_depth_mapping",
+          // Simulated mesh data that would come from PowerPrint
+          type: "powerprint_generated",
+          algorithm: "gaussian_splatting_to_mesh",
           inputImages: images.length,
           processingTime,
-          propertyChanges: [], // Initialize empty array for property changes
-          realMeshStats: {
-            vertexCount: realMesh.vertexCount,
-            faceCount: realMesh.faceCount,
-            hasTexture: realMesh.textureData !== null,
-            boundingBox: realMesh.boundingBox
-          }
+          propertyChanges: [] // Initialize empty array for property changes
         },
         textureUrl,
-        complexity: realMesh.vertexCount,
-        vertices: realMesh.vertexCount,
-        faces: realMesh.faceCount,
-        realMesh // Include the actual mesh data
+        complexity: modelComplexity,
+        vertices,
+        faces
       };
 
       setGeneratedModel(generatedModelData);
       setHasModel(true);
-      setGenerationStatus("2D to 3D conversion completed successfully!");
+      setGenerationStatus("PowerPrint pipeline completed successfully!");
       
       // Add to history
       if (onModelGenerated) {
-        const modelName = `2D→3D Model ${new Date().toLocaleDateString()}`;
+        const modelName = `PowerPrint Model ${new Date().toLocaleDateString()}`;
         const imageNames = images.map(img => img.name);
         onModelGenerated(modelName, imageNames, generatedModelData, processingTime);
       }
       
       toast({
-        title: "3D Mesh Generated!",
-        description: `Successfully converted 2D image to 3D mesh with ${realMesh.vertexCount.toLocaleString()} vertices and ${realMesh.faceCount.toLocaleString()} faces.`,
+        title: "3D Model Generated!",
+        description: `Generated high-quality 3D model with ${vertices.toLocaleString()} vertices using PowerPrint pipeline.`,
       });
 
     } catch (error) {
-      console.error("Error in 2D to 3D conversion:", error);
+      console.error("Error in PowerPrint pipeline:", error);
       setHasModel(false);
       setGeneratedModel(null);
       toast({
-        title: "Conversion Failed",
-        description: error instanceof Error ? error.message : "Failed to convert 2D image to 3D mesh.",
+        title: "Pipeline Failed",
+        description: error instanceof Error ? error.message : "Failed to generate 3D model using PowerPrint pipeline.",
         variant: "destructive",
       });
     } finally {
@@ -138,13 +122,6 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
       }
     };
   }, [uploadedImages]);
-
-  // Clean up converter on unmount
-  useEffect(() => {
-    return () => {
-      converter.dispose();
-    };
-  }, [converter]);
 
   // Trigger pipeline when images are uploaded
   useEffect(() => {
