@@ -319,12 +319,6 @@ print(f"Processing completed using repository: ${repoName}")
             </p>
           </div>
 
-          {selectedRepo && (
-            <p className="text-xs text-gray-400">
-              Selected: {githubRepos.find(r => r.id === selectedRepo)?.owner}/{githubRepos.find(r => r.id === selectedRepo)?.name}
-            </p>
-          )}
-
           {/* Spark Notebook Integration */}
           <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
