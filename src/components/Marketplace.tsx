@@ -1,98 +1,213 @@
 
 import { useState } from "react";
-import { Download, Eye, Share2, Heart, ShoppingCart, Star } from "lucide-react";
+import { Download, Eye, Share2, Heart, ShoppingCart, Star, Filter, Search } from "lucide-react";
 
 const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
   
   const cadModels = [
     {
       id: 1,
-      name: "Precision Gear Assembly",
+      name: "Precision Ball Bearing Assembly",
       category: "mechanical",
-      price: "$29.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 2456,
-      rating: 4.8,
-      reviews: 127,
-      author: "TechCAD Pro",
-      description: "High-precision mechanical gear assembly for industrial applications"
+      price: "$45.99",
+      thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
+      downloads: 5240,
+      rating: 4.9,
+      reviews: 234,
+      author: "MechanicalPro",
+      description: "High-precision ball bearing assembly with detailed tolerances for industrial applications",
+      tags: ["bearing", "mechanical", "industrial", "precision"]
     },
     {
       id: 2,
-      name: "Modern Office Chair",
+      name: "Ergonomic Office Chair Model",
       category: "furniture",
-      price: "$19.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 1823,
-      rating: 4.6,
-      reviews: 89,
-      author: "DesignStudio",
-      description: "Ergonomic office chair design with adjustable features"
+      price: "$29.99",
+      thumbnail: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
+      downloads: 3890,
+      rating: 4.7,
+      reviews: 156,
+      author: "FurnitureDesign Co",
+      description: "Complete ergonomic office chair with adjustable components and cushioning details",
+      tags: ["chair", "office", "ergonomic", "furniture"]
     },
     {
       id: 3,
-      name: "Architectural Column",
+      name: "Classical Ionic Column",
       category: "architectural",
-      price: "$39.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 987,
-      rating: 4.9,
-      reviews: 156,
-      author: "ArchitectPro",
-      description: "Classical architectural column with detailed moldings"
+      price: "$65.99",
+      thumbnail: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop",
+      downloads: 2156,
+      rating: 4.8,
+      reviews: 89,
+      author: "ArchitectStudio",
+      description: "Detailed classical Ionic column with accurate proportions and ornamental details",
+      tags: ["column", "classical", "ionic", "architecture"]
     },
     {
       id: 4,
-      name: "Smartphone Housing",
+      name: "iPhone 15 Pro Housing",
       category: "electronics",
-      price: "$24.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 3421,
-      rating: 4.7,
-      reviews: 203,
-      author: "MobileTech",
-      description: "Premium smartphone housing design with precise tolerances"
+      price: "$39.99",
+      thumbnail: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop",
+      downloads: 7823,
+      rating: 4.6,
+      reviews: 445,
+      author: "TechCAD Solutions",
+      description: "Precise iPhone 15 Pro housing model with camera bump and port details",
+      tags: ["iphone", "smartphone", "housing", "apple"]
     },
     {
       id: 5,
-      name: "Automotive Brake Disc",
+      name: "Performance Brake Caliper",
       category: "automotive",
-      price: "$34.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 1567,
+      price: "$55.99",
+      thumbnail: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
+      downloads: 4321,
       rating: 4.5,
-      reviews: 78,
-      author: "AutoCAD Experts",
-      description: "Performance brake disc with ventilation channels"
+      reviews: 178,
+      author: "AutoEngineering",
+      description: "High-performance brake caliper with cooling fins and mounting provisions",
+      tags: ["brake", "caliper", "automotive", "performance"]
     },
     {
       id: 6,
-      name: "Jewelry Ring Setting",
+      name: "Diamond Solitaire Ring",
       category: "jewelry",
-      price: "$15.99",
-      thumbnail: "/placeholder.svg",
-      downloads: 892,
+      price: "$25.99",
+      thumbnail: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=300&fit=crop",
+      downloads: 1892,
+      rating: 4.9,
+      reviews: 67,
+      author: "JewelryCAD Pro",
+      description: "Elegant solitaire ring setting with prong details for 1-carat diamond",
+      tags: ["ring", "diamond", "solitaire", "engagement"]
+    },
+    {
+      id: 7,
+      name: "Electric Motor Housing",
+      category: "mechanical",
+      price: "$42.99",
+      thumbnail: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop",
+      downloads: 3654,
+      rating: 4.7,
+      reviews: 123,
+      author: "ElectroMech Design",
+      description: "Compact electric motor housing with ventilation slots and mounting flanges",
+      tags: ["motor", "housing", "electric", "mechanical"]
+    },
+    {
+      id: 8,
+      name: "Modern Desk Lamp",
+      category: "furniture",
+      price: "$32.99",
+      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+      downloads: 2487,
+      rating: 4.4,
+      reviews: 91,
+      author: "LightingDesign Studio",
+      description: "Minimalist desk lamp with adjustable arm and LED housing",
+      tags: ["lamp", "desk", "modern", "lighting"]
+    },
+    {
+      id: 9,
+      name: "PCB Circuit Board Layout",
+      category: "electronics",
+      price: "$28.99",
+      thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
+      downloads: 5432,
       rating: 4.8,
+      reviews: 267,
+      author: "CircuitPro",
+      description: "Multi-layer PCB design with component footprints and trace routing",
+      tags: ["pcb", "circuit", "electronics", "board"]
+    },
+    {
+      id: 10,
+      name: "Art Deco Building Facade",
+      category: "architectural",
+      price: "$78.99",
+      thumbnail: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop",
+      downloads: 1234,
+      rating: 4.9,
       reviews: 45,
-      author: "JewelCraft",
-      description: "Elegant ring setting for precious stones"
+      author: "Heritage Architecture",
+      description: "Detailed Art Deco building facade with geometric patterns and ornaments",
+      tags: ["facade", "art deco", "building", "ornamental"]
+    },
+    {
+      id: 11,
+      name: "Turbocharger Assembly",
+      category: "automotive",
+      price: "$89.99",
+      thumbnail: "https://images.unsplash.com/photo-1486754735734-325b5831c3ad?w=400&h=300&fit=crop",
+      downloads: 2876,
+      rating: 4.6,
+      reviews: 134,
+      author: "TurboTech Engineering",
+      description: "Complete turbocharger assembly with impeller, housing, and wastegate",
+      tags: ["turbo", "turbocharger", "automotive", "performance"]
+    },
+    {
+      id: 12,
+      name: "Vintage Watch Movement",
+      category: "jewelry",
+      price: "$95.99",
+      thumbnail: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop",
+      downloads: 987,
+      rating: 4.9,
+      reviews: 23,
+      author: "TimeKeeper Models",
+      description: "Intricate vintage watch movement with gears, springs, and jeweled bearings",
+      tags: ["watch", "movement", "vintage", "mechanical"]
     }
   ];
 
   const categories = [
-    { id: "all", name: "All Models" },
-    { id: "mechanical", name: "Mechanical" },
-    { id: "architectural", name: "Architectural" },
-    { id: "furniture", name: "Furniture" },
-    { id: "electronics", name: "Electronics" },
-    { id: "automotive", name: "Automotive" },
-    { id: "jewelry", name: "Jewelry" }
+    { id: "all", name: "All Models", count: cadModels.length },
+    { id: "mechanical", name: "Mechanical", count: cadModels.filter(m => m.category === "mechanical").length },
+    { id: "architectural", name: "Architectural", count: cadModels.filter(m => m.category === "architectural").length },
+    { id: "furniture", name: "Furniture", count: cadModels.filter(m => m.category === "furniture").length },
+    { id: "electronics", name: "Electronics", count: cadModels.filter(m => m.category === "electronics").length },
+    { id: "automotive", name: "Automotive", count: cadModels.filter(m => m.category === "automotive").length },
+    { id: "jewelry", name: "Jewelry", count: cadModels.filter(m => m.category === "jewelry").length }
   ];
 
-  const filteredModels = selectedCategory === "all" 
-    ? cadModels 
-    : cadModels.filter(model => model.category === selectedCategory);
+  const sortOptions = [
+    { id: "popular", name: "Most Popular" },
+    { id: "newest", name: "Newest" },
+    { id: "price-low", name: "Price: Low to High" },
+    { id: "price-high", name: "Price: High to Low" },
+    { id: "rating", name: "Highest Rated" }
+  ];
+
+  const filteredAndSortedModels = cadModels
+    .filter(model => {
+      const matchesCategory = selectedCategory === "all" || model.category === selectedCategory;
+      const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "popular":
+          return b.downloads - a.downloads;
+        case "newest":
+          return b.id - a.id;
+        case "price-low":
+          return parseFloat(a.price.slice(1)) - parseFloat(b.price.slice(1));
+        case "price-high":
+          return parseFloat(b.price.slice(1)) - parseFloat(a.price.slice(1));
+        case "rating":
+          return b.rating - a.rating;
+        default:
+          return 0;
+      }
+    });
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -109,31 +224,59 @@ const Marketplace = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white">3D CAD Marketplace</h1>
           <p className="text-gray-400 mt-2">Discover premium 3D models for your projects</p>
         </div>
         
-        <div className="flex space-x-2">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? "bg-purple-600 text-white"
-                  : "bg-white/10 text-gray-300 hover:text-white hover:bg-white/20"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search models..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.id} value={option.id} className="bg-slate-800">
+                {option.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredModels.map((model) => (
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => setSelectedCategory(category.id)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+              selectedCategory === category.id
+                ? "bg-purple-600 text-white"
+                : "bg-white/10 text-gray-300 hover:text-white hover:bg-white/20"
+            }`}
+          >
+            {category.name}
+            <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+              {category.count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredAndSortedModels.map((model) => (
           <div key={model.id} className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group">
             <div className="aspect-video bg-gradient-to-br from-purple-900/30 to-blue-900/30 relative">
               <img 
@@ -161,8 +304,8 @@ const Marketplace = () => {
             </div>
             
             <div className="p-4">
-              <h3 className="text-white font-semibold text-lg mb-1">{model.name}</h3>
-              <p className="text-gray-400 text-sm mb-2">{model.description}</p>
+              <h3 className="text-white font-semibold text-lg mb-1 truncate">{model.name}</h3>
+              <p className="text-gray-400 text-sm mb-2 line-clamp-2">{model.description}</p>
               <p className="text-purple-300 text-sm mb-3">by {model.author}</p>
               
               <div className="flex items-center justify-between mb-3">
@@ -174,24 +317,28 @@ const Marketplace = () => {
                 </div>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-4 text-sm text-gray-400">
                   <div className="flex items-center space-x-1">
                     <Download className="w-4 h-4" />
-                    <span>{model.downloads}</span>
+                    <span>{model.downloads.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Heart className="w-4 h-4" />
                     <span>{Math.floor(model.downloads * 0.1)}</span>
                   </div>
                 </div>
-                
-                <span className="px-2 py-1 bg-purple-600/20 text-purple-300 text-xs rounded-full capitalize">
-                  {model.category}
-                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-1 mb-3">
+                {model.tags.slice(0, 3).map((tag) => (
+                  <span key={tag} className="px-2 py-1 bg-purple-600/20 text-purple-300 text-xs rounded-full">
+                    #{tag}
+                  </span>
+                ))}
               </div>
               
-              <button className="w-full mt-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300">
+              <button className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300">
                 Add to Cart
               </button>
             </div>
@@ -199,11 +346,14 @@ const Marketplace = () => {
         ))}
       </div>
 
-      {filteredModels.length === 0 && (
+      {filteredAndSortedModels.length === 0 && (
         <div className="text-center py-20">
           <h2 className="text-2xl font-bold text-white mb-4">No models found</h2>
           <p className="text-gray-400">
-            No CAD models found in the {categories.find(c => c.id === selectedCategory)?.name} category.
+            {searchTerm 
+              ? `No models match your search "${searchTerm}"`
+              : `No CAD models found in the ${categories.find(c => c.id === selectedCategory)?.name} category.`
+            }
           </p>
         </div>
       )}
