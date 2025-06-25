@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -13,7 +14,6 @@ import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
 import { Euro } from "lucide-react";
 import ConfigurationManager from "@/components/ConfigurationManager";
-import NotebookIntegration from "@/components/NotebookIntegration";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -99,8 +99,6 @@ const Index = () => {
                     selectedInstance={selectedInstance}
                     onConfigurationLoad={handleConfigurationLoad}
                   />
-
-                  <NotebookIntegration />
                   
                   <ImageUpload 
                     uploadedImages={uploadedImages}
