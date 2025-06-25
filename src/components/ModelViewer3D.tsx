@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { useApiKey } from "@/hooks/useApiKey";
 import { use3DGeneration } from "@/hooks/use3DGeneration";
 import ApiStatus from "@/components/ApiStatus";
@@ -6,6 +7,8 @@ import ViewerControls from "@/components/ViewerControls";
 import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
+import ObjFileUpload from "@/components/ObjFileUpload";
+import { ParsedObjData } from "@/components/ObjFileParser";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
@@ -13,6 +16,8 @@ interface ModelViewer3DProps {
 }
 
 const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DProps) => {
+  const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
+
   const {
     apiKey,
     setApiKey,
@@ -34,6 +39,14 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
     uploadedImages,
     onModelGenerated,
   });
+
+  const handleObjLoaded = (objData: ParsedObjData, fileName: string) => {
+    setUploadedObj({ data: objData, fileName });
+  };
+
+  const handleRemoveObj = () => {
+    setUploadedObj(null);
+  };
 
   const resetView = () => {
     console.log("Reset view");
@@ -83,12 +96,12 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-purple-300">
-            Advanced PowerPrint Pipeline • Image-to-3D Generation • 3D Printing Ready
+            Advanced PowerPrint Pipeline • Image-to-3D Generation • OBJ File Viewer • 3D Printing Ready
           </p>
         </div>
         
         <ViewerControls
-          hasModel={hasModel}
+          hasModel={hasModel || !!uploadedObj}
           uploadedImages={uploadedImages}
           generatedModel={generatedModel}
           onResetView={resetView}
@@ -104,6 +117,13 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         setShowApiInput={setShowApiInput}
       />
 
+      {/* OBJ File Upload */}
+      <ObjFileUpload
+        onObjLoaded={handleObjLoaded}
+        onRemoveObj={handleRemoveObj}
+        uploadedObj={uploadedObj}
+      />
+
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="aspect-video bg-black relative">
           <ThreeDCanvas
@@ -111,6 +131,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
             generationStatus={generationStatus}
             uploadedImages={uploadedImages}
             generatedModel={generatedModel}
+            uploadedObj={uploadedObj}
           />
         </div>
 
@@ -126,10 +147,13 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
       )}
 
       <div className="text-xs text-purple-200 space-y-1">
-        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis</p>
+        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis • OBJ File Support</p>
         <p>• Automatic mesh optimization • High-quality texture synthesis • Export: PLY, STL, OBJ, GLB • 3D Print Ready</p>
         {generatedModel && (
           <p>• Model Stats: {generatedModel.vertices.toLocaleString()} vertices, {generatedModel.faces.toLocaleString()} faces, Complexity: {generatedModel.complexity}</p>
+        )}
+        {uploadedObj && (
+          <p>• OBJ File: {uploadedObj.fileName} • {(uploadedObj.data.vertices.length / 3).toLocaleString()} vertices</p>
         )}
       </div>
     </div>
