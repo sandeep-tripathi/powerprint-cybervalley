@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Mesh2DTo3DConverter, MeshGenerationOptions, GeneratedMesh } from "@/services/mesh2DTo3DConverter";
-import { ColabIntegrationService, ColabProcessingRequest } from "@/services/colabIntegration";
 
 interface Use3DGenerationProps {
   apiKey: string;
@@ -15,7 +14,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
-  const [processingMethod, setProcessingMethod] = useState<'colab' | 'local'>('local');
+  const [processingMethod, setProcessingMethod] = useState<'local'>('local');
   const [generatedModel, setGeneratedModel] = useState<{
     meshData: any;
     textureUrl: string;
@@ -26,83 +25,11 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
   } | null>(null);
   const { toast } = useToast();
   const [converter] = useState(() => new Mesh2DTo3DConverter());
-  const [colabService] = useState(() => new ColabIntegrationService());
 
   // Function to update the generated model
   const updateGeneratedModel = (updatedModel: any) => {
     setGeneratedModel(updatedModel);
     console.log("Model updated with new properties:", updatedModel);
-  };
-
-  const processImagesWithColab = async (images: File[]): Promise<any> => {
-    console.log("Starting Colab-based 2D to 3D conversion...");
-    setProcessingMethod('colab');
-    setGenerationStatus("Connecting to Google Colab...");
-
-    // Convert images to base64
-    const base64Images = await colabService.convertImagesToBase64(images);
-    
-    const request: ColabProcessingRequest = {
-      images: base64Images,
-      processingOptions: {
-        extrusionHeight: 0.2,
-        resolution: 64, // Higher resolution for Colab
-        generateBackface: true,
-        textureResolution: 512
-      }
-    };
-
-    setGenerationStatus("Sending images to Colab for processing...");
-    const response = await colabService.processImagesWithColab(request);
-    
-    if (!response.success) {
-      throw new Error(response.error || 'Colab processing failed');
-    }
-
-    setGenerationStatus("Processing results from Colab...");
-    
-    // Convert Colab response to our mesh format
-    const realMesh: GeneratedMesh = {
-      vertices: new Float32Array(response.meshData!.vertices),
-      faces: new Uint32Array(response.meshData!.faces),
-      normals: new Float32Array(response.meshData!.normals),
-      uvCoordinates: new Float32Array(response.meshData!.uvCoordinates),
-      textureData: null, // Will be set from base64 if available
-      vertexCount: response.meshData!.vertices.length / 3,
-      faceCount: response.meshData!.faces.length / 3,
-      boundingBox: response.meshData!.boundingBox
-    };
-
-    // Handle texture data if provided
-    let textureUrl = '';
-    if (response.textureData) {
-      const blob = await fetch(`data:image/png;base64,${response.textureData}`).then(r => r.blob());
-      textureUrl = URL.createObjectURL(blob);
-    } else {
-      // Fallback to original image
-      textureUrl = URL.createObjectURL(images[0]);
-    }
-
-    return {
-      meshData: {
-        type: "colab_mesh_generated",
-        algorithm: "colab_2d_to_3d_advanced",
-        inputImages: images.length,
-        processingTime: response.processingTime || 0,
-        propertyChanges: [],
-        realMeshStats: {
-          vertexCount: realMesh.vertexCount,
-          faceCount: realMesh.faceCount,
-          hasTexture: response.textureData !== null,
-          boundingBox: realMesh.boundingBox
-        }
-      },
-      textureUrl,
-      complexity: realMesh.vertexCount,
-      vertices: realMesh.vertexCount,
-      faces: realMesh.faceCount,
-      realMesh
-    };
   };
 
   const processImagesWithLocalPipeline = async (images: File[]): Promise<any> => {
@@ -164,33 +91,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     let generatedModelData;
 
     try {
-      // Check if Colab is available and enabled
-      const colabConfig = colabService.getConfig();
-      const useColab = colabConfig.enabled && await colabService.isColabAvailable();
-      
-      if (useColab) {
-        console.log("Using Google Colab for processing");
-        try {
-          generatedModelData = await processImagesWithColab(images);
-        } catch (colabError) {
-          console.warn("Colab processing failed:", colabError);
-          
-          if (colabConfig.fallbackToLocal) {
-            console.log("Falling back to local processing");
-            toast({
-              title: "Colab Unavailable",
-              description: "Falling back to local processing...",
-              variant: "default",
-            });
-            generatedModelData = await processImagesWithLocalPipeline(images);
-          } else {
-            throw colabError;
-          }
-        }
-      } else {
-        console.log("Using local processing");
-        generatedModelData = await processImagesWithLocalPipeline(images);
-      }
+      console.log("Using local processing");
+      generatedModelData = await processImagesWithLocalPipeline(images);
 
       setGeneratedModel(generatedModelData);
       setHasModel(true);
@@ -200,13 +102,13 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
       
       // Add to history
       if (onModelGenerated) {
-        const modelName = `${processingMethod === 'colab' ? 'Colab' : 'Local'} 2D→3D Model ${new Date().toLocaleDateString()}`;
+        const modelName = `Local 2D→3D Model ${new Date().toLocaleDateString()}`;
         const imageNames = images.map(img => img.name);
         onModelGenerated(modelName, imageNames, generatedModelData, finalProcessingTime);
       }
       
       toast({
-        title: `3D Mesh Generated with ${processingMethod === 'colab' ? 'Google Colab' : 'Local Processing'}!`,
+        title: `3D Mesh Generated with Local Processing!`,
         description: `Successfully converted 2D image to 3D mesh with ${generatedModelData.vertices} vertices and ${generatedModelData.faces} faces.`,
       });
 
