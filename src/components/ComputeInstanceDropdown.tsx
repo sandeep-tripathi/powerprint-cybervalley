@@ -1,4 +1,3 @@
-
 import { Cpu, Zap, Award, Cloud, Monitor } from "lucide-react";
 import {
   Select,
@@ -21,7 +20,7 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
       description: "2 vCPUs, 8GB RAM",
       icon: Cpu,
       speed: "3-5 min",
-      price: "Free",
+      price: "€0.10/run",
       provider: "AWS t3.large"
     },
     {
