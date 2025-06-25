@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -38,7 +37,7 @@ const Index = () => {
                   AI-Powered Image to 3D Model Conversion
                 </h1>
                 <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                  Transform your images into professional 3D models using PowerPrint's advanced AI technology
+                  Transform your images into professional 3D models using PowerPrint's advanced AI technology platform
                 </p>
               </div>
 
