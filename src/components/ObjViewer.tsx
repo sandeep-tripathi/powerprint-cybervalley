@@ -33,28 +33,61 @@ const ObjViewer = ({
 
   // Create the geometry from OBJ data
   const geometry = useMemo(() => {
+    console.log("Creating geometry from OBJ data...");
+    console.log("Vertices length:", objData.vertices.length);
+    console.log("Faces length:", objData.faces.length);
+    
     const geom = new THREE.BufferGeometry();
     
-    // Set vertex positions
-    geom.setAttribute('position', new THREE.BufferAttribute(objData.vertices, 3));
-    
-    // Set faces
-    geom.setIndex(new THREE.BufferAttribute(objData.faces, 1));
-    
-    // Set normals
-    if (objData.normals.length > 0) {
-      geom.setAttribute('normal', new THREE.BufferAttribute(objData.normals, 3));
-    } else {
-      geom.computeVertexNormals();
+    try {
+      // Set vertex positions
+      if (objData.vertices.length > 0) {
+        geom.setAttribute('position', new THREE.BufferAttribute(objData.vertices, 3));
+        console.log("✓ Position attribute set");
+      }
+      
+      // Set faces (indices)
+      if (objData.faces.length > 0) {
+        geom.setIndex(new THREE.BufferAttribute(objData.faces, 1));
+        console.log("✓ Index attribute set");
+      }
+      
+      // Set normals
+      if (objData.normals.length > 0) {
+        geom.setAttribute('normal', new THREE.BufferAttribute(objData.normals, 3));
+        console.log("✓ Normal attribute set");
+      } else {
+        geom.computeVertexNormals();
+        console.log("✓ Computed vertex normals");
+      }
+      
+      // Set UV coordinates
+      if (objData.uvCoordinates.length > 0) {
+        geom.setAttribute('uv', new THREE.BufferAttribute(objData.uvCoordinates, 2));
+        console.log("✓ UV attribute set");
+      }
+      
+      // Center and scale the geometry
+      geom.center();
+      
+      // Scale to reasonable size
+      geom.computeBoundingBox();
+      if (geom.boundingBox) {
+        const size = geom.boundingBox.getSize(new THREE.Vector3());
+        const maxDimension = Math.max(size.x, size.y, size.z);
+        if (maxDimension > 0) {
+          const scale = 2 / maxDimension; // Scale to fit in 2 unit cube
+          geom.scale(scale, scale, scale);
+          console.log("✓ Geometry scaled by factor:", scale);
+        }
+      }
+      
+      console.log("✓ Geometry created successfully");
+      
+    } catch (error) {
+      console.error("Error creating geometry:", error);
+      throw error;
     }
-    
-    // Set UV coordinates
-    if (objData.uvCoordinates.length > 0) {
-      geom.setAttribute('uv', new THREE.BufferAttribute(objData.uvCoordinates, 2));
-    }
-    
-    // Center the geometry
-    geom.center();
     
     return geom;
   }, [objData]);
@@ -77,6 +110,8 @@ const ObjViewer = ({
       meshMaterial.dispose();
     };
   }, [geometry, meshMaterial]);
+
+  console.log("Rendering OBJ mesh with", objData.vertices.length / 3, "vertices");
 
   return (
     <group>

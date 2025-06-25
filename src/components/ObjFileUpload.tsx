@@ -12,22 +12,30 @@ interface ObjFileUploadProps {
 const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
     if (!file.name.toLowerCase().endsWith('.obj')) {
-      alert('Please select a valid .obj file');
+      setError('Please select a valid .obj file');
       return;
     }
 
+    console.log("Loading OBJ file:", file.name, "Size:", file.size, "bytes");
     setIsLoading(true);
+    setError(null);
+    
     try {
       const text = await file.text();
+      console.log("File content loaded, length:", text.length);
+      
       const objData = parseObjFile(text);
+      console.log("OBJ data parsed successfully:", objData);
+      
       onObjLoaded(objData, file.name);
     } catch (error) {
       console.error('Error parsing OBJ file:', error);
-      alert('Error parsing OBJ file. Please check the file format.');
+      setError(error instanceof Error ? error.message : 'Error parsing OBJ file. Please check the file format.');
     } finally {
       setIsLoading(false);
     }
@@ -42,6 +50,8 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
     
     if (objFile) {
       handleFileSelect(objFile);
+    } else {
+      setError('No .obj file found in dropped files');
     }
   };
 
@@ -56,7 +66,9 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
   };
 
   const handleClick = () => {
-    fileInputRef.current?.click();
+    if (!isLoading) {
+      fileInputRef.current?.click();
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +110,12 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload OBJ File</h3>
+      
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
       
       <div
         onDrop={handleDrop}
