@@ -54,34 +54,34 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
           Compute Instance
         </label>
         <Select value={selectedInstance} onValueChange={setSelectedInstance}>
-          <SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
+          <SelectTrigger className="w-full bg-gradient-to-r from-purple-900 to-purple-800 border-purple-600 text-white hover:from-purple-800 hover:to-purple-700 transition-all">
             <SelectValue placeholder="Select compute instance..." />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-600 z-50">
+          <SelectContent className="bg-purple-900 border-purple-600 z-50">
             {instances.map((instance) => {
               const Icon = instance.icon;
               return (
                 <SelectItem 
                   key={instance.id} 
                   value={instance.id}
-                  className="text-white hover:bg-slate-700 focus:bg-slate-700"
+                  className="text-white hover:bg-purple-800 focus:bg-purple-800"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center space-x-3">
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4 text-purple-300" />
                       <div>
                         <div className="flex items-center space-x-2">
                           <span className="font-medium">{instance.name}</span>
                           {instance.popular && (
-                            <span className="bg-purple-600 text-xs px-1.5 py-0.5 rounded">Popular</span>
+                            <span className="bg-purple-500 text-xs px-1.5 py-0.5 rounded">Popular</span>
                           )}
                         </div>
-                        <div className="text-xs text-gray-400">{instance.description}</div>
+                        <div className="text-xs text-purple-200">{instance.description}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-medium">{instance.price}</div>
-                      <div className="text-xs text-gray-400">{instance.speed}</div>
+                      <div className="font-medium text-purple-200">{instance.price}</div>
+                      <div className="text-xs text-purple-300">{instance.speed}</div>
                     </div>
                   </div>
                 </SelectItem>
@@ -91,18 +91,18 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
         </Select>
         
         {selectedInstanceData && (
-          <div className="mt-2 text-xs text-gray-400">
+          <div className="mt-2 text-xs text-purple-300">
             {selectedInstanceData.provider} • {selectedInstanceData.speed}
           </div>
         )}
       </div>
 
-      <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+      <div className="bg-gradient-to-r from-purple-900/30 to-purple-800/30 border border-purple-700 rounded-lg p-3">
         <div className="flex items-center space-x-2 mb-2">
           <Cloud className="w-4 h-4 text-purple-400" />
           <span className="text-purple-300 font-medium text-sm">Cloud Provider Info</span>
         </div>
-        <p className="text-slate-300 text-xs">
+        <p className="text-purple-200 text-xs">
           Instances are automatically provisioned across AWS, Azure, and Google Cloud for optimal performance.
         </p>
       </div>
