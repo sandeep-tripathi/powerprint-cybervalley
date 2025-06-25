@@ -72,7 +72,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-slate-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-400 text-sm">
-            © 2024 PowerPrint. All rights reserved.
+            © 2025 PowerPrint. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#privacy" className="text-slate-400 hover:text-purple-400 text-sm transition-colors">
