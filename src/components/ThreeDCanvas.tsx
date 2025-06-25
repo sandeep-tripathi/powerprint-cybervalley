@@ -7,9 +7,10 @@ interface ThreeDCanvasProps {
   isLoading: boolean;
   generationStatus: string;
   uploadedImages: File[];
+  processedImages?: string[];
 }
 
-const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCanvasProps) => {
+const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages, processedImages = [] }: ThreeDCanvasProps) => {
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center">
@@ -70,6 +71,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
         {/* Render a cube for each uploaded image */}
         {uploadedImages.map((image, index) => {
           const position = getCubePosition(index);
+          const imageUrl = processedImages[index];
           return (
             <SlicedCube
               key={index}
@@ -77,6 +79,7 @@ const ThreeDCanvas = ({ isLoading, generationStatus, uploadedImages }: ThreeDCan
               scale={[1, 1, 1]}
               rotation={[0, index * 0.5, 0]}
               animate={true}
+              imageUrl={imageUrl}
             />
           );
         })}
