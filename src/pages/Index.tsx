@@ -2,8 +2,8 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
-import ModelSelectorButtons from "@/components/ModelSelectorButtons";
-import ComputeInstanceButtons from "@/components/ComputeInstanceButtons";
+import ModelSelectorDropdown from "@/components/ModelSelectorDropdown";
+import ComputeInstanceDropdown from "@/components/ComputeInstanceDropdown";
 import Marketplace from "@/components/Marketplace";
 import WorkflowSidebar from "@/components/WorkflowSidebar";
 import ModelViewer3D from "@/components/ModelViewer3D";
@@ -65,12 +65,12 @@ const Index = () => {
                     setUploadedImages={setUploadedImages}
                   />
                   
-                  <ModelSelectorButtons 
+                  <ModelSelectorDropdown 
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
                   />
                   
-                  <ComputeInstanceButtons 
+                  <ComputeInstanceDropdown 
                     selectedInstance={selectedInstance}
                     setSelectedInstance={setSelectedInstance}
                   />
