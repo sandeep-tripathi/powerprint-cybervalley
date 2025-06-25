@@ -50,7 +50,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
         await new Promise(resolve => setTimeout(resolve, pipelineSteps[i].duration));
       }
 
-      // Create a composite texture from all uploaded images
+      // Use the first uploaded image as the texture
       const mainImage = images[0];
       const textureUrl = URL.createObjectURL(mainImage);
 
@@ -96,6 +96,15 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
     }
   };
 
+  // Clean up texture URLs when images change
+  useEffect(() => {
+    return () => {
+      if (generatedModel?.textureUrl) {
+        URL.revokeObjectURL(generatedModel.textureUrl);
+      }
+    };
+  }, [uploadedImages]);
+
   // Trigger pipeline when images are uploaded
   useEffect(() => {
     if (uploadedImages.length > 0 && apiKey.trim()) {
@@ -103,6 +112,9 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages }: Use
     } else if (uploadedImages.length === 0) {
       setHasModel(false);
       setGenerationStatus("");
+      if (generatedModel?.textureUrl) {
+        URL.revokeObjectURL(generatedModel.textureUrl);
+      }
       setGeneratedModel(null);
     }
   }, [uploadedImages, apiKey]);
