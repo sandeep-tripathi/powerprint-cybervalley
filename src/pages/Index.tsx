@@ -12,6 +12,7 @@ import GenerationHistory from "@/components/GenerationHistory";
 import Footer from "@/components/Footer";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
+import { Euro } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -23,6 +24,20 @@ const Index = () => {
   const handleModelGenerated = (modelName: string, imageNames: string[], modelData: any, processingTime: number) => {
     addToHistory(modelName, imageNames, modelData, processingTime);
   };
+
+  // Platform pricing info component
+  const PlatformPricing = () => (
+    <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
+      <div className="flex items-center space-x-3 mb-2">
+        <Euro className="w-5 h-5 text-purple-400" />
+        <span className="text-purple-300 font-medium">Platform Pricing</span>
+      </div>
+      <p className="text-slate-300 text-sm">
+        PowerPrint Platform: <strong>€50</strong> - Complete AI-powered 3D generation platform with REST API access, 
+        advanced processing capabilities, and professional 3D model export options.
+      </p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
@@ -42,6 +57,8 @@ const Index = () => {
                   Transform your images into professional 3D models using PowerPrint's advanced AI technology platform
                 </p>
               </div>
+
+              <PlatformPricing />
 
               {/* API Info Banner */}
               <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
@@ -99,15 +116,24 @@ const Index = () => {
           )}
 
           {activeTab === "marketplace" && (
-            <Marketplace />
+            <div className="space-y-6">
+              <PlatformPricing />
+              <Marketplace />
+            </div>
           )}
 
           {activeTab === "pricing" && (
-            <PricingPage />
+            <div className="space-y-6">
+              <PlatformPricing />
+              <PricingPage />
+            </div>
           )}
 
           {activeTab === "history" && (
-            <GenerationHistory />
+            <div className="space-y-6">
+              <PlatformPricing />
+              <GenerationHistory />
+            </div>
           )}
 
           {activeTab === "api" && (
