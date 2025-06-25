@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +45,7 @@ const NotebookIntegration = () => {
     {
       id: "3d-conversion-pipeline",
       name: "2D to 3D Conversion",
-      category: "3D Conversion",
+      category: "2D to 3D Conversion",
       platform: "colab",
       description: "Convert 2D images to 3D models using depth estimation",
       icon: Layers,
@@ -85,7 +84,7 @@ const NotebookIntegration = () => {
     }
   ];
 
-  const categories = ["All", "Computer Vision", "Image Processing", "3D Conversion"];
+  const categories = ["All", "Computer Vision", "Image Processing", "2D to 3D Conversion"];
   const platforms = ["All", "colab", "jupyter", "spark"];
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPlatform, setSelectedPlatform] = useState("All");
