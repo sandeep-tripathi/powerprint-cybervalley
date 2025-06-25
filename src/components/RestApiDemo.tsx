@@ -1,22 +1,32 @@
 import { useState } from "react";
 import { PipelineApiService, PipelineSettings, PipelineRequest } from "@/api/pipelineApi";
 import { mockApiServer } from "@/api/mockApiServer";
+import { ConfigurationService } from "@/services/configurationService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Code, Play, Settings, Cloud, Euro, Copy } from "lucide-react";
+import { Code, Play, Settings, Cloud, Euro, Copy, Upload } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const RestApiDemo = () => {
   const [apiResponse, setApiResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState("status");
   const [requestBody, setRequestBody] = useState("");
+  const [selectedConfig, setSelectedConfig] = useState("");
   const { toast } = useToast();
 
   const apiService = new PipelineApiService();
+  const savedConfigurations = ConfigurationService.getAllConfigurations();
 
   // Mock the fetch function to use our mock server
   const originalFetch = window.fetch;
@@ -90,6 +100,29 @@ import json
 API_KEY = "pp_your_api_key_here"
 BASE_URL = "https://api.powerprint.dev"
 
+# Load saved configuration
+def load_configuration(config_name):
+    """Load a saved PowerPrint configuration by name"""
+    # In a real implementation, you would load this from your saved configs
+    configurations = {
+        "high_quality": {
+            "selectedModel": "powerprint-pro",
+            "selectedInstance": "enterprise",
+            "description": "Best quality for production models"
+        },
+        "fast_preview": {
+            "selectedModel": "powerprint-v2", 
+            "selectedInstance": "pro",
+            "description": "Quick processing for previews"
+        },
+        "budget_friendly": {
+            "selectedModel": "powerprint-v2",
+            "selectedInstance": "basic", 
+            "description": "Cost-effective processing"
+        }
+    }
+    return configurations.get(config_name)
+
 # Helper function to encode image to base64
 def encode_image_to_base64(image_path):
     with open(image_path, "rb") as image_file:
@@ -100,16 +133,15 @@ def check_status():
     response = requests.get(f"{BASE_URL}/api/status")
     return response.json()
 
-# 2. Get current settings
-def get_settings():
-    response = requests.get(f"{BASE_URL}/api/settings")
-    return response.json()
-
-# 3. Update settings
-def update_settings(model="powerprint-v2", instance="pro"):
+# 2. Update settings using saved configuration
+def apply_configuration(config_name):
+    config = load_configuration(config_name)
+    if not config:
+        raise ValueError(f"Configuration '{config_name}' not found")
+    
     settings = {
-        "selectedModel": model,
-        "selectedInstance": instance,
+        "selectedModel": config["selectedModel"],
+        "selectedInstance": config["selectedInstance"],
         "apiKey": API_KEY
     }
     response = requests.put(
@@ -119,8 +151,12 @@ def update_settings(model="powerprint-v2", instance="pro"):
     )
     return response.json()
 
-# 4. Process images to 3D model
-def process_images(image_paths):
+# 3. Process images with configuration
+def process_images_with_config(image_paths, config_name="high_quality"):
+    # Apply the configuration first
+    apply_configuration(config_name)
+    config = load_configuration(config_name)
+    
     # Encode images to base64
     encoded_images = []
     for path in image_paths:
@@ -131,8 +167,8 @@ def process_images(image_paths):
     payload = {
         "images": encoded_images,
         "settings": {
-            "selectedModel": "powerprint-v2",
-            "selectedInstance": "pro",
+            "selectedModel": config["selectedModel"],
+            "selectedInstance": config["selectedInstance"],
             "apiKey": API_KEY
         }
     }
@@ -146,24 +182,50 @@ def process_images(image_paths):
     
     return response.json()
 
-# Example usage
+# Example usage with configurations
 if __name__ == "__main__":
     # Check if API is online
     status = check_status()
     print(f"API Status: {status['status']}")
     
-    # Process a single image
+    # Process with different quality settings
     image_paths = ["./my_image.jpg"]
-    result = process_images(image_paths)
     
-    if result["success"]:
-        print("3D model generated successfully!")
-        print(f"Processing time: {result['processingTime']}ms")
-        print(f"Model complexity: {result['modelData']['complexity']}")
-        print(f"Vertices: {result['modelData']['vertices']}")
-        print(f"Faces: {result['modelData']['faces']}")
-    else:
-        print(f"Error: {result['error']}")`;
+    # High quality for final production
+    print("\\nProcessing with high quality settings...")
+    result = process_images_with_config(image_paths, "high_quality")
+    print(f"High quality result: {result['success']}")
+    
+    # Fast preview for testing
+    print("\\nProcessing with fast preview settings...")
+    result = process_images_with_config(image_paths, "fast_preview") 
+    print(f"Fast preview result: {result['success']}")`;
+
+  const loadConfiguration = (configId: string) => {
+    const config = ConfigurationService.getConfiguration(configId);
+    if (!config) {
+      toast({
+        title: "Error",
+        description: "Configuration not found",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const configRequestBody = JSON.stringify({
+      selectedModel: config.selectedModel,
+      selectedInstance: config.selectedInstance,
+      apiKey: "pp_example123456789abcdefghijk"
+    }, null, 2);
+
+    setRequestBody(configRequestBody);
+    setSelectedEndpoint("updateSettings");
+    
+    toast({
+      title: "Configuration Loaded",
+      description: `Loaded settings from "${config.name}"`,
+    });
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -256,6 +318,52 @@ if __name__ == "__main__":
           advanced processing capabilities, and professional 3D model export options.
         </p>
       </div>
+
+      {/* Saved Configurations Section */}
+      {savedConfigurations.length > 0 && (
+        <Card className="bg-slate-800 border-slate-600">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center space-x-2">
+              <Settings className="w-5 h-5" />
+              <span>Saved Configurations</span>
+            </CardTitle>
+            <CardDescription className="text-slate-300">
+              Load your saved AI model and compute instance configurations for API testing
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="savedConfig" className="text-white">Select Configuration</Label>
+              <Select value={selectedConfig} onValueChange={setSelectedConfig}>
+                <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                  <SelectValue placeholder="Choose a saved configuration..." />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-600">
+                  {savedConfigurations.map((config) => (
+                    <SelectItem key={config.id} value={config.id} className="text-white hover:bg-slate-700">
+                      <div>
+                        <div className="font-medium">{config.name}</div>
+                        <div className="text-xs text-slate-400">
+                          {config.selectedModel} • {config.selectedInstance}
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Button
+              onClick={() => selectedConfig && loadConfiguration(selectedConfig)}
+              disabled={!selectedConfig}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Load Configuration for API Testing
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Python Code Example */}
       <Card className="bg-slate-800 border-slate-600">

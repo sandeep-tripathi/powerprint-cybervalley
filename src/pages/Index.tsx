@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -13,6 +12,7 @@ import Footer from "@/components/Footer";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
 import { Euro } from "lucide-react";
+import ConfigurationManager from "@/components/ConfigurationManager";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -23,6 +23,11 @@ const Index = () => {
 
   const handleModelGenerated = (modelName: string, imageNames: string[], modelData: any, processingTime: number) => {
     addToHistory(modelName, imageNames, modelData, processingTime);
+  };
+
+  const handleConfigurationLoad = (config: any) => {
+    setSelectedModel(config.selectedModel);
+    setSelectedInstance(config.selectedInstance);
   };
 
   // Platform pricing info component
@@ -86,6 +91,12 @@ const Index = () => {
                   <ComputeInstanceDropdown 
                     selectedInstance={selectedInstance}
                     setSelectedInstance={setSelectedInstance}
+                  />
+
+                  <ConfigurationManager
+                    selectedModel={selectedModel}
+                    selectedInstance={selectedInstance}
+                    onConfigurationLoad={handleConfigurationLoad}
                   />
                   
                   <ImageUpload 
