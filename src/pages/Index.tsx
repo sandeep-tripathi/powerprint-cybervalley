@@ -14,6 +14,7 @@ import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
 import { Euro } from "lucide-react";
 import ConfigurationManager from "@/components/ConfigurationManager";
+import NotebookIntegration from "@/components/NotebookIntegration";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -88,6 +89,8 @@ const Index = () => {
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
                   />
+                  
+                  <NotebookIntegration />
                   
                   <ComputeInstanceDropdown 
                     selectedInstance={selectedInstance}
