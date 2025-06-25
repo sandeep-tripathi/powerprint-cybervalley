@@ -1,9 +1,11 @@
+
 import { useApiKey } from "@/hooks/useApiKey";
 import { use3DGeneration } from "@/hooks/use3DGeneration";
 import ApiStatus from "@/components/ApiStatus";
 import ViewerControls from "@/components/ViewerControls";
 import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
+import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
@@ -25,6 +27,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
     hasModel,
     generationStatus,
     generatedModel,
+    updateGeneratedModel,
   } = use3DGeneration({
     apiKey,
     showApiKeyInput,
@@ -113,6 +116,14 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
         <ModelInfo uploadedImages={uploadedImages} />
       </div>
+
+      {/* Property Editor - Only show when model is generated */}
+      {generatedModel && !isLoading && (
+        <ModelPropertyEditor
+          generatedModel={generatedModel}
+          onModelUpdate={updateGeneratedModel}
+        />
+      )}
 
       <div className="text-xs text-purple-200 space-y-1">
         <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis</p>

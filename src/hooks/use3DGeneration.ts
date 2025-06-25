@@ -22,6 +22,12 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
   } | null>(null);
   const { toast } = useToast();
 
+  // Function to update the generated model
+  const updateGeneratedModel = (updatedModel: any) => {
+    setGeneratedModel(updatedModel);
+    console.log("Model updated with new properties:", updatedModel);
+  };
+
   const processImagesWithPowerPrintPipeline = async (images: File[]) => {
     if (!apiKey.trim()) {
       showApiKeyInput();
@@ -69,7 +75,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
           type: "powerprint_generated",
           algorithm: "gaussian_splatting_to_mesh",
           inputImages: images.length,
-          processingTime
+          processingTime,
+          propertyChanges: [] // Initialize empty array for property changes
         },
         textureUrl,
         complexity: modelComplexity,
@@ -135,6 +142,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     hasModel,
     generationStatus,
     generatedModel,
+    updateGeneratedModel,
     processImagesWithPowerPrintPipeline,
   };
 };
