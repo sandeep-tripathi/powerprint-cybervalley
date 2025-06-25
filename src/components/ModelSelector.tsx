@@ -17,7 +17,7 @@ interface ModelSelectorProps {
 
 const ModelSelector = ({ selectedModel, setSelectedModel }: ModelSelectorProps) => {
   const [selectedRepo, setSelectedRepo] = useState("");
-  const [customRepoUrl, setCustomRepoUrl] = useState("");
+  const [customRepoUrl, setCustomRepoUrl] = useState("https://github.com/microsoft/TRELLIS.git");
   const [customRepos, setCustomRepos] = useState<Array<{id: string, name: string, owner: string}>>([]);
   const { toast } = useToast();
 
