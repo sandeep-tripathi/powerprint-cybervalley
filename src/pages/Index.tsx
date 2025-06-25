@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
 import ModelSelector from "@/components/ModelSelector";
 import ComputeInstance from "@/components/ComputeInstance";
-import ModelGallery from "@/components/ModelGallery";
+import Marketplace from "@/components/Marketplace";
 import WorkflowSidebar from "@/components/WorkflowSidebar";
 import ModelViewer3D from "@/components/ModelViewer3D";
 import PricingPage from "@/components/PricingPage";
@@ -85,8 +86,8 @@ const Index = () => {
             </div>
           )}
 
-          {activeTab === "gallery" && (
-            <ModelGallery />
+          {activeTab === "marketplace" && (
+            <Marketplace />
           )}
 
           {activeTab === "pricing" && (
