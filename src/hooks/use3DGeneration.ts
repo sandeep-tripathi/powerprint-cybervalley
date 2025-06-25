@@ -20,7 +20,7 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     complexity: number;
     vertices: number;
     faces: number;
-    realMesh?: GeneratedMesh; // Add the real mesh data
+    realMesh?: GeneratedMesh;
   } | null>(null);
   const { toast } = useToast();
   const [converter] = useState(() => new Mesh2DTo3DConverter());
@@ -37,42 +37,34 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
       return;
     }
 
-    console.log("Starting PowerPrint pipeline for", images.length, "images");
+    console.log("Starting simple PowerPrint pipeline for", images.length, "images");
     setIsLoading(true);
     setHasModel(false);
-    setGenerationStatus("Initializing PowerPrint pipeline...");
+    setGenerationStatus("Initializing simple 2D to 3D conversion...");
 
     const startTime = Date.now();
 
     try {
-      // Real 2D to 3D conversion algorithm
       const mainImage = images[0];
       
       setGenerationStatus("Analyzing image structure...");
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      setGenerationStatus("Generating depth map from luminance data...");
+      setGenerationStatus("Creating simple 3D extrusion...");
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Configure mesh generation options based on image characteristics
+      // Configure simple mesh generation options
       const options: MeshGenerationOptions = {
-        depthStrength: 0.3, // Moderate depth for realistic results
-        smoothingIterations: 2, // Smooth but preserve detail
-        subdivisionLevel: 1, // Add some detail without over-processing
+        extrusionHeight: 0.2, // Simple extrusion height
+        resolution: 32, // Low resolution for simplicity
         generateBackface: true, // Create solid object
-        textureResolution: 512 // Good quality texture
+        textureResolution: 256 // Basic texture quality
       };
       
-      setGenerationStatus("Converting 2D image to 3D mesh geometry...");
+      setGenerationStatus("Converting 2D image to simple 3D mesh...");
       const realMesh = await converter.convertImageToMesh(mainImage, options);
       
-      setGenerationStatus("Optimizing mesh topology...");
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      setGenerationStatus("Calculating surface normals and UV mapping...");
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setGenerationStatus("Applying texture synthesis and post-processing...");
+      setGenerationStatus("Finalizing simple 3D model...");
       await new Promise(resolve => setTimeout(resolve, 400));
 
       // Use the first uploaded image as the texture
@@ -81,8 +73,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
 
       const generatedModelData = {
         meshData: {
-          type: "real_mesh_generated",
-          algorithm: "2d_to_3d_depth_mapping",
+          type: "simple_mesh_generated",
+          algorithm: "simple_2d_to_3d_extrusion",
           inputImages: images.length,
           processingTime,
           propertyChanges: [], // Initialize empty array for property changes
@@ -102,27 +94,27 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
 
       setGeneratedModel(generatedModelData);
       setHasModel(true);
-      setGenerationStatus("2D to 3D conversion completed successfully!");
+      setGenerationStatus("Simple 2D to 3D conversion completed!");
       
       // Add to history
       if (onModelGenerated) {
-        const modelName = `2D→3D Model ${new Date().toLocaleDateString()}`;
+        const modelName = `Simple 2D→3D Model ${new Date().toLocaleDateString()}`;
         const imageNames = images.map(img => img.name);
         onModelGenerated(modelName, imageNames, generatedModelData, processingTime);
       }
       
       toast({
-        title: "3D Mesh Generated!",
-        description: `Successfully converted 2D image to 3D mesh with ${realMesh.vertexCount.toLocaleString()} vertices and ${realMesh.faceCount.toLocaleString()} faces.`,
+        title: "Simple 3D Mesh Generated!",
+        description: `Successfully converted 2D image to simple 3D mesh with ${realMesh.vertexCount} vertices and ${realMesh.faceCount} faces.`,
       });
 
     } catch (error) {
-      console.error("Error in 2D to 3D conversion:", error);
+      console.error("Error in simple 2D to 3D conversion:", error);
       setHasModel(false);
       setGeneratedModel(null);
       toast({
         title: "Conversion Failed",
-        description: error instanceof Error ? error.message : "Failed to convert 2D image to 3D mesh.",
+        description: error instanceof Error ? error.message : "Failed to convert 2D image to simple 3D mesh.",
         variant: "destructive",
       });
     } finally {
