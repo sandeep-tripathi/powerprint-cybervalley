@@ -30,6 +30,54 @@ def install_packages():
     for package in packages:
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
 
+#############
+import subprocess
+import os
+
+# Clone the TripoSR repository
+subprocess.run(["git", "clone", "https://github.com/VAST-AI-Research/TripoSR.git"])
+
+# Upgrade setuptools
+subprocess.run(["pip", "install", "--upgrade", "setuptools"])
+
+# Uninstall torchmcubes if it's already installed
+#subprocess.run(["pip", "uninstall", "-y", "torchmcubes"])
+
+# Install torchmcubes from the specified GitHub repository
+subprocess.run(["pip", "install", "git+https://github.com/tatsy/torchmcubes.git"])
+
+# Change directory to TripoSR
+os.chdir("TripoSR")
+
+# List files in the directory
+#subprocess.run(["ls"])
+
+# Print the current working directory
+#subprocess.run(["pwd"])
+
+# Install required dependencies from requirements.txt
+subprocess.run(["pip", "install", "-r", "requirements.txt"])
+
+# Change directory back to TripoSR
+os.chdir("..")
+
+# Install additional dependencies
+subprocess.run(["pip", "install", "onnxruntime"])
+subprocess.run(["pip", "install", "--upgrade", "huggingface_hub", "transformers"])
+
+# Print the current working directory
+subprocess.run(["pwd"])
+
+# Change directory to TripoSR
+os.chdir("TripoSR")
+
+# Run the TripoSR script with the specified example
+subprocess.run(["python", "run.py", "examples/ring.png", "--output-dir", "output/"])
+
+
+############
+
+
 # Advanced 2D to 3D conversion functions
 import numpy as np
 import cv2
@@ -177,7 +225,7 @@ def calculate_normals(vertices, faces):
     
     return normals
 
-def calculate_bounding_box(vertices):
+/*def calculate_bounding_box(vertices):
     """
     Calculate the bounding box of the mesh
     """
@@ -188,7 +236,7 @@ def calculate_bounding_box(vertices):
         'min': {'x': float(min_coords[0]), 'y': float(min_coords[1]), 'z': float(min_coords[2])},
         'max': {'x': float(max_coords[0]), 'y': float(max_coords[1]), 'z': float(max_coords[2])}
     }
-
+*/
 # Flask server setup
 app = Flask(__name__)
 CORS(app)
