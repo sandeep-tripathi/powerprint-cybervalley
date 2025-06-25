@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Code, Play, Settings, Cloud } from "lucide-react";
+import { Code, Play, Settings, Cloud, Euro } from "lucide-react";
 
 const RestApiDemo = () => {
   const [apiResponse, setApiResponse] = useState("");
@@ -152,6 +152,18 @@ const RestApiDemo = () => {
         <h2 className="text-3xl font-bold text-white mb-4">PowerPrint REST API</h2>
         <p className="text-xl text-slate-300 max-w-3xl mx-auto">
           Access the PowerPrint pipeline and settings through our RESTful API endpoints
+        </p>
+      </div>
+
+      {/* Platform Cost Information */}
+      <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+        <div className="flex items-center space-x-3 mb-2">
+          <Euro className="w-5 h-5 text-purple-400" />
+          <span className="text-purple-300 font-medium">Platform Pricing</span>
+        </div>
+        <p className="text-slate-300 text-sm">
+          PowerPrint Platform: <strong>€50</strong> - Complete AI-powered 3D generation platform with REST API access, 
+          advanced processing capabilities, and professional 3D model export options.
         </p>
       </div>
 

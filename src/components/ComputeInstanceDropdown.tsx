@@ -30,7 +30,7 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
       description: "8 vCPUs, 32GB RAM, GPU",
       icon: Zap,
       speed: "1-2 min",
-      price: "$0.50/run",
+      price: "€0.50/run",
       provider: "AWS p3.2xlarge",
       popular: true
     },
@@ -40,7 +40,7 @@ const ComputeInstanceDropdown = ({ selectedInstance, setSelectedInstance }: Comp
       description: "16 vCPUs, 64GB RAM, High-end GPU",
       icon: Award,
       speed: "30-60 sec",
-      price: "$2.00/run",
+      price: "€2.00/run",
       provider: "AWS p4d.2xlarge"
     }
   ];

@@ -5,7 +5,7 @@ const PricingPage = () => {
   const plans = [
     {
       name: "Free",
-      price: "$0",
+      price: "€0",
       period: "forever",
       description: "Perfect for getting started with AI 3D generation",
       credits: "200 credits/month",
@@ -24,7 +24,7 @@ const PricingPage = () => {
     },
     {
       name: "Pro",
-      price: "$20",
+      price: "€20",
       period: "per month",
       description: "For creators and professionals who need more power",
       credits: "1,000 credits/month",
@@ -45,7 +45,7 @@ const PricingPage = () => {
     },
     {
       name: "Max",
-      price: "$60",
+      price: "€60",
       period: "per month", 
       description: "Maximum power for teams and heavy users",
       credits: "3,000 credits/month",
@@ -67,10 +67,10 @@ const PricingPage = () => {
   ];
 
   const additionalCredits = [
-    { amount: "500", price: "$5" },
-    { amount: "1,000", price: "$9" },
-    { amount: "2,500", price: "$20" },
-    { amount: "5,000", price: "$35" }
+    { amount: "500", price: "€5" },
+    { amount: "1,000", price: "€9" },
+    { amount: "2,500", price: "€20" },
+    { amount: "5,000", price: "€35" }
   ];
 
   return (
