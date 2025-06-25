@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -51,7 +52,7 @@ const Index = () => {
                   <div>
                     <h3 className="text-purple-300 font-medium mb-1">Free API Integration</h3>
                     <p className="text-slate-300 text-sm">
-                      This app uses PowerPrint's free API (500 credits/month). 
+                      This app uses PowerPrint's free API (50 credits/month). 
                       Click on your username to generate a new API key instantly!
                     </p>
                   </div>
