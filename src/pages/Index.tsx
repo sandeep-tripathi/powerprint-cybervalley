@@ -10,6 +10,7 @@ import PricingPage from "@/components/PricingPage";
 import GenerationHistory from "@/components/GenerationHistory";
 import Footer from "@/components/Footer";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
+import RestApiDemo from "@/components/RestApiDemo";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -106,6 +107,10 @@ const Index = () => {
 
           {activeTab === "history" && (
             <GenerationHistory />
+          )}
+
+          {activeTab === "api" && (
+            <RestApiDemo />
           )}
         </main>
       </div>

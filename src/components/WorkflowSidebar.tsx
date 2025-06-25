@@ -1,5 +1,17 @@
 
-import { Image, Layers, History, Zap } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { 
+  Upload, 
+  Store, 
+  CreditCard, 
+  History, 
+  Cloud,
+  Code,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
 
 interface WorkflowSidebarProps {
   activeTab: string;
@@ -7,43 +19,72 @@ interface WorkflowSidebarProps {
 }
 
 const WorkflowSidebar = ({ activeTab, setActiveTab }: WorkflowSidebarProps) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const tabs = [
-    { id: "generate", label: "Generate", icon: Zap },
-    { id: "marketplace", label: "Marketplace", icon: Layers },
+    { id: "generate", label: "Generate", icon: Upload },
+    { id: "marketplace", label: "Marketplace", icon: Store },
+    { id: "pricing", label: "Pricing", icon: CreditCard },
     { id: "history", label: "History", icon: History },
+    { id: "api", label: "REST API", icon: Code },
   ];
 
   return (
-    <aside className="fixed left-0 top-20 h-full w-64 bg-black/20 backdrop-blur-lg border-r border-white/10 p-6">
-      <div className="space-y-2">
+    <div className={cn(
+      "fixed left-0 top-16 h-[calc(100vh-4rem)] bg-slate-800 border-r border-slate-700 transition-all duration-300 z-40",
+      isCollapsed ? "w-16" : "w-64"
+    )}>
+      {/* Collapse Toggle */}
+      <div className="absolute -right-3 top-6 z-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="h-6 w-6 rounded-full bg-slate-700 border-slate-600 text-white hover:bg-slate-600 p-0"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-3 w-3" />
+          ) : (
+            <ChevronLeft className="h-3 w-3" />
+          )}
+        </Button>
+      </div>
+
+      <div className="p-4 space-y-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
-            <button
+            <Button
               key={tab.id}
+              variant={activeTab === tab.id ? "secondary" : "ghost"}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
-              }`}
+              className={cn(
+                "w-full justify-start text-white hover:bg-slate-700 transition-all duration-200",
+                activeTab === tab.id && "bg-purple-600 hover:bg-purple-700",
+                isCollapsed ? "px-2" : "px-4"
+              )}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{tab.label}</span>
-            </button>
+              <Icon className={cn("h-4 w-4", isCollapsed ? "" : "mr-2")} />
+              {!isCollapsed && <span>{tab.label}</span>}
+            </Button>
           );
         })}
       </div>
-      
-      <div className="mt-8 p-4 bg-gradient-to-br from-purple-900/30 to-blue-900/30 rounded-lg border border-white/10">
-        <h3 className="text-white font-semibold mb-2">Quick Tips</h3>
-        <ul className="text-sm text-gray-300 space-y-1">
-          <li>• Upload high-quality images for better results</li>
-          <li>• Choose the right AI model for your use case</li>
-          <li>• Higher compute instances generate faster</li>
-        </ul>
-      </div>
-    </aside>
+
+      {!isCollapsed && (
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="bg-slate-700 rounded-lg p-3">
+            <div className="flex items-center space-x-2 mb-2">
+              <Cloud className="w-4 h-4 text-purple-400" />
+              <span className="text-purple-300 font-medium text-sm">PowerPrint Pipeline</span>
+            </div>
+            <p className="text-slate-300 text-xs">
+              Advanced AI-powered image to 3D model conversion with REST API access
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
