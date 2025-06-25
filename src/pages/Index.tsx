@@ -60,11 +60,6 @@ const Index = () => {
 
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
-                  <ImageUpload 
-                    uploadedImages={uploadedImages}
-                    setUploadedImages={setUploadedImages}
-                  />
-                  
                   <ModelSelectorDropdown 
                     selectedModel={selectedModel}
                     setSelectedModel={setSelectedModel}
@@ -73,6 +68,11 @@ const Index = () => {
                   <ComputeInstanceDropdown 
                     selectedInstance={selectedInstance}
                     setSelectedInstance={setSelectedInstance}
+                  />
+                  
+                  <ImageUpload 
+                    uploadedImages={uploadedImages}
+                    setUploadedImages={setUploadedImages}
                   />
                   
                   <button 
