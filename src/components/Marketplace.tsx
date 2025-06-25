@@ -1,167 +1,183 @@
 import { useState } from "react";
-import { Download, Eye, Share2, Heart, ShoppingCart, Star, Filter, Search } from "lucide-react";
+import { Download, Eye, Share2, Heart, ShoppingCart, Star, Search } from "lucide-react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import SlicedCube from "./SlicedCube";
 
 const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("popular");
   
+  // Updated with free CAD model data and 3D preview information
   const cadModels = [
     {
       id: 1,
       name: "Precision Ball Bearing Assembly",
       category: "mechanical",
-      price: "$45.99",
-      thumbnail: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "bearing",
       downloads: 5240,
       rating: 4.9,
       reviews: 234,
-      author: "MechanicalPro",
+      author: "OpenCAD Community",
       description: "High-precision ball bearing assembly with detailed tolerances for industrial applications",
-      tags: ["bearing", "mechanical", "industrial", "precision"]
+      tags: ["bearing", "mechanical", "industrial", "precision"],
+      license: "Creative Commons"
     },
     {
       id: 2,
       name: "Ergonomic Office Chair Model",
       category: "furniture",
-      price: "$29.99",
-      thumbnail: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "furniture",
       downloads: 3890,
       rating: 4.7,
       reviews: 156,
-      author: "FurnitureDesign Co",
+      author: "FurnitureCAD Collective",
       description: "Complete ergonomic office chair with adjustable components and cushioning details",
-      tags: ["chair", "office", "ergonomic", "furniture"]
+      tags: ["chair", "office", "ergonomic", "furniture"],
+      license: "MIT License"
     },
     {
       id: 3,
       name: "Classical Ionic Column",
       category: "architectural",
-      price: "$65.99",
-      thumbnail: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "architectural",
       downloads: 2156,
       rating: 4.8,
       reviews: 89,
-      author: "ArchitectStudio",
+      author: "Architecture Commons",
       description: "Detailed classical Ionic column with accurate proportions and ornamental details",
-      tags: ["column", "classical", "ionic", "architecture"]
+      tags: ["column", "classical", "ionic", "architecture"],
+      license: "Public Domain"
     },
     {
       id: 4,
-      name: "iPhone 15 Pro Housing",
+      name: "Generic Smartphone Housing",
       category: "electronics",
-      price: "$39.99",
-      thumbnail: "https://images.unsplash.com/photo-1616627561235-2fb8a6e7e0b4?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "electronics",
       downloads: 7823,
       rating: 4.6,
       reviews: 445,
-      author: "TechCAD Solutions",
-      description: "Precise iPhone 15 Pro housing model with camera bump and port details",
-      tags: ["iphone", "smartphone", "housing", "apple"]
+      author: "TechCAD Open Source",
+      description: "Generic smartphone housing model with camera bump and port details",
+      tags: ["smartphone", "housing", "electronics", "generic"],
+      license: "Apache 2.0"
     },
     {
       id: 5,
       name: "Performance Brake Caliper",
       category: "automotive",
-      price: "$55.99",
-      thumbnail: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "automotive",
       downloads: 4321,
       rating: 4.5,
       reviews: 178,
-      author: "AutoEngineering",
+      author: "AutoCAD Community",
       description: "High-performance brake caliper with cooling fins and mounting provisions",
-      tags: ["brake", "caliper", "automotive", "performance"]
+      tags: ["brake", "caliper", "automotive", "performance"],
+      license: "GPL v3"
     },
     {
       id: 6,
-      name: "Diamond Solitaire Ring",
+      name: "Simple Solitaire Ring",
       category: "jewelry",
-      price: "$25.99",
-      thumbnail: "https://images.unsplash.com/photo-1581833971366-4f24292d2e41?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "jewelry",
       downloads: 1892,
       rating: 4.9,
       reviews: 67,
-      author: "JewelryCAD Pro",
-      description: "Elegant solitaire ring setting with prong details for 1-carat diamond",
-      tags: ["ring", "diamond", "solitaire", "engagement"]
+      author: "JewelryCAD Open",
+      description: "Elegant solitaire ring setting with prong details for standard gemstones",
+      tags: ["ring", "solitaire", "jewelry", "engagement"],
+      license: "Creative Commons"
     },
     {
       id: 7,
       name: "Electric Motor Housing",
       category: "mechanical",
-      price: "$42.99",
-      thumbnail: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "mechanical",
       downloads: 3654,
       rating: 4.7,
       reviews: 123,
-      author: "ElectroMech Design",
+      author: "ElectroMech Open Source",
       description: "Compact electric motor housing with ventilation slots and mounting flanges",
-      tags: ["motor", "housing", "electric", "mechanical"]
+      tags: ["motor", "housing", "electric", "mechanical"],
+      license: "BSD License"
     },
     {
       id: 8,
       name: "Modern Desk Lamp",
       category: "furniture",
-      price: "$32.99",
-      thumbnail: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "furniture",
       downloads: 2487,
       rating: 4.4,
       reviews: 91,
-      author: "LightingDesign Studio",
+      author: "OpenDesign Studio",
       description: "Minimalist desk lamp with adjustable arm and LED housing",
-      tags: ["lamp", "desk", "modern", "lighting"]
+      tags: ["lamp", "desk", "modern", "lighting"],
+      license: "MIT License"
     },
     {
       id: 9,
       name: "PCB Circuit Board Layout",
       category: "electronics",
-      price: "$28.99",
-      thumbnail: "https://images.unsplash.com/photo-1581093458791-9d14678d3515?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "electronics",
       downloads: 5432,
       rating: 4.8,
       reviews: 267,
-      author: "CircuitPro",
+      author: "CircuitPro Community",
       description: "Multi-layer PCB design with component footprints and trace routing",
-      tags: ["pcb", "circuit", "electronics", "board"]
+      tags: ["pcb", "circuit", "electronics", "board"],
+      license: "Creative Commons"
     },
     {
       id: 10,
       name: "Art Deco Building Facade",
       category: "architectural",
-      price: "$78.99",
-      thumbnail: "https://images.unsplash.com/photo-1581833971340-8b5b3c6b1b8a?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "architectural",
       downloads: 1234,
       rating: 4.9,
       reviews: 45,
-      author: "Heritage Architecture",
+      author: "Heritage Architecture Commons",
       description: "Detailed Art Deco building facade with geometric patterns and ornaments",
-      tags: ["facade", "art deco", "building", "ornamental"]
+      tags: ["facade", "art deco", "building", "ornamental"],
+      license: "Public Domain"
     },
     {
       id: 11,
       name: "Turbocharger Assembly",
       category: "automotive",
-      price: "$89.99",
-      thumbnail: "https://images.unsplash.com/photo-1581093296284-e4b5b2f4a9d6?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "automotive",
       downloads: 2876,
       rating: 4.6,
       reviews: 134,
-      author: "TurboTech Engineering",
+      author: "AutoTech Open Source",
       description: "Complete turbocharger assembly with impeller, housing, and wastegate",
-      tags: ["turbo", "turbocharger", "automotive", "performance"]
+      tags: ["turbo", "turbocharger", "automotive", "performance"],
+      license: "GPL v3"
     },
     {
       id: 12,
-      name: "Vintage Watch Movement",
+      name: "Mechanical Watch Movement",
       category: "jewelry",
-      price: "$95.99",
-      thumbnail: "https://images.unsplash.com/photo-1616627561233-2fb8a6e7e0b4?w=400&h=300&fit=crop",
+      price: "Free",
+      modelType: "jewelry",
       downloads: 987,
       rating: 4.9,
       reviews: 23,
-      author: "TimeKeeper Models",
-      description: "Intricate vintage watch movement with gears, springs, and jeweled bearings",
-      tags: ["watch", "movement", "vintage", "mechanical"]
+      author: "TimeKeeper Open Models",
+      description: "Intricate mechanical watch movement with gears, springs, and jeweled bearings",
+      tags: ["watch", "movement", "mechanical", "gears"],
+      license: "Creative Commons"
     }
   ];
 
@@ -221,12 +237,38 @@ const Marketplace = () => {
     ));
   };
 
+  // 3D Model Preview Component
+  const ModelPreview3D = ({ modelType, modelId }: { modelType: string; modelId: number }) => (
+    <div className="w-full h-full">
+      <Canvas camera={{ position: [3, 3, 3], fov: 50 }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 5, 5]} intensity={0.8} />
+        <pointLight position={[-5, -5, -5]} intensity={0.4} />
+        
+        <SlicedCube
+          position={[0, 0, 0]}
+          scale={[0.8, 0.8, 0.8]}
+          rotation={[0, modelId * 0.3, 0]}
+          animate={true}
+        />
+        
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          enableRotate={true}
+          autoRotate={true}
+          autoRotateSpeed={2}
+        />
+      </Canvas>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">3D CAD Marketplace</h1>
-          <p className="text-gray-400 mt-2">Discover premium 3D models for your projects</p>
+          <h1 className="text-3xl font-bold text-white">Free 3D CAD Models</h1>
+          <p className="text-gray-400 mt-2">Discover free, open-source 3D models for your projects</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
@@ -278,17 +320,14 @@ const Marketplace = () => {
         {filteredAndSortedModels.map((model) => (
           <div key={model.id} className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group">
             <div className="aspect-video bg-gradient-to-br from-purple-900/30 to-blue-900/30 relative">
-              <img 
-                src={model.thumbnail} 
-                alt={model.name}
-                className="w-full h-full object-cover"
-              />
+              <ModelPreview3D modelType={model.modelType} modelId={model.id} />
+              
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-3">
                 <button className="p-3 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
                   <Eye className="w-5 h-5 text-white" />
                 </button>
                 <button className="p-3 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
-                  <ShoppingCart className="w-5 h-5 text-white" />
+                  <Download className="w-5 h-5 text-white" />
                 </button>
                 <button className="p-3 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
                   <Share2 className="w-5 h-5 text-white" />
@@ -298,6 +337,12 @@ const Marketplace = () => {
               <div className="absolute top-3 right-3">
                 <span className="bg-green-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
                   {model.price}
+                </span>
+              </div>
+
+              <div className="absolute top-3 left-3">
+                <span className="bg-blue-600/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                  {model.license}
                 </span>
               </div>
             </div>
@@ -338,7 +383,7 @@ const Marketplace = () => {
               </div>
               
               <button className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300">
-                Add to Cart
+                Download Free
               </button>
             </div>
           </div>
