@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Brain, Zap, Target, Cog, Eye, Rocket } from "lucide-react";
+import { Brain, Zap, Target, Cog, Eye, Rocket, Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
 interface ModelSelectorDropdownProps {
@@ -16,8 +17,18 @@ interface ModelSelectorDropdownProps {
   setSelectedModel: (model: string) => void;
 }
 
+interface CustomRepo {
+  id: string;
+  name: string;
+  owner: string;
+}
+
 const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelectorDropdownProps) => {
   const [selectedRepo, setSelectedRepo] = useState("");
+  const [customRepos, setCustomRepos] = useState<CustomRepo[]>([]);
+  const [showAddCustomRepo, setShowAddCustomRepo] = useState(false);
+  const [newRepoOwner, setNewRepoOwner] = useState("");
+  const [newRepoName, setNewRepoName] = useState("");
   const { toast } = useToast();
 
   const models = [
@@ -63,7 +74,7 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
     }
   ];
 
-  const githubRepos = [
+  const defaultGithubRepos = [
     { id: "repo1", name: "vision-transformer", owner: "huggingface" },
     { id: "repo2", name: "detectron2", owner: "facebookresearch" },
     { id: "repo3", name: "yolov5", owner: "ultralytics" },
@@ -72,8 +83,38 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
     { id: "repo6", name: "sam", owner: "facebookresearch" }
   ];
 
+  const allRepos = [...defaultGithubRepos, ...customRepos];
+
+  const handleAddCustomRepo = () => {
+    if (!newRepoOwner.trim() || !newRepoName.trim()) {
+      toast({
+        title: "Invalid Repository",
+        description: "Please provide both owner and repository name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newRepo: CustomRepo = {
+      id: `custom-${Date.now()}`,
+      name: newRepoName.trim(),
+      owner: newRepoOwner.trim()
+    };
+
+    setCustomRepos(prev => [...prev, newRepo]);
+    setSelectedRepo(newRepo.id);
+    setNewRepoOwner("");
+    setNewRepoName("");
+    setShowAddCustomRepo(false);
+
+    toast({
+      title: "Repository Added",
+      description: `Successfully added ${newRepo.owner}/${newRepo.name}`,
+    });
+  };
+
   const generateSparkNotebook = () => {
-    const selectedRepoData = githubRepos.find(r => r.id === selectedRepo);
+    const selectedRepoData = allRepos.find(r => r.id === selectedRepo);
     const repoName = selectedRepoData ? `${selectedRepoData.owner}/${selectedRepoData.name}` : 'your-repo';
     
     const sparkNotebookContent = `# Custom Vision Model - Spark Notebook
@@ -196,15 +237,69 @@ print(f"Processing completed using repository: ${repoName}")
       {/* GitHub Repository Selection for Custom Vision */}
       {selectedModel === "custom-vision" && (
         <div className="p-4 bg-white/5 rounded-lg border border-white/10 space-y-4">
-          <label className="block text-sm font-medium text-white mb-2">
-            Select GitHub Repository
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-medium text-white">
+              Select GitHub Repository
+            </label>
+            <Button
+              onClick={() => setShowAddCustomRepo(!showAddCustomRepo)}
+              variant="outline"
+              size="sm"
+              className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Custom
+            </Button>
+          </div>
+
+          {showAddCustomRepo && (
+            <div className="p-3 bg-slate-700/50 rounded-lg border border-slate-600 space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-slate-300 mb-1">Owner</label>
+                  <Input
+                    value={newRepoOwner}
+                    onChange={(e) => setNewRepoOwner(e.target.value)}
+                    placeholder="e.g., facebook"
+                    className="bg-slate-800 border-slate-600 text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-300 mb-1">Repository</label>
+                  <Input
+                    value={newRepoName}
+                    onChange={(e) => setNewRepoName(e.target.value)}
+                    placeholder="e.g., react"
+                    className="bg-slate-800 border-slate-600 text-white text-sm"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={handleAddCustomRepo}
+                  size="sm"
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  Add Repository
+                </Button>
+                <Button
+                  onClick={() => setShowAddCustomRepo(false)}
+                  variant="outline"
+                  size="sm"
+                  className="bg-slate-600 border-slate-500 text-white hover:bg-slate-500"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
           <Select value={selectedRepo} onValueChange={setSelectedRepo}>
             <SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
               <SelectValue placeholder="Choose a repository..." />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-600 z-50">
-              {githubRepos.map((repo) => (
+              {allRepos.map((repo) => (
                 <SelectItem 
                   key={repo.id} 
                   value={repo.id}
@@ -213,6 +308,9 @@ print(f"Processing completed using repository: ${repoName}")
                   <div className="flex items-center space-x-2">
                     <span className="text-gray-400">{repo.owner}/</span>
                     <span className="text-white font-medium">{repo.name}</span>
+                    {repo.id.startsWith('custom-') && (
+                      <span className="text-xs bg-purple-600 text-white px-1 rounded">custom</span>
+                    )}
                   </div>
                 </SelectItem>
               ))}
