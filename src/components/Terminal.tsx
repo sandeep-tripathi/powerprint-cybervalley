@@ -147,7 +147,7 @@ const Terminal = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm text-white flex items-center">
               <TerminalIcon className="w-4 h-4 mr-2" />
-              Python Terminal
+              Terminal
             </CardTitle>
             <div className="flex space-x-1">
               <Button
