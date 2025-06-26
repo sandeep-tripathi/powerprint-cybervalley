@@ -33,6 +33,11 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
       console.log("OBJ data parsed successfully:", objData);
       
       onObjLoaded(objData, file.name);
+      
+      // Clear the file input to allow re-uploading the same file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       console.error('Error parsing OBJ file:', error);
       setError(error instanceof Error ? error.message : 'Error parsing OBJ file. Please check the file format.');
@@ -42,8 +47,8 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
   };
 
   const handleClick = () => {
-    if (!isLoading) {
-      fileInputRef.current?.click();
+    if (!isLoading && fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -51,6 +56,21 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
     const file = e.target.files?.[0];
     if (file) {
       handleFileSelect(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
     }
   };
 
@@ -94,12 +114,34 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
         disabled={isLoading}
       />
       
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onClick={handleClick}
+        className="border-2 border-dashed border-purple-300 rounded-lg p-4 text-center cursor-pointer hover:border-purple-500 transition-colors bg-purple-50/50"
+      >
+        {isLoading ? (
+          <div className="flex flex-col items-center space-y-2">
+            <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-purple-600">Loading OBJ file...</span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center space-y-2">
+            <Upload className="w-8 h-8 text-purple-500" />
+            <div>
+              <p className="text-sm font-medium text-purple-700">Upload OBJ File</p>
+              <p className="text-xs text-purple-500">Click or drag & drop</p>
+            </div>
+          </div>
+        )}
+      </div>
+      
       <Button
         onClick={handleClick}
         disabled={isLoading}
         variant="outline"
         size="sm"
-        className="h-8 px-3 text-xs"
+        className="h-8 px-3 text-xs w-full"
       >
         {isLoading ? (
           <>
@@ -109,7 +151,7 @@ const ObjFileUpload = ({ onObjLoaded, onRemoveObj, uploadedObj }: ObjFileUploadP
         ) : (
           <>
             <Upload className="w-3 h-3 mr-2" />
-            Upload OBJ
+            Browse OBJ Files
           </>
         )}
       </Button>

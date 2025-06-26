@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Terminal as TerminalIcon, X, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Terminal = () => {
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true); // Changed to true for minimized by default
   const [isVisible, setIsVisible] = useState(true);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([
