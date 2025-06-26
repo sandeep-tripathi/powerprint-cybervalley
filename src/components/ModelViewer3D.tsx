@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useApiKey } from "@/hooks/useApiKey";
 import { use3DGeneration } from "@/hooks/use3DGeneration";
@@ -7,7 +8,6 @@ import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 import ObjFileUpload from "@/components/ObjFileUpload";
-import HistoryModelLoader from "@/components/HistoryModelLoader";
 import { ParsedObjData, parseObjFile } from "@/components/ObjFileParser";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 
@@ -52,24 +52,6 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
   const handleRemoveObj = () => {
     setUploadedObj(null);
-  };
-
-  const handleHistoryModelLoad = (modelData: any) => {
-    // Check if this is an OBJ file from history
-    if (modelData.objData) {
-      // Load as OBJ file
-      setUploadedObj({ 
-        data: modelData.objData, 
-        fileName: modelData.objData.fileName || "Loaded from History" 
-      });
-      // Clear any generated model
-      updateGeneratedModel(null);
-    } else {
-      // Load as generated model
-      updateGeneratedModel(modelData);
-      // Clear any uploaded OBJ
-      setUploadedObj(null);
-    }
   };
 
   const resetView = () => {
@@ -120,7 +102,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-purple-300">
-            Advanced PowerPrint Pipeline • Image-to-3D Generation • OBJ File Viewer • History Model Loader • 3D Printing Ready
+            Advanced PowerPrint Pipeline • Image-to-3D Generation • OBJ File Viewer • 3D Printing Ready
           </p>
         </div>
         
@@ -142,15 +124,11 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
       />
 
       {/* File Upload Options */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <ObjFileUpload
           onObjLoaded={handleObjLoaded}
           onRemoveObj={handleRemoveObj}
           uploadedObj={uploadedObj}
-        />
-        
-        <HistoryModelLoader
-          onModelLoad={handleHistoryModelLoad}
         />
       </div>
 
@@ -177,7 +155,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
       )}
 
       <div className="text-xs text-purple-200 space-y-1">
-        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis • OBJ File Support • History Model Loader</p>
+        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis • OBJ File Support</p>
         <p>• Automatic mesh optimization • High-quality texture synthesis • Export: PLY, STL, OBJ, GLB • 3D Print Ready</p>
         {generatedModel && (
           <p>• Model Stats: {generatedModel.vertices.toLocaleString()} vertices, {generatedModel.faces.toLocaleString()} faces, Complexity: {generatedModel.complexity}</p>
