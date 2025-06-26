@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Zap, Target, Cog, Eye, Rocket, Plus } from "lucide-react";
+import { Brain, Zap, Target, Cog, Eye, Plus } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -149,88 +149,6 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
     });
   };
 
-  const generateSparkNotebook = () => {
-    const selectedRepoData = allRepos.find(r => r.id === selectedRepo);
-    const repoName = selectedRepoData ? `${selectedRepoData.owner}/${selectedRepoData.name}` : 'your-repo';
-    
-    const sparkNotebookContent = `# Custom Vision Model - Spark Notebook
-# 2D to 3D Conversion using Apache Spark
-
-from pyspark.sql import SparkSession
-from pyspark.ml import Pipeline
-from pyspark.ml.feature import VectorAssembler
-import numpy as np
-
-# Initialize Spark Session
-spark = SparkSession.builder \\
-    .appName("CustomVision2Dto3D") \\
-    .config("spark.sql.adaptive.enabled", "true") \\
-    .config("spark.sql.adaptive.coalescePartitions.enabled", "true") \\
-    .getOrCreate()
-
-# Clone and setup custom vision repository
-!git clone https://github.com/${repoName}.git
-%cd ${repoName.split('/')[1]}
-
-# Install dependencies
-!pip install torch torchvision opencv-python matplotlib
-
-# Custom Vision 2D to 3D Processing Pipeline
-class VisionProcessor:
-    def __init__(self, spark_session):
-        self.spark = spark_session
-        
-    def process_image_to_3d(self, image_path):
-        """Convert 2D image to 3D model using distributed processing"""
-        
-        # Load and preprocess image
-        import cv2
-        image = cv2.imread(image_path)
-        
-        # Distributed feature extraction
-        features_df = self.extract_features_distributed(image)
-        
-        # 3D mesh generation
-        mesh_data = self.generate_3d_mesh(features_df)
-        
-        return mesh_data
-    
-    def extract_features_distributed(self, image):
-        """Extract image features using Spark for distributed processing"""
-        # Implementation for distributed feature extraction
-        pass
-    
-    def generate_3d_mesh(self, features_df):
-        """Generate 3D mesh from extracted features"""
-        # Implementation for 3D mesh generation
-        pass
-
-# Initialize processor
-processor = VisionProcessor(spark)
-
-# Process your image
-result = processor.process_image_to_3d('/path/to/your/image.jpg')
-
-print("Spark-based 2D to 3D conversion completed!")
-print(f"Processing completed using repository: ${repoName}")
-`;
-
-    const blob = new Blob([sparkNotebookContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'custom_vision_spark_notebook.py';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Spark Notebook Generated",
-      description: "Custom vision Spark notebook has been downloaded successfully!",
-    });
-  };
-
   const selectedModelData = models.find(m => m.id === selectedModel);
 
   return (
@@ -344,30 +262,6 @@ print(f"Processing completed using repository: ${repoName}")
               ))}
             </SelectContent>
           </Select>
-
-          {/* Spark Notebook Integration */}
-          <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-            <div className="flex items-center space-x-2 mb-2">
-              <Rocket className="w-4 h-4 text-orange-400" />
-              <span className="text-orange-300 font-medium text-sm">Spark Notebook</span>
-            </div>
-            <p className="text-orange-200 text-xs mb-3">
-              Deploy your custom vision algorithm to Apache Spark for distributed 2D to 3D processing
-            </p>
-            <Button
-              onClick={generateSparkNotebook}
-              disabled={!selectedRepo}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white text-sm py-2"
-            >
-              <Rocket className="w-4 h-4 mr-2" />
-              Generate Spark Notebook
-            </Button>
-            {!selectedRepo && (
-              <p className="text-xs text-orange-300 mt-1">
-                Select a repository first to generate Spark notebook
-              </p>
-            )}
-          </div>
         </div>
       )}
     </div>
