@@ -10,12 +10,22 @@ const Terminal = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([
-    "Python 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)] on win32",
-    "Type \"help\", \"copyright\", \"credits\" or \"license\" for more information.",
-    ">>> "
+    "PowerPrint Linux Terminal v1.0",
+    "Welcome to the PowerPrint development environment!",
+    "user@powerprint:~$ "
   ]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [currentDirectory, setCurrentDirectory] = useState("~");
+  const [fileSystem, setFileSystem] = useState<{[key: string]: string[]}>({
+    "~": ["Documents", "Downloads", "Pictures", "projects"],
+    "~/Documents": ["readme.txt", "notes.md"],
+    "~/Downloads": ["model.obj", "texture.png"],
+    "~/Pictures": ["screenshot.png"],
+    "~/projects": ["powerprint-app", "3d-models"],
+    "~/projects/powerprint-app": ["src", "package.json", "README.md"],
+    "~/projects/3d-models": ["cube.obj", "sphere.obj"]
+  });
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,83 +41,192 @@ const Terminal = () => {
     }
   }, [isMinimized]);
 
-  const executePythonCommand = (command: string) => {
+  const executeLinuxCommand = (command: string) => {
     const trimmedCommand = command.trim();
     
-    if (!trimmedCommand) return [">>> "];
+    if (!trimmedCommand) return [`user@powerprint:${currentDirectory}$ `];
     
     // Add command to history
     setCommandHistory(prev => [...prev, trimmedCommand]);
     setHistoryIndex(-1);
     
-    const output = [`>>> ${trimmedCommand}`];
+    const output = [`user@powerprint:${currentDirectory}$ ${trimmedCommand}`];
+    const args = trimmedCommand.split(' ');
+    const cmd = args[0];
     
-    // Simple Python command simulation
     try {
-      switch (true) {
-        case trimmedCommand === "help()":
-          output.push("Type help() for interactive help, or help(object) for help about object.");
-          break;
-        case trimmedCommand.startsWith("print("):
-          const printMatch = trimmedCommand.match(/print\((.*)\)/);
-          if (printMatch) {
-            const content = printMatch[1].replace(/['"]/g, '');
-            output.push(content);
-          }
-          break;
-        case trimmedCommand === "import numpy as np":
-          output.push("# NumPy imported successfully");
-          break;
-        case trimmedCommand === "import pandas as pd":
-          output.push("# Pandas imported successfully");
-          break;
-        case trimmedCommand === "import matplotlib.pyplot as plt":
-          output.push("# Matplotlib imported successfully");
-          break;
-        case trimmedCommand.includes("="):
-          output.push("# Variable assigned");
-          break;
-        case /^\d+\s*[\+\-\*\/]\s*\d+$/.test(trimmedCommand):
-          try {
-            const result = eval(trimmedCommand);
-            output.push(result.toString());
-          } catch {
-            output.push("SyntaxError: invalid syntax");
-          }
-          break;
-        case trimmedCommand === "exit()" || trimmedCommand === "quit()":
-          output.push("Use Ctrl+C to exit the terminal");
-          break;
-        case trimmedCommand === "clear":
-          return [
-            "Python 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)] on win32",
-            "Type \"help\", \"copyright\", \"credits\" or \"license\" for more information.",
-            ">>> "
-          ];
-        case trimmedCommand.startsWith("pip install"):
-          const package_name = trimmedCommand.replace("pip install ", "");
-          output.push(`Collecting ${package_name}`);
-          output.push(`Successfully installed ${package_name}`);
-          break;
-        default:
-          if (trimmedCommand.includes("def ") || trimmedCommand.includes("class ") || trimmedCommand.includes("for ") || trimmedCommand.includes("if ")) {
-            output.push("... ");
-            return output;
+      switch (cmd) {
+        case "ls":
+          const lsPath = args[1] || currentDirectory;
+          const files = fileSystem[lsPath] || [];
+          if (files.length > 0) {
+            output.push(files.join("  "));
           } else {
-            output.push(`NameError: name '${trimmedCommand.split(' ')[0]}' is not defined`);
+            output.push("ls: cannot access '" + lsPath + "': No such file or directory");
           }
+          break;
+          
+        case "pwd":
+          output.push(currentDirectory);
+          break;
+          
+        case "cd":
+          const targetDir = args[1];
+          if (!targetDir || targetDir === "~") {
+            setCurrentDirectory("~");
+          } else if (targetDir === "..") {
+            const pathParts = currentDirectory.split('/');
+            if (pathParts.length > 1) {
+              pathParts.pop();
+              const newPath = pathParts.join('/') || "~";
+              setCurrentDirectory(newPath);
+            }
+          } else {
+            let newPath;
+            if (targetDir.startsWith('/')) {
+              newPath = targetDir;
+            } else if (targetDir.startsWith('~')) {
+              newPath = targetDir;
+            } else {
+              newPath = currentDirectory === "~" ? `~/${targetDir}` : `${currentDirectory}/${targetDir}`;
+            }
+            
+            if (fileSystem[newPath]) {
+              setCurrentDirectory(newPath);
+            } else {
+              output.push(`cd: ${targetDir}: No such file or directory`);
+            }
+          }
+          break;
+          
+        case "cat":
+          const fileName = args[1];
+          if (!fileName) {
+            output.push("cat: missing file operand");
+          } else if (fileName === "readme.txt") {
+            output.push("Welcome to PowerPrint!");
+            output.push("This is your AI-powered 3D model generation platform.");
+          } else if (fileName === "notes.md") {
+            output.push("# Development Notes");
+            output.push("- Implement new 3D algorithms");
+            output.push("- Optimize rendering performance");
+          } else if (fileName === "package.json") {
+            output.push("{");
+            output.push('  "name": "powerprint-app",');
+            output.push('  "version": "1.0.0",');
+            output.push('  "description": "AI-powered 3D generation"');
+            output.push("}");
+          } else {
+            output.push(`cat: ${fileName}: No such file or directory`);
+          }
+          break;
+          
+        case "mkdir":
+          const dirName = args[1];
+          if (!dirName) {
+            output.push("mkdir: missing operand");
+          } else {
+            const newDirPath = currentDirectory === "~" ? `~/${dirName}` : `${currentDirectory}/${dirName}`;
+            setFileSystem(prev => ({
+              ...prev,
+              [currentDirectory]: [...(prev[currentDirectory] || []), dirName],
+              [newDirPath]: []
+            }));
+          }
+          break;
+          
+        case "touch":
+          const fileName2 = args[1];
+          if (!fileName2) {
+            output.push("touch: missing file operand");
+          } else {
+            setFileSystem(prev => ({
+              ...prev,
+              [currentDirectory]: [...(prev[currentDirectory] || []), fileName2]
+            }));
+          }
+          break;
+          
+        case "rm":
+          const fileToRemove = args[1];
+          if (!fileToRemove) {
+            output.push("rm: missing operand");
+          } else {
+            setFileSystem(prev => ({
+              ...prev,
+              [currentDirectory]: (prev[currentDirectory] || []).filter(f => f !== fileToRemove)
+            }));
+          }
+          break;
+          
+        case "echo":
+          const message = args.slice(1).join(' ');
+          output.push(message);
+          break;
+          
+        case "whoami":
+          output.push("user");
+          break;
+          
+        case "date":
+          output.push(new Date().toString());
+          break;
+          
+        case "uname":
+          if (args[1] === "-a") {
+            output.push("Linux powerprint 5.15.0 #1 SMP x86_64 GNU/Linux");
+          } else {
+            output.push("Linux");
+          }
+          break;
+          
+        case "ps":
+          output.push("  PID TTY          TIME CMD");
+          output.push(" 1234 pts/0    00:00:01 bash");
+          output.push(" 5678 pts/0    00:00:00 powerprint");
+          break;
+          
+        case "df":
+          output.push("Filesystem     1K-blocks    Used Available Use% Mounted on");
+          output.push("/dev/sda1       20971520 8388608  12582912  40% /");
+          break;
+          
+        case "free":
+          output.push("              total        used        free      shared");
+          output.push("Mem:        8192000     4096000     4096000           0");
+          output.push("Swap:       2048000           0     2048000");
+          break;
+          
+        case "clear":
+          return [
+            "PowerPrint Linux Terminal v1.0",
+            "Welcome to the PowerPrint development environment!",
+            `user@powerprint:${currentDirectory}$ `
+          ];
+          
+        case "help":
+          output.push("Available commands:");
+          output.push("ls, cd, pwd, cat, mkdir, touch, rm, echo, whoami, date, uname, ps, df, free, clear, help");
+          break;
+          
+        case "exit":
+          output.push("logout");
+          break;
+          
+        default:
+          output.push(`${cmd}: command not found`);
       }
     } catch (error) {
-      output.push("SyntaxError: invalid syntax");
+      output.push("bash: command error occurred");
     }
     
-    output.push(">>> ");
+    output.push(`user@powerprint:${currentDirectory}$ `);
     return output;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newOutput = executePythonCommand(input);
+    const newOutput = executeLinuxCommand(input);
     setHistory(prev => [...prev.slice(0, -1), ...newOutput]);
     setInput("");
   };
@@ -183,7 +302,7 @@ const Terminal = () => {
                 </div>
               ))}
               <form onSubmit={handleSubmit} className="flex">
-                <span className="text-green-400">{">>> "}</span>
+                <span className="text-green-400">{`user@powerprint:${currentDirectory}$ `}</span>
                 <input
                   ref={inputRef}
                   type="text"
@@ -191,13 +310,13 @@ const Terminal = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="flex-1 bg-transparent text-green-400 outline-none font-mono ml-1"
-                  placeholder="Enter Python commands..."
+                  placeholder="Enter Linux commands..."
                   autoComplete="off"
                 />
               </form>
             </div>
             <div className="bg-gray-800 p-2 text-xs text-gray-300">
-              <p>PowerPrint Python Terminal • Type Python commands • Use 'clear' to clear screen • Arrow keys for history</p>
+              <p>PowerPrint Linux Terminal • Type 'help' for available commands • Arrow keys for history</p>
             </div>
           </CardContent>
         )}
