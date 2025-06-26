@@ -1,7 +1,7 @@
 
 import * as THREE from "three";
 import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, ThreeEvent } from "@react-three/fiber";
 import GeneratedMesh3D from "./GeneratedMesh3D";
 
 interface PowerPrintModelProps {
@@ -26,6 +26,17 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
       groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.1;
     }
   });
+
+  const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    console.log("PowerPrint model clicked!", {
+      vertices: modelData.vertices,
+      faces: modelData.faces,
+      complexity: modelData.complexity,
+      point: event.point,
+      uv: event.uv
+    });
+  };
 
   // If we have real mesh data, use it; otherwise fall back to procedural geometry
   if (modelData.realMesh) {
@@ -76,7 +87,7 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
     }
 
     return (
-      <group ref={groupRef} position={[0, 0, 0]}>
+      <group ref={groupRef} position={[0, 0, 0]} onClick={handleClick}>
         <GeneratedMesh3D 
           meshData={modelData.realMesh}
           animate={false} // We handle animation at the group level
@@ -181,7 +192,7 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
   }, [modelData.meshData.propertyChanges]);
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
+    <group ref={groupRef} position={[0, 0, 0]} onClick={handleClick}>
       {/* Main generated model with dynamic material */}
       <mesh geometry={geometry} material={material} />
       
