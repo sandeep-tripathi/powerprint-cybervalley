@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Brain, Zap, Target, Cog, Eye, Rocket, Plus } from "lucide-react";
 import {
@@ -21,14 +20,14 @@ interface CustomRepo {
   id: string;
   name: string;
   owner: string;
+  url?: string;
 }
 
 const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelectorDropdownProps) => {
   const [selectedRepo, setSelectedRepo] = useState("");
   const [customRepos, setCustomRepos] = useState<CustomRepo[]>([]);
   const [showAddCustomRepo, setShowAddCustomRepo] = useState(false);
-  const [newRepoOwner, setNewRepoOwner] = useState("");
-  const [newRepoName, setNewRepoName] = useState("");
+  const [repoInput, setRepoInput] = useState("");
   const { toast } = useToast();
 
   const models = [
@@ -85,11 +84,48 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
 
   const allRepos = [...defaultGithubRepos, ...customRepos];
 
+  const parseRepoInput = (input: string): { owner: string; name: string; url?: string } | null => {
+    const trimmedInput = input.trim();
+    
+    // Check if it's a URL
+    if (trimmedInput.startsWith('http://') || trimmedInput.startsWith('https://')) {
+      const urlMatch = trimmedInput.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+      if (urlMatch) {
+        return {
+          owner: urlMatch[1],
+          name: urlMatch[2].replace(/\.git$/, ''),
+          url: trimmedInput
+        };
+      }
+      return null;
+    }
+    
+    // Check if it's in owner/repo format
+    if (trimmedInput.includes('/')) {
+      const [owner, name] = trimmedInput.split('/');
+      if (owner && name) {
+        return { owner: owner.trim(), name: name.trim() };
+      }
+    }
+    
+    return null;
+  };
+
   const handleAddCustomRepo = () => {
-    if (!newRepoOwner.trim() || !newRepoName.trim()) {
+    if (!repoInput.trim()) {
       toast({
         title: "Invalid Repository",
-        description: "Please provide both owner and repository name.",
+        description: "Please provide a repository URL or owner/repository format.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const parsedRepo = parseRepoInput(repoInput);
+    if (!parsedRepo) {
+      toast({
+        title: "Invalid Format",
+        description: "Please use either a GitHub URL or owner/repository format (e.g., facebook/react).",
         variant: "destructive",
       });
       return;
@@ -97,14 +133,14 @@ const ModelSelectorDropdown = ({ selectedModel, setSelectedModel }: ModelSelecto
 
     const newRepo: CustomRepo = {
       id: `custom-${Date.now()}`,
-      name: newRepoName.trim(),
-      owner: newRepoOwner.trim()
+      name: parsedRepo.name,
+      owner: parsedRepo.owner,
+      url: parsedRepo.url
     };
 
     setCustomRepos(prev => [...prev, newRepo]);
     setSelectedRepo(newRepo.id);
-    setNewRepoOwner("");
-    setNewRepoName("");
+    setRepoInput("");
     setShowAddCustomRepo(false);
 
     toast({
@@ -254,25 +290,17 @@ print(f"Processing completed using repository: ${repoName}")
 
           {showAddCustomRepo && (
             <div className="p-3 bg-slate-700/50 rounded-lg border border-slate-600 space-y-3">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs text-slate-300 mb-1">Owner</label>
-                  <Input
-                    value={newRepoOwner}
-                    onChange={(e) => setNewRepoOwner(e.target.value)}
-                    placeholder="e.g., facebook"
-                    className="bg-slate-800 border-slate-600 text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-300 mb-1">Repository</label>
-                  <Input
-                    value={newRepoName}
-                    onChange={(e) => setNewRepoName(e.target.value)}
-                    placeholder="e.g., react"
-                    className="bg-slate-800 border-slate-600 text-white text-sm"
-                  />
-                </div>
+              <div>
+                <label className="block text-xs text-slate-300 mb-1">Repository URL or owner/repo</label>
+                <Input
+                  value={repoInput}
+                  onChange={(e) => setRepoInput(e.target.value)}
+                  placeholder="e.g., https://github.com/facebook/react or facebook/react"
+                  className="bg-slate-800 border-slate-600 text-white text-sm"
+                />
+                <p className="text-xs text-slate-400 mt-1">
+                  Enter a GitHub URL or use owner/repository format
+                </p>
               </div>
               <div className="flex space-x-2">
                 <Button
