@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { ParsedObjData } from "@/components/ObjFileParser";
 
 interface GenerationHistoryItem {
   id: string;
@@ -13,12 +12,9 @@ interface GenerationHistoryItem {
     complexity: number;
     vertices: number;
     faces: number;
-    realMesh?: any;
-    objData?: ParsedObjData; // Add support for OBJ data
   };
   processingTime: number;
   status: "completed" | "failed";
-  type: "powerprint" | "obj"; // Add type to distinguish between generated and uploaded models
 }
 
 export const useGenerationHistory = () => {
@@ -51,8 +47,7 @@ export const useGenerationHistory = () => {
     modelName: string,
     imageNames: string[],
     modelData: GenerationHistoryItem['modelData'],
-    processingTime: number,
-    type: "powerprint" | "obj" = "powerprint"
+    processingTime: number
   ) => {
     const newItem: GenerationHistoryItem = {
       id: `powerprint-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -61,30 +56,10 @@ export const useGenerationHistory = () => {
       imageNames,
       modelData,
       processingTime,
-      status: "completed",
-      type
+      status: "completed"
     };
 
     setHistory(prev => [newItem, ...prev].slice(0, 50)); // Keep only last 50 items
-  };
-
-  const addObjToHistory = (fileName: string, objData: ParsedObjData) => {
-    const modelData = {
-      meshData: null,
-      textureUrl: "",
-      complexity: Math.floor(objData.vertices.length / 100), // Rough complexity estimate
-      vertices: objData.vertices.length / 3,
-      faces: objData.faces.length / 3,
-      objData: objData
-    };
-
-    addToHistory(
-      fileName.replace('.obj', ''),
-      [],
-      modelData,
-      0, // No processing time for uploaded files
-      "obj"
-    );
   };
 
   const clearHistory = () => {
@@ -99,7 +74,6 @@ export const useGenerationHistory = () => {
   return {
     history,
     addToHistory,
-    addObjToHistory,
     clearHistory,
     removeFromHistory
   };

@@ -1,7 +1,7 @@
 
 import * as THREE from "three";
 import { useRef, useEffect, useMemo } from "react";
-import { useFrame, ThreeEvent } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { ParsedObjData } from "./ObjFileParser";
 
 interface ObjViewerProps {
@@ -30,16 +30,6 @@ const ObjViewer = ({
       meshRef.current.rotation.x = Math.sin(time * 0.2) * 0.1;
     }
   });
-
-  const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    event.stopPropagation();
-    console.log("OBJ model clicked!", {
-      vertices: objData.vertices.length / 3,
-      faces: objData.faces.length / 3,
-      point: event.point,
-      uv: event.uv
-    });
-  };
 
   // Create the geometry from OBJ data
   const geometry = useMemo(() => {
@@ -124,7 +114,7 @@ const ObjViewer = ({
   console.log("Rendering OBJ mesh with", objData.vertices.length / 3, "vertices");
 
   return (
-    <group onClick={handleClick}>
+    <group>
       <mesh ref={meshRef} geometry={geometry} material={meshMaterial} />
     </group>
   );

@@ -72,7 +72,7 @@ const WorkflowSidebar = ({ activeTab, setActiveTab }: WorkflowSidebarProps) => {
       </div>
 
       {!isCollapsed && (
-        <div className="absolute bottom-24 left-4 right-4">
+        <div className="absolute bottom-4 left-4 right-4">
           <div className="bg-slate-700 rounded-lg p-3">
             <div className="flex items-center space-x-2 mb-2">
               <Cloud className="w-4 h-4 text-purple-400" />

@@ -8,8 +8,7 @@ import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 import ObjFileUpload from "@/components/ObjFileUpload";
-import { ParsedObjData, parseObjFile } from "@/components/ObjFileParser";
-import { useGenerationHistory } from "@/hooks/useGenerationHistory";
+import { ParsedObjData } from "@/components/ObjFileParser";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
@@ -18,7 +17,6 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
-  const { addObjToHistory } = useGenerationHistory();
 
   const {
     apiKey,
@@ -44,10 +42,6 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
   const handleObjLoaded = (objData: ParsedObjData, fileName: string) => {
     setUploadedObj({ data: objData, fileName });
-    
-    // Add the uploaded OBJ file to history
-    addObjToHistory(fileName, objData);
-    console.log("OBJ file added to history:", fileName);
   };
 
   const handleRemoveObj = () => {
@@ -123,14 +117,12 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         setShowApiInput={setShowApiInput}
       />
 
-      {/* File Upload Options */}
-      <div className="grid grid-cols-1 gap-4">
-        <ObjFileUpload
-          onObjLoaded={handleObjLoaded}
-          onRemoveObj={handleRemoveObj}
-          uploadedObj={uploadedObj}
-        />
-      </div>
+      {/* OBJ File Upload */}
+      <ObjFileUpload
+        onObjLoaded={handleObjLoaded}
+        onRemoveObj={handleRemoveObj}
+        uploadedObj={uploadedObj}
+      />
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="aspect-video bg-black relative">
