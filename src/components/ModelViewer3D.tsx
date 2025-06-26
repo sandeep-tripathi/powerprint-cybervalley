@@ -8,7 +8,9 @@ import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 import ObjFileUpload from "@/components/ObjFileUpload";
-import { ParsedObjData } from "@/components/ObjFileParser";
+import GoogleDriveIntegration from "@/components/GoogleDriveIntegration";
+import { ParsedObjData, parseObjFile } from "@/components/ObjFileParser";
+import { googleDriveService, GoogleDriveFile } from "@/services/googleDriveService";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
@@ -17,6 +19,7 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
+  const [isLoadingFromDrive, setIsLoadingFromDrive] = useState(false);
 
   const {
     apiKey,
@@ -46,6 +49,29 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
   const handleRemoveObj = () => {
     setUploadedObj(null);
+  };
+
+  const handleGoogleDriveFileSelect = async (file: GoogleDriveFile) => {
+    setIsLoadingFromDrive(true);
+    
+    try {
+      console.log("Loading file from Google Drive:", file.name);
+      
+      const fileContent = await googleDriveService.downloadFile(file.id);
+      const objData = parseObjFile(fileContent);
+      
+      setUploadedObj({ 
+        data: objData, 
+        fileName: `${file.name} (Google Drive)` 
+      });
+      
+      console.log("Successfully loaded OBJ file from Google Drive");
+    } catch (error) {
+      console.error("Failed to load file from Google Drive:", error);
+      // In a real app, you'd show a toast notification here
+    } finally {
+      setIsLoadingFromDrive(false);
+    }
   };
 
   const resetView = () => {
@@ -96,7 +122,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-purple-300">
-            Advanced PowerPrint Pipeline • Image-to-3D Generation • OBJ File Viewer • 3D Printing Ready
+            Advanced PowerPrint Pipeline • Image-to-3D Generation • OBJ File Viewer • Google Drive Integration • 3D Printing Ready
           </p>
         </div>
         
@@ -117,12 +143,28 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
         setShowApiInput={setShowApiInput}
       />
 
-      {/* OBJ File Upload */}
-      <ObjFileUpload
-        onObjLoaded={handleObjLoaded}
-        onRemoveObj={handleRemoveObj}
-        uploadedObj={uploadedObj}
-      />
+      {/* File Upload Options */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ObjFileUpload
+          onObjLoaded={handleObjLoaded}
+          onRemoveObj={handleRemoveObj}
+          uploadedObj={uploadedObj}
+        />
+        
+        <GoogleDriveIntegration
+          onFileSelect={handleGoogleDriveFileSelect}
+          acceptedTypes={['model/obj', 'application/octet-stream', 'text/plain']}
+        />
+      </div>
+
+      {isLoadingFromDrive && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-blue-700 font-medium">Loading file from Google Drive...</p>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="aspect-video bg-black relative">
@@ -147,7 +189,7 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
       )}
 
       <div className="text-xs text-purple-200 space-y-1">
-        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis • OBJ File Support</p>
+        <p>• Powered by PowerPrint Image-to-3D Pipeline • Advanced Gaussian Splatting • Multi-view Analysis • OBJ File Support • Google Drive Integration</p>
         <p>• Automatic mesh optimization • High-quality texture synthesis • Export: PLY, STL, OBJ, GLB • 3D Print Ready</p>
         {generatedModel && (
           <p>• Model Stats: {generatedModel.vertices.toLocaleString()} vertices, {generatedModel.faces.toLocaleString()} faces, Complexity: {generatedModel.complexity}</p>
