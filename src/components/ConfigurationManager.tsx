@@ -2,21 +2,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ConfigurationService } from "@/services/configurationService";
-import { PipelineConfiguration, ConfigurationFormData } from "@/types/configuration";
+import { PipelineConfiguration } from "@/types/configuration";
 import { Save, Settings, Trash2, Download, Upload } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 interface ConfigurationManagerProps {
   selectedModel: string;
@@ -32,11 +21,6 @@ const ConfigurationManager = ({
   const [configurations, setConfigurations] = useState<PipelineConfiguration[]>(
     ConfigurationService.getAllConfigurations()
   );
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState<ConfigurationFormData>({
-    name: "",
-    description: ""
-  });
   const { toast } = useToast();
 
   const refreshConfigurations = () => {
@@ -44,15 +28,6 @@ const ConfigurationManager = ({
   };
 
   const handleSaveConfiguration = () => {
-    if (!formData.name.trim()) {
-      toast({
-        title: "Error",
-        description: "Configuration name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!selectedModel || !selectedInstance) {
       toast({
         title: "Error",
@@ -62,16 +37,17 @@ const ConfigurationManager = ({
       return;
     }
 
+    const timestamp = new Date().toLocaleString();
+    const configName = `Config ${timestamp}`;
+
     const newConfig = ConfigurationService.saveConfiguration({
-      name: formData.name,
-      description: formData.description,
+      name: configName,
+      description: `Configuration saved on ${timestamp}`,
       selectedModel,
       selectedInstance
     });
 
     refreshConfigurations();
-    setIsDialogOpen(false);
-    setFormData({ name: "", description: "" });
 
     toast({
       title: "Configuration Saved",
@@ -130,66 +106,13 @@ const ConfigurationManager = ({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Configuration Manager</h3>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <Save className="w-4 h-4 mr-2" />
-              Save Current
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-slate-800 border-slate-600 text-white">
-            <DialogHeader>
-              <DialogTitle>Save Configuration</DialogTitle>
-              <DialogDescription className="text-slate-300">
-                Save your current AI model and compute instance selection as a reusable configuration.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="configName" className="text-white">Configuration Name</Label>
-                <Input
-                  id="configName"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="e.g., High-Quality Production"
-                  className="bg-slate-700 border-slate-600 text-white"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="configDescription" className="text-white">Description (Optional)</Label>
-                <Textarea
-                  id="configDescription"
-                  value={formData.description || ""}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Describe when to use this configuration..."
-                  className="bg-slate-700 border-slate-600 text-white"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="bg-slate-700 rounded-lg p-3">
-                <h4 className="font-medium text-white mb-2">Current Settings</h4>
-                <p className="text-sm text-slate-300">Model: {selectedModel || "None selected"}</p>
-                <p className="text-sm text-slate-300">Instance: {selectedInstance || "None selected"}</p>
-              </div>
-              
-              <div className="flex justify-end space-x-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsDialogOpen(false)}
-                  className="border-slate-600 text-white hover:bg-slate-700"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveConfiguration} className="bg-purple-600 hover:bg-purple-700">
-                  Save Configuration
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button 
+          onClick={handleSaveConfiguration}
+          className="bg-purple-600 hover:bg-purple-700"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          Save Configuration
+        </Button>
       </div>
 
       <div className="grid gap-3">
