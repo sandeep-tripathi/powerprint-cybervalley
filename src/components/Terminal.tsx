@@ -183,7 +183,7 @@ const Terminal = () => {
                 </div>
               ))}
               <form onSubmit={handleSubmit} className="flex">
-                <span className="text-green-400">>>> </span>
+                <span className="text-green-400">{">>> "}</span>
                 <input
                   ref={inputRef}
                   type="text"
