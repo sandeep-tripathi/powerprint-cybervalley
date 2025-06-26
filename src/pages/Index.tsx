@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import ImageUpload from "@/components/ImageUpload";
@@ -10,6 +9,7 @@ import ModelViewer3D from "@/components/ModelViewer3D";
 import PricingPage from "@/components/PricingPage";
 import GenerationHistory from "@/components/GenerationHistory";
 import Footer from "@/components/Footer";
+import Terminal from "@/components/Terminal";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
 import { Euro } from "lucide-react";
@@ -52,7 +52,7 @@ const Index = () => {
       <div className="flex flex-1">
         <WorkflowSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
-        <main className="flex-1 p-6 ml-64">
+        <main className="flex-1 p-6 ml-64 pb-24">
           {activeTab === "generate" && (
             <div className="space-y-8">
               <div className="text-center mb-8">
@@ -155,6 +155,7 @@ const Index = () => {
       </div>
       
       <Footer />
+      <Terminal />
     </div>
   );
 };
