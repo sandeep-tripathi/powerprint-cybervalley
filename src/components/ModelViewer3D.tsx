@@ -9,6 +9,7 @@ import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 import ObjFileUpload from "@/components/ObjFileUpload";
 import HistoryModelLoader from "@/components/HistoryModelLoader";
 import { ParsedObjData, parseObjFile } from "@/components/ObjFileParser";
+import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 
 interface ModelViewer3DProps {
   uploadedImages?: File[];
@@ -17,6 +18,7 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
+  const { addObjToHistory } = useGenerationHistory();
 
   const {
     apiKey,
@@ -42,6 +44,10 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
 
   const handleObjLoaded = (objData: ParsedObjData, fileName: string) => {
     setUploadedObj({ data: objData, fileName });
+    
+    // Add the uploaded OBJ file to history
+    addObjToHistory(fileName, objData);
+    console.log("OBJ file added to history:", fileName);
   };
 
   const handleRemoveObj = () => {
@@ -49,8 +55,21 @@ const ModelViewer3D = ({ uploadedImages = [], onModelGenerated }: ModelViewer3DP
   };
 
   const handleHistoryModelLoad = (modelData: any) => {
-    // Update the generated model with the loaded history model
-    updateGeneratedModel(modelData);
+    // Check if this is an OBJ file from history
+    if (modelData.objData) {
+      // Load as OBJ file
+      setUploadedObj({ 
+        data: modelData.objData, 
+        fileName: modelData.objData.fileName || "Loaded from History" 
+      });
+      // Clear any generated model
+      updateGeneratedModel(null);
+    } else {
+      // Load as generated model
+      updateGeneratedModel(modelData);
+      // Clear any uploaded OBJ
+      setUploadedObj(null);
+    }
   };
 
   const resetView = () => {

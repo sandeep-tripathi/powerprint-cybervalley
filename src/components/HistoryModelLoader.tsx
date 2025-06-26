@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { History, FileText, Eye, Download } from "lucide-react";
+import { History, FileText, Eye, Download, Cube } from "lucide-react";
 import { Button } from "./ui/button";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 
@@ -24,7 +24,7 @@ const HistoryModelLoader = ({ onModelLoad }: HistoryModelLoaderProps) => {
   const handleModelLoad = (item: any) => {
     onModelLoad(item.modelData);
     setShowHistory(false);
-    console.log("Loaded model from history:", item.modelName);
+    console.log("Loaded model from history:", item.modelName, "Type:", item.type);
   };
 
   if (showHistory) {
@@ -54,13 +54,21 @@ const HistoryModelLoader = ({ onModelLoad }: HistoryModelLoaderProps) => {
                 className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg border border-gray-100"
               >
                 <div className="w-8 h-8 flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-purple-500" />
+                  {item.type === "obj" ? (
+                    <Cube className="w-6 h-6 text-blue-500" />
+                  ) : (
+                    <FileText className="w-6 h-6 text-purple-500" />
+                  )}
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">{item.modelName}</p>
+                  <p className="font-medium text-gray-900 truncate">
+                    {item.modelName}
+                    {item.type === "obj" && <span className="text-xs text-blue-600 ml-2">(OBJ)</span>}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {formatDate(item.timestamp)} • {item.modelData.vertices.toLocaleString()} vertices
+                    {item.type === "obj" && " • Uploaded file"}
                   </p>
                 </div>
                 
@@ -96,8 +104,12 @@ const HistoryModelLoader = ({ onModelLoad }: HistoryModelLoaderProps) => {
         Load from History
       </Button>
       
-      {history.length === 0 && (
+      {history.length === 0 ? (
         <p className="text-xs text-gray-500">No models in history</p>
+      ) : (
+        <p className="text-xs text-gray-500">
+          {history.length} model{history.length > 1 ? 's' : ''} in history
+        </p>
       )}
     </div>
   );
