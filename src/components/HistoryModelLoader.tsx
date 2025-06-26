@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { History, FileText, Eye, Download, Cube } from "lucide-react";
+import { History, FileText, Eye, Download, Box } from "lucide-react";
 import { Button } from "./ui/button";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 
@@ -55,7 +55,7 @@ const HistoryModelLoader = ({ onModelLoad }: HistoryModelLoaderProps) => {
               >
                 <div className="w-8 h-8 flex items-center justify-center">
                   {item.type === "obj" ? (
-                    <Cube className="w-6 h-6 text-blue-500" />
+                    <Box className="w-6 h-6 text-blue-500" />
                   ) : (
                     <FileText className="w-6 h-6 text-purple-500" />
                   )}
