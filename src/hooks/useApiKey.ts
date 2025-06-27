@@ -13,7 +13,7 @@ export const useApiKey = () => {
       setShowApiInput(false);
       toast({
         title: "API Key Updated",
-        description: "Your Meshy AI API key has been updated successfully!",
+        description: "Your API key has been updated successfully!",
       });
     }
   };
