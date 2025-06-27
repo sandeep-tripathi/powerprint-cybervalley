@@ -12,7 +12,7 @@ export const useApiKey = () => {
     if (newKey.trim()) {
       setShowApiInput(false);
       toast({
-        title: "Meshy AI API Key Updated",
+        title: "API Key Updated",
         description: "Your Meshy AI API key has been updated successfully!",
       });
     }
