@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { VisionLanguageModelConverter, VisionModelOptions, Enhanced3DMesh } from "@/services/visionLanguageModel";
@@ -148,18 +147,32 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     };
   }, [converter]);
 
-  // Trigger pipeline when images are uploaded
+  // Trigger pipeline when images are uploaded or show default panda
   useEffect(() => {
     if (uploadedImages.length > 0) {
       processImagesWithAdvancedPipeline(uploadedImages);
     } else if (uploadedImages.length === 0) {
-      // For default case (no images), show panda immediately without running pipeline
-      setHasModel(true);
-      setGenerationStatus("");
-      if (generatedModel?.textureUrl) {
-        URL.revokeObjectURL(generatedModel.textureUrl);
-      }
-      setGeneratedModel(null);
+      // For default case (no images), show panda immediately with a quick transition
+      setIsLoading(true);
+      setGenerationStatus("Loading 3D Panda Model...");
+      
+      // Show the panda within 3 seconds
+      setTimeout(() => {
+        setHasModel(true);
+        setIsLoading(false);
+        setGenerationStatus("");
+        
+        // Clean up any existing texture
+        if (generatedModel?.textureUrl) {
+          URL.revokeObjectURL(generatedModel.textureUrl);
+        }
+        setGeneratedModel(null);
+        
+        toast({
+          title: "3D Panda Ready!",
+          description: "Sample 3D model loaded successfully. Try the AI manipulation tools!",
+        });
+      }, 2000); // Show within 2 seconds for better UX
     }
   }, [uploadedImages]);
 

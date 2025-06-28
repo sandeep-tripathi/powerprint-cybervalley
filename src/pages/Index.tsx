@@ -8,7 +8,6 @@ import WorkflowSidebar from "@/components/WorkflowSidebar";
 import ModelViewer3D from "@/components/ModelViewer3D";
 import PricingPage from "@/components/PricingPage";
 import GenerationHistory from "@/components/GenerationHistory";
-import Footer from "@/components/Footer";
 import LinuxTerminal from "@/components/LinuxTerminal";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
@@ -33,12 +32,11 @@ const Index = () => {
       <div className="flex flex-1">
         <WorkflowSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
-        <main className="flex-1 p-6 ml-64 pb-20">
+        <main className="flex-1 p-6 ml-64">
           {activeTab === "generate" && (
             <div className="space-y-8">
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
-                  {/* Step 1: Add image to generate */}
                   <div className="space-y-3">
                     <div className="text-center">
                       <span className="inline-flex items-center justify-center w-8 h-8 bg-purple-600 text-white rounded-full font-semibold text-sm mb-2">
@@ -65,7 +63,6 @@ const Index = () => {
                     className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     disabled={!allImages.length}
                     onClick={() => {
-                      // The 3D generation will be triggered automatically when images are available
                       console.log("Generate button clicked - processing will start automatically");
                     }}
                   >
@@ -101,7 +98,6 @@ const Index = () => {
         </main>
       </div>
       
-      <Footer />
       <LinuxTerminal />
     </div>
   );
