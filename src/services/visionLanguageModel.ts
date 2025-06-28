@@ -1,4 +1,3 @@
-
 export interface VisionModelOptions {
   model: "gpt-4-vision" | "claude-vision" | "gemini-vision";
   quality: "standard" | "high" | "ultra";
@@ -42,7 +41,7 @@ export class VisionLanguageModelConverter {
     console.log(`Analyzing image with ${options.model} vision model...`);
     
     // Load and analyze the image
-    const imageData = await this.loadImageData(imageFile);
+    const imageData = await this.loadImageData(imageFile, options);
     
     // Simulate advanced vision analysis
     await this.simulateVisionProcessing(options.model);
@@ -70,7 +69,7 @@ export class VisionLanguageModelConverter {
     return mesh;
   }
 
-  private async loadImageData(imageFile: File): Promise<ImageData> {
+  private async loadImageData(imageFile: File, options: VisionModelOptions): Promise<ImageData> {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
@@ -151,7 +150,7 @@ export class VisionLanguageModelConverter {
     depthAnalysis: DepthAnalysis,
     options: VisionModelOptions
   ): Promise<Enhanced3DMesh> {
-    const imageData = await this.loadImageData(imageFile);
+    const imageData = await this.loadImageData(imageFile, options);
     const { width, height } = imageData;
     
     // Generate more sophisticated mesh based on depth analysis
