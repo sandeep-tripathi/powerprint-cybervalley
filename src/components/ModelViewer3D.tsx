@@ -6,8 +6,8 @@ import ViewerControls from "@/components/ViewerControls";
 import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
-import LLMManipulation from "@/components/LLMManipulation";
-import PrintingValidation from "@/components/PrintingValidation";
+import CompactModelManipulation from "@/components/CompactModelManipulation";
+import CompactPrintingValidation from "@/components/CompactPrintingValidation";
 import { ParsedObjData } from "@/components/ObjFileParser";
 import { useToast } from "@/hooks/use-toast";
 
@@ -113,13 +113,29 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
         </div>
         
-        <ViewerControls
-          hasModel={hasModel}
-          uploadedImages={capturedImages}
-          generatedModel={generatedModel}
-          onResetView={resetView}
-          onDownloadOBJ={downloadModel}
-        />
+        <div className="flex items-center space-x-2">
+          <ViewerControls
+            hasModel={hasModel}
+            uploadedImages={capturedImages}
+            generatedModel={generatedModel}
+            onResetView={resetView}
+            onDownloadOBJ={downloadModel}
+          />
+          
+          {/* Compact buttons for manipulation and validation */}
+          {showManipulationTools && (
+            <>
+              <CompactModelManipulation
+                onManipulate={handleLLMManipulation}
+                isLoading={llmLoading}
+              />
+              <CompactPrintingValidation
+                onValidate={handlePrintingValidation}
+                isLoading={llmLoading}
+              />
+            </>
+          )}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -135,20 +151,6 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
 
         <ModelInfo uploadedImages={capturedImages} />
       </div>
-
-      {/* Model Manipulation and Printing Validation - Show for default panda */}
-      {showManipulationTools && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <LLMManipulation
-            onManipulate={handleLLMManipulation}
-            isLoading={llmLoading}
-          />
-          <PrintingValidation
-            onValidate={handlePrintingValidation}
-            isLoading={llmLoading}
-          />
-        </div>
-      )}
 
       {/* Property Editor - Only show when model is generated */}
       {generatedModel && !isLoading && (

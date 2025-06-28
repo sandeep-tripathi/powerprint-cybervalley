@@ -36,6 +36,27 @@ const Index = () => {
         <main className="flex-1 p-6 ml-64 pb-20">
           {activeTab === "generate" && (
             <div className="space-y-8">
+              {/* Workflow Steps Header */}
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-white mb-4">3D Model Generation Workflow</h1>
+                <div className="flex justify-center items-center space-x-8">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                    <span className="text-white font-medium">Upload Image</span>
+                  </div>
+                  <div className="w-8 h-0.5 bg-gray-600"></div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                    <span className="text-white font-medium">Model Manipulation</span>
+                  </div>
+                  <div className="w-8 h-0.5 bg-gray-600"></div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                    <span className="text-white font-medium">3D Printing Validation</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
                   <div className="grid grid-cols-2 gap-3">
