@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export const useApiKey = () => {
-  const [apiKey, setApiKey] = useState(""); // Start empty for PowerPrint
-  const [showApiInput, setShowApiInput] = useState(true); // Show by default since API key is required
+  const [apiKey, setApiKey] = useState("free-algorithm"); // Default to free algorithm
+  const [showApiInput, setShowApiInput] = useState(false); // Hide by default since no API key is needed
   const { toast } = useToast();
 
   const updateApiKey = (newKey: string) => {
@@ -12,19 +12,15 @@ export const useApiKey = () => {
     if (newKey.trim()) {
       setShowApiInput(false);
       toast({
-        title: "API Key Updated",
-        description: "Your PowerPrint API key has been updated successfully!",
+        title: "Configuration Updated",
+        description: "Using free 2D to 3D conversion algorithm!",
       });
     }
   };
 
   const showApiKeyInput = () => {
-    setShowApiInput(true);
-    toast({
-      title: "PowerPrint API Key Required",
-      description: "Please enter your PowerPrint API key to generate 3D models from camera images.",
-      variant: "destructive",
-    });
+    // For free algorithm, we don't need to show API input
+    console.log("Using free algorithm - no API key required");
   };
 
   return {
