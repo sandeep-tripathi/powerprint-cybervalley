@@ -26,6 +26,14 @@ const CompactModelManipulation = ({ onManipulate, isLoading = false }: CompactMo
     }
   };
 
+  const handleQuickSuggestion = async (suggestion: string) => {
+    setInstruction(suggestion);
+    // Immediately apply the suggestion
+    await onManipulate(suggestion, manipulationType);
+    setInstruction("");
+    setShowDialog(false);
+  };
+
   const colorSuggestions = ["Make it red", "Change to blue", "Make it golden", "Turn it green"];
   const sizeSuggestions = ["Make it bigger", "Make it smaller", "Double the size", "Make it 50% smaller"];
 
@@ -89,8 +97,9 @@ const CompactModelManipulation = ({ onManipulate, isLoading = false }: CompactMo
                 {(manipulationType === 'color' ? colorSuggestions : sizeSuggestions).map((suggestion, index) => (
                   <button
                     key={index}
-                    onClick={() => setInstruction(suggestion)}
-                    className="text-sm bg-gray-50 hover:bg-purple-50 hover:text-purple-700 border border-gray-200 hover:border-purple-200 px-3 py-2 rounded-lg transition-colors"
+                    onClick={() => handleQuickSuggestion(suggestion)}
+                    className="text-sm bg-gray-50 hover:bg-purple-50 hover:text-purple-700 border border-gray-200 hover:border-purple-200 px-3 py-2 rounded-lg transition-colors text-black"
+                    disabled={isLoading}
                   >
                     {suggestion}
                   </button>
