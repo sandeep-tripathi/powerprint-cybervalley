@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
@@ -19,9 +18,10 @@ const OrnateRing = ({ animate = true }: OrnateRingProps) => {
     }
     
     // Add subtle gem sparkle
-    if (gemRef.current) {
+    if (gemRef.current && gemRef.current.material) {
       const time = state.clock.elapsedTime;
-      gemRef.current.material.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.2;
+      const material = gemRef.current.material as THREE.MeshStandardMaterial;
+      material.emissiveIntensity = 0.3 + Math.sin(time * 2) * 0.2;
     }
   });
 
