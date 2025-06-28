@@ -110,6 +110,48 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     setLlmLoading(false);
   };
 
+  const handlePropertyChange = async (instruction: string) => {
+    setLlmLoading(true);
+    console.log('Processing property change:', instruction);
+    
+    try {
+      const currentModel = getModelForManipulation();
+      
+      // Simulate property change processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const updatedModel = {
+        ...currentModel,
+        meshData: {
+          ...currentModel.meshData,
+          lastModification: instruction,
+          modificationTimestamp: Date.now(),
+          propertyChanges: [...(currentModel.meshData.propertyChanges || []), instruction]
+        },
+        // Simulate property changes affecting complexity
+        complexity: Math.max(1000, currentModel.complexity + (instruction.includes("detail") ? 500 : 0)),
+        vertices: currentModel.vertices + (instruction.includes("detail") ? 200 : 0),
+        faces: currentModel.faces + (instruction.includes("detail") ? 150 : 0)
+      };
+
+      updateGeneratedModel(updatedModel);
+      
+      toast({
+        title: "Model Properties Updated!",
+        description: `Successfully applied: "${instruction}"`,
+      });
+    } catch (error) {
+      console.error('Property change error:', error);
+      toast({
+        title: "Processing Error",
+        description: "An error occurred while processing your request.",
+        variant: "destructive",
+      });
+    }
+    
+    setLlmLoading(false);
+  };
+
   const handlePrintingValidation = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
@@ -123,8 +165,42 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
       recommendations: [
         "Consider increasing wall thickness for better durability",
         "Optimize orientation for minimal support material"
+      ],
+      optimizations: [
+        "Add support structures for overhangs",
+        "Optimize layer adhesion for better strength"
       ]
     };
+  };
+
+  const handlePrintOptimization = async (instruction: string) => {
+    setLlmLoading(true);
+    console.log('Processing print optimization:', instruction);
+    
+    try {
+      const currentModel = getModelForManipulation();
+      
+      // Simulate optimization processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const updatedModel = {
+        ...currentModel,
+        meshData: {
+          ...currentModel.meshData,
+          printOptimization: {
+            optimizedAt: Date.now(),
+            instruction,
+            improvements: ["Reduced support material needed", "Improved layer adhesion"]
+          }
+        }
+      };
+
+      updateGeneratedModel(updatedModel);
+    } catch (error) {
+      console.error('Print optimization error:', error);
+    }
+    
+    setLlmLoading(false);
   };
 
   const showManipulationTools = capturedImages.length === 0 || generatedModel || hasModel;
@@ -141,6 +217,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
                 </span>
                 <CompactModelManipulation
                   onManipulate={handleLLMManipulation}
+                  onPropertyChange={handlePropertyChange}
                   isLoading={llmLoading}
                 />
               </div>
@@ -151,6 +228,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
                 </span>
                 <CompactPrintingValidation
                   onValidate={handlePrintingValidation}
+                  onOptimize={handlePrintOptimization}
                   isLoading={llmLoading}
                 />
               </div>
@@ -172,13 +250,6 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
 
         <ModelInfo uploadedImages={capturedImages} />
       </div>
-
-      {(generatedModel || hasModel) && !isLoading && (
-        <ModelPropertyEditor
-          generatedModel={generatedModel || getModelForManipulation()}
-          onModelUpdate={updateGeneratedModel}
-        />
-      )}
     </div>
   );
 };

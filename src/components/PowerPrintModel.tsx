@@ -28,7 +28,7 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
   });
 
   // Apply size modifications from LLM manipulation
-  const scaleModifications = useMemo(() => {
+  const scaleModifications = useMemo((): [number, number, number] => {
     const sizeModification = modelData.meshData.sizeModification;
     if (sizeModification) {
       return [sizeModification.scaleX || 1, sizeModification.scaleY || 1, sizeModification.scaleZ || 1];

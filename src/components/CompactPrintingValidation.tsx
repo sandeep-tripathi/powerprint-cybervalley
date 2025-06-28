@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Shield, CheckCircle } from "lucide-react";
+import { Shield, CheckCircle, Settings, Printer } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
@@ -10,16 +10,20 @@ interface ValidationResult {
   warnings: string[];
   errors: string[];
   recommendations: string[];
+  optimizations?: string[];
 }
 
 interface CompactPrintingValidationProps {
   onValidate: () => Promise<ValidationResult>;
+  onOptimize?: (instruction: string) => Promise<void>;
   isLoading?: boolean;
 }
 
-const CompactPrintingValidation = ({ onValidate, isLoading = false }: CompactPrintingValidationProps) => {
+const CompactPrintingValidation = ({ onValidate, onOptimize, isLoading = false }: CompactPrintingValidationProps) => {
   const [validating, setValidating] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showOptimizeDialog, setShowOptimizeDialog] = useState(false);
+  const [optimizeInstruction, setOptimizeInstruction] = useState("");
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const { toast } = useToast();
 
@@ -53,6 +57,25 @@ const CompactPrintingValidation = ({ onValidate, isLoading = false }: CompactPri
     }
   };
 
+  const handleOptimize = async () => {
+    if (optimizeInstruction.trim() && onOptimize) {
+      await onOptimize(optimizeInstruction);
+      setOptimizeInstruction("");
+      setShowOptimizeDialog(false);
+      toast({
+        title: "Model optimized!",
+        description: "Your 3D model has been optimized for printing.",
+      });
+    }
+  };
+
+  const optimizationSuggestions = [
+    "Optimize for minimal support structures",
+    "Increase wall thickness for durability",
+    "Reduce overhangs and bridges",
+    "Optimize orientation for printing"
+  ];
+
   return (
     <>
       <TooltipProvider>
@@ -73,7 +96,7 @@ const CompactPrintingValidation = ({ onValidate, isLoading = false }: CompactPri
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Validate your 3D model for printing compatibility</p>
+            <p>Validate and optimize your 3D model for printing compatibility</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -132,12 +155,79 @@ const CompactPrintingValidation = ({ onValidate, isLoading = false }: CompactPri
               </div>
             )}
 
-            <Button
-              onClick={() => setShowResults(false)}
-              className="w-full"
-            >
-              Close
-            </Button>
+            <div className="flex space-x-2">
+              {onOptimize && (
+                <Button
+                  onClick={() => setShowOptimizeDialog(true)}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
+                  <Settings className="w-4 h-4 mr-1" />
+                  Optimize
+                </Button>
+              )}
+              <Button
+                onClick={() => setShowResults(false)}
+                className="flex-1"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Optimization Dialog */}
+      {showOptimizeDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl max-w-lg w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Optimize for 3D Printing</h3>
+            
+            <div className="mb-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Quick optimizations:</h4>
+              <div className="flex flex-wrap gap-2">
+                {optimizationSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setOptimizeInstruction(suggestion)}
+                    className="text-sm bg-gray-50 hover:bg-green-50 hover:text-green-700 border border-gray-200 hover:border-green-200 px-3 py-2 rounded-lg transition-colors text-black"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Custom optimization:
+              </label>
+              <textarea
+                value={optimizeInstruction}
+                onChange={(e) => setOptimizeInstruction(e.target.value)}
+                placeholder="Describe how you want to optimize the model for 3D printing..."
+                className="w-full h-20 p-3 border border-gray-300 rounded-lg resize-none text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex space-x-3">
+              <Button
+                onClick={handleOptimize}
+                disabled={!optimizeInstruction.trim()}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
+                <Printer className="w-4 h-4 mr-1" />
+                Apply Optimization
+              </Button>
+              <Button
+                onClick={() => setShowOptimizeDialog(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       )}
