@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Menu, X, Settings, User, Bell } from "lucide-react";
+import { Menu, X, Settings, User, Bell, Box } from "lucide-react";
 import UserProfileDropdown from "./UserProfileDropdown";
 import NotificationButton from "./NotificationButton";
 
@@ -14,12 +14,12 @@ const Header = () => {
           {/* Logo and Title */}
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-violet-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">3D</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-gray-500 rounded flex items-center justify-center">
+                <Box className="w-5 h-5 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">3D Converter</h1>
+              <h1 className="text-xl font-bold text-white">PowerPrint</h1>
             </div>
           </div>
 

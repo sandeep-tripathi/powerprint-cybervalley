@@ -38,14 +38,6 @@ const Index = () => {
             <div className="space-y-8">
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
-                  {/* Workflow Step 1 - Upload Image */}
-                  <div className="text-center mb-4">
-                    <div className="flex items-center justify-center space-x-2 mb-3">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">1</div>
-                      <span className="text-white font-medium">Upload Image</span>
-                    </div>
-                  </div>
-                  
                   <div className="grid grid-cols-2 gap-3">
                     <CameraCapture 
                       capturedImages={capturedImages}
