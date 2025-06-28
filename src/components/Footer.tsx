@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <footer className="bg-slate-900 border-t border-slate-700 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex justify-center">
-          {/* Contact */}
+        <div className="flex justify-end">
+          {/* Contact - Moved to right side */}
           <div>
             <h4 className="text-white font-semibold mb-4 text-center">Contact</h4>
             <ul className="space-y-2">

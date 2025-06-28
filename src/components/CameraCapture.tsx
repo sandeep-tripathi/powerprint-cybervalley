@@ -105,7 +105,7 @@ const CameraCapture = ({ capturedImages, setCapturedImages, compact = false }: C
 
   return (
     <div className="space-y-4">
-      {/* Camera Capture Button */}
+      {/* Camera Capture Button - Automatically opens camera */}
       <div className="relative group">
         <button
           onClick={startCamera}

@@ -12,7 +12,7 @@ interface Use3DGenerationProps {
 
 export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onModelGenerated }: Use3DGenerationProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [hasModel, setHasModel] = useState(false);
+  const [hasModel, setHasModel] = useState(true); // Default to true to show panda immediately
   const [generationStatus, setGenerationStatus] = useState("");
   const [processingMethod, setProcessingMethod] = useState<'vision'>('vision');
   const [generatedModel, setGeneratedModel] = useState<{
@@ -153,7 +153,8 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     if (uploadedImages.length > 0) {
       processImagesWithAdvancedPipeline(uploadedImages);
     } else if (uploadedImages.length === 0) {
-      setHasModel(false);
+      // For default case (no images), show panda immediately without running pipeline
+      setHasModel(true);
       setGenerationStatus("");
       if (generatedModel?.textureUrl) {
         URL.revokeObjectURL(generatedModel.textureUrl);
