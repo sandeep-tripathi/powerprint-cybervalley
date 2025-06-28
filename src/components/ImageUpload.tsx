@@ -1,6 +1,6 @@
 
 import { useRef } from "react";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Info } from "lucide-react";
 
 interface ImageUploadProps {
   uploadedImages: File[];
@@ -35,26 +35,30 @@ const ImageUpload = ({ uploadedImages, setUploadedImages }: ImageUploadProps) =>
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-white mb-4">Upload Images</h2>
-      
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-purple-500/50 rounded-xl p-8 text-center cursor-pointer hover:border-purple-500 transition-colors bg-white/5 backdrop-blur-sm"
-      >
-        <Upload className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">
-          Drag & drop images here
-        </h3>
-        <p className="text-gray-400 mb-4">
-          or click to browse files
-        </p>
-        <p className="text-sm text-gray-500">
-          Supports: JPG, PNG, WEBP (Max 10MB each)
-        </p>
+      {/* Upload Button */}
+      <div className="relative group">
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
+        >
+          <Upload className="w-6 h-6" />
+          <span>Upload Images</span>
+          <Info className="w-4 h-4 opacity-70" />
+        </button>
+        
+        {/* Hover Information */}
+        <div className="absolute bottom-full left-0 right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+          <div className="bg-gray-900 text-white text-sm rounded-lg p-3 shadow-lg border border-gray-700">
+            <p className="font-medium mb-1">Image Upload</p>
+            <p className="text-gray-300">
+              Upload existing images from your device for 3D model generation. 
+              Supports JPG, PNG, WEBP formats up to 10MB each. Multiple images supported.
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Hidden File Input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -64,6 +68,19 @@ const ImageUpload = ({ uploadedImages, setUploadedImages }: ImageUploadProps) =>
         className="hidden"
       />
 
+      {/* Drag & Drop Area - Optional secondary upload method */}
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        className="border-2 border-dashed border-purple-500/30 rounded-xl p-6 text-center bg-white/5 backdrop-blur-sm hover:border-purple-500/50 transition-colors"
+      >
+        <Upload className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+        <p className="text-gray-400 text-sm">
+          Or drag & drop images here
+        </p>
+      </div>
+
+      {/* Uploaded Images */}
       {uploadedImages.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-white">Uploaded Images ({uploadedImages.length})</h3>
@@ -72,7 +89,7 @@ const ImageUpload = ({ uploadedImages, setUploadedImages }: ImageUploadProps) =>
               <div key={index} className="relative group">
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                   <div className="flex items-center space-x-3">
-                    <ImageIcon className="w-8 h-8 text-purple-400 flex-shrink-0" />
+                    <ImageIcon className="w-8 h-8 text-green-400 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-medium truncate">
                         {image.name}

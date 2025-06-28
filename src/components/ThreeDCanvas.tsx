@@ -15,6 +15,7 @@ interface ThreeDCanvasProps {
     complexity: number;
     vertices: number;
     faces: number;
+    qualityScore?: number;
   } | null;
   uploadedObj?: {
     data: ParsedObjData;
@@ -33,9 +34,15 @@ const ThreeDCanvas = ({
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white font-medium">Free 2D to 3D Processing...</p>
+          <div className="relative mb-4">
+            <div className="w-16 h-16 border-4 border-purple-500/30 rounded-full"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-white font-medium">Vision AI Processing...</p>
           <p className="text-purple-300 text-sm">{generationStatus}</p>
+          <div className="mt-2 text-xs text-gray-400">
+            Using advanced vision language models
+          </div>
         </div>
       </div>
     );
@@ -48,8 +55,9 @@ const ThreeDCanvas = ({
           <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
             <div className="w-8 h-8 border border-gray-500 rounded"></div>
           </div>
-          <p className="text-white font-medium">Ready for Free 2D to 3D Conversion</p>
-          <p className="text-gray-400 text-sm">Capture or upload images to generate 3D models or upload OBJ files to view</p>
+          <p className="text-white font-medium">Ready for Advanced 3D Generation</p>
+          <p className="text-gray-400 text-sm">Capture or upload images to generate high-quality 3D models</p>
+          <p className="text-gray-500 text-xs mt-1">Powered by vision language models</p>
         </div>
       </div>
     );
@@ -113,10 +121,11 @@ const ThreeDCanvas = ({
         {generatedModel ? (
           <div>
             <p className="text-white font-medium text-sm">
-              Free 2D to 3D Model Generated
+              Vision AI 3D Model Generated
             </p>
             <p className="text-purple-300 text-xs">
               {generatedModel.vertices.toLocaleString()} vertices • {generatedModel.faces.toLocaleString()} faces
+              {generatedModel.qualityScore && ` • Quality: ${(generatedModel.qualityScore * 100).toFixed(1)}%`}
             </p>
             <p className="text-gray-300 text-xs">
               Click and drag to rotate • Scroll to zoom
@@ -136,7 +145,7 @@ const ThreeDCanvas = ({
           </div>
         ) : (
           <p className="text-gray-400 text-sm">
-            Waiting for free 2D to 3D conversion...
+            Waiting for vision AI processing...
           </p>
         )}
       </div>

@@ -1,6 +1,6 @@
 
 import { useRef, useState, useCallback } from "react";
-import { Camera, Square, RotateCcw, X, Download } from "lucide-react";
+import { Camera, Square, RotateCcw, X, Download, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface CameraCaptureProps {
@@ -12,6 +12,7 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
   const { toast } = useToast();
 
@@ -28,6 +29,7 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         setIsStreaming(true);
+        setShowCamera(true);
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
@@ -45,6 +47,7 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
       stream.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
       setIsStreaming(false);
+      setShowCamera(false);
     }
   }, []);
 
@@ -71,10 +74,10 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
         
         toast({
           title: "Photo Captured!",
-          description: "Image captured successfully.",
+          description: "Image captured successfully for 3D generation.",
         });
       }
-    }, 'image/jpeg', 0.8);
+    }, 'image/jpeg', 0.9);
   }, [capturedImages, setCapturedImages, toast]);
 
   const switchCamera = useCallback(() => {
@@ -101,62 +104,73 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-white mb-4">Camera Capture</h2>
-      
-      {/* Camera Interface */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden">
-        <div className="aspect-video bg-black relative">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
-          <canvas ref={canvasRef} className="hidden" />
-          
-          {!isStreaming && (
-            <div className="absolute inset-0 flex items-center justify-center">
+      {/* Camera Capture Button */}
+      <div className="relative group">
+        <button
+          onClick={startCamera}
+          className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
+        >
+          <Camera className="w-6 h-6" />
+          <span>Camera Capture</span>
+          <Info className="w-4 h-4 opacity-70" />
+        </button>
+        
+        {/* Hover Information */}
+        <div className="absolute bottom-full left-0 right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+          <div className="bg-gray-900 text-white text-sm rounded-lg p-3 shadow-lg border border-gray-700">
+            <p className="font-medium mb-1">Camera Capture</p>
+            <p className="text-gray-300">
+              Use your device camera to capture high-quality images for 3D model generation. 
+              Supports front and rear cameras with HD resolution.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Camera Interface - Only show when active */}
+      {showCamera && (
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden">
+          <div className="aspect-video bg-black relative">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+            />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+
+          {/* Camera Controls */}
+          {isStreaming && (
+            <div className="p-4 bg-black/20 flex items-center justify-center space-x-4">
               <button
-                onClick={startCamera}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center space-x-2"
+                onClick={switchCamera}
+                className="p-3 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                title="Switch Camera"
               >
-                <Camera className="w-5 h-5" />
-                <span>Start Camera</span>
+                <RotateCcw className="w-6 h-6 text-white" />
+              </button>
+              
+              <button
+                onClick={capturePhoto}
+                className="p-4 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+                title="Capture Photo"
+              >
+                <Square className="w-8 h-8 text-white" />
+              </button>
+              
+              <button
+                onClick={stopCamera}
+                className="p-3 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                title="Stop Camera"
+              >
+                <X className="w-6 h-6 text-white" />
               </button>
             </div>
           )}
         </div>
-
-        {/* Camera Controls */}
-        {isStreaming && (
-          <div className="p-4 bg-black/20 flex items-center justify-center space-x-4">
-            <button
-              onClick={switchCamera}
-              className="p-3 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
-              title="Switch Camera"
-            >
-              <RotateCcw className="w-6 h-6 text-white" />
-            </button>
-            
-            <button
-              onClick={capturePhoto}
-              className="p-4 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors"
-              title="Capture Photo"
-            >
-              <Square className="w-8 h-8 text-white" />
-            </button>
-            
-            <button
-              onClick={stopCamera}
-              className="p-3 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
-              title="Stop Camera"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Captured Images */}
       {capturedImages.length > 0 && (
@@ -167,7 +181,7 @@ const CameraCapture = ({ capturedImages, setCapturedImages }: CameraCaptureProps
               <div key={index} className="relative group">
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                   <div className="flex items-center space-x-3">
-                    <Camera className="w-8 h-8 text-purple-400 flex-shrink-0" />
+                    <Camera className="w-8 h-8 text-blue-400 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-medium truncate">
                         {image.name}

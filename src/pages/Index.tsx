@@ -32,11 +32,11 @@ const Index = () => {
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
       <div className="flex items-center space-x-3 mb-2">
         <Euro className="w-5 h-5 text-purple-400" />
-        <span className="text-purple-300 font-medium">Free 2D to 3D Conversion</span>
+        <span className="text-purple-300 font-medium">Advanced 3D Generation</span>
       </div>
       <p className="text-slate-300 text-sm">
-        Use our free algorithm to convert 2D images to 3D models. 
-        Capture images with your camera or upload existing images to generate 3D models.
+        Powered by advanced vision language models for superior image-to-3D conversion. 
+        Capture images with your camera or upload existing images to generate high-quality 3D models.
       </p>
     </div>
   );
@@ -53,10 +53,10 @@ const Index = () => {
             <div className="space-y-8">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-white mb-4">
-                  Free 2D to 3D Image Conversion
+                  3D Model Generation
                 </h1>
                 <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                  Transform your 2D images into 3D models using our free conversion algorithm
+                  Transform your 2D images into detailed 3D models using advanced AI vision
                 </p>
               </div>
 
@@ -82,7 +82,7 @@ const Index = () => {
                       console.log("Generate button clicked - processing will start automatically");
                     }}
                   >
-                    {allImages.length > 0 ? "Processing with Free Algorithm..." : "Add Images to Generate"}
+                    {allImages.length > 0 ? "Processing with Advanced AI..." : "Add Images to Generate"}
                   </button>
                 </div>
 
