@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { VisionLanguageModelConverter, VisionModelOptions, Enhanced3DMesh } from "@/services/visionLanguageModel";
@@ -25,6 +26,24 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
   } | null>(null);
   const { toast } = useToast();
   const [converter] = useState(() => new VisionLanguageModelConverter());
+
+  // Create default panda model structure
+  const createDefaultPandaModel = () => {
+    return {
+      meshData: {
+        type: "default_panda",
+        algorithm: "procedural_geometry",
+        inputImages: 0,
+        processingTime: 0,
+        propertyChanges: [],
+      },
+      textureUrl: "",
+      complexity: 2000,
+      vertices: 1000,
+      faces: 800,
+      qualityScore: 0.85
+    };
+  };
 
   // Function to update the generated model
   const updateGeneratedModel = (updatedModel: any) => {
@@ -152,11 +171,11 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
     if (uploadedImages.length > 0) {
       processImagesWithAdvancedPipeline(uploadedImages);
     } else if (uploadedImages.length === 0) {
-      // For default case (no images), show panda immediately with a quick transition
+      // For default case (no images), show panda immediately
       setIsLoading(true);
       setGenerationStatus("Loading 3D Panda Model...");
       
-      // Show the panda within 3 seconds
+      // Show the panda within 2 seconds
       setTimeout(() => {
         setHasModel(true);
         setIsLoading(false);
@@ -166,13 +185,15 @@ export const use3DGeneration = ({ apiKey, showApiKeyInput, uploadedImages, onMod
         if (generatedModel?.textureUrl) {
           URL.revokeObjectURL(generatedModel.textureUrl);
         }
-        setGeneratedModel(null);
+        
+        // Set the default panda model
+        setGeneratedModel(createDefaultPandaModel());
         
         toast({
           title: "3D Panda Ready!",
           description: "Sample 3D model loaded successfully. Try the AI manipulation tools!",
         });
-      }, 2000); // Show within 2 seconds for better UX
+      }, 2000);
     }
   }, [uploadedImages]);
 

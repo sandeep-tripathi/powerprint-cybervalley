@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import GeneratedMesh3D from "./GeneratedMesh3D";
+import Panda3D from "./Panda3D";
 
 interface PowerPrintModelProps {
   modelData: {
@@ -35,6 +36,48 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
     }
     return [1, 1, 1];
   }, [modelData.meshData.sizeModification]);
+
+  // Check if this is a default panda model
+  const isDefaultPanda = modelData.meshData.type === "default_panda";
+
+  // If this is a default panda, render the Panda3D component with modifications
+  if (isDefaultPanda) {
+    console.log("Rendering default panda model");
+    
+    return (
+      <group ref={groupRef} position={[0, 0, 0]} scale={scaleModifications}>
+        <Panda3D animate={false} />
+        
+        {/* Apply color modifications as overlay if they exist */}
+        {modelData.meshData.colorModification && (
+          <mesh position={[0, 0, 0]} scale={[3, 3, 3]}>
+            <sphereGeometry args={[1, 32, 32]} />
+            <meshStandardMaterial 
+              color={modelData.meshData.colorModification.primaryColor}
+              transparent
+              opacity={0.3}
+              roughness={modelData.meshData.colorModification.finish === 'metallic' ? 0.1 : 0.7}
+              metalness={modelData.meshData.colorModification.finish === 'metallic' ? 0.9 : 0.1}
+            />
+          </mesh>
+        )}
+        
+        {/* Visual indicator for recent changes */}
+        {(modelData.meshData.colorModification || modelData.meshData.sizeModification) && (
+          <mesh position={[0, 3, 0]} scale={[0.2, 0.2, 0.2]}>
+            <sphereGeometry args={[1, 8, 8]} />
+            <meshStandardMaterial 
+              color="#10B981" 
+              emissive="#10B981"
+              emissiveIntensity={0.5}
+              transparent
+              opacity={0.7}
+            />
+          </mesh>
+        )}
+      </group>
+    );
+  }
 
   // If we have real mesh data, use it; otherwise fall back to procedural geometry
   if (modelData.realMesh) {
