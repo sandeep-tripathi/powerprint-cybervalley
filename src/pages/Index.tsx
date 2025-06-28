@@ -12,7 +12,6 @@ import Footer from "@/components/Footer";
 import LinuxTerminal from "@/components/LinuxTerminal";
 import { useGenerationHistory } from "@/hooks/useGenerationHistory";
 import RestApiDemo from "@/components/RestApiDemo";
-import { Euro } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("generate");
@@ -27,20 +26,6 @@ const Index = () => {
   // Combine captured and uploaded images
   const allImages = [...capturedImages, ...uploadedImages];
 
-  // Platform pricing info component
-  const PlatformPricing = () => (
-    <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
-      <div className="flex items-center space-x-3 mb-2">
-        <Euro className="w-5 h-5 text-purple-400" />
-        <span className="text-purple-300 font-medium">Advanced 3D Generation</span>
-      </div>
-      <p className="text-slate-300 text-sm">
-        Powered by advanced vision language models for superior image-to-3D conversion. 
-        Capture images with your camera or upload existing images to generate high-quality 3D models.
-      </p>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       <Header />
@@ -51,17 +36,6 @@ const Index = () => {
         <main className="flex-1 p-6 ml-64 pb-20">
           {activeTab === "generate" && (
             <div className="space-y-8">
-              <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-white mb-4">
-                  3D Model Generation
-                </h1>
-                <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                  Transform your 2D images into detailed 3D models using advanced AI vision
-                </p>
-              </div>
-
-              <PlatformPricing />
-
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
                   <CameraCapture 
@@ -97,24 +71,15 @@ const Index = () => {
           )}
 
           {activeTab === "marketplace" && (
-            <div className="space-y-6">
-              <PlatformPricing />
-              <Marketplace />
-            </div>
+            <Marketplace />
           )}
 
           {activeTab === "pricing" && (
-            <div className="space-y-6">
-              <PlatformPricing />
-              <PricingPage />
-            </div>
+            <PricingPage />
           )}
 
           {activeTab === "history" && (
-            <div className="space-y-6">
-              <PlatformPricing />
-              <GenerationHistory />
-            </div>
+            <GenerationHistory />
           )}
 
           {activeTab === "api" && (

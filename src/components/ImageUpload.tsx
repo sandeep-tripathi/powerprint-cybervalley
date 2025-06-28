@@ -68,18 +68,6 @@ const ImageUpload = ({ uploadedImages, setUploadedImages }: ImageUploadProps) =>
         className="hidden"
       />
 
-      {/* Drag & Drop Area - Optional secondary upload method */}
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        className="border-2 border-dashed border-purple-500/30 rounded-xl p-6 text-center bg-white/5 backdrop-blur-sm hover:border-purple-500/50 transition-colors"
-      >
-        <Upload className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-        <p className="text-gray-400 text-sm">
-          Or drag & drop images here
-        </p>
-      </div>
-
       {/* Uploaded Images */}
       {uploadedImages.length > 0 && (
         <div className="space-y-3">

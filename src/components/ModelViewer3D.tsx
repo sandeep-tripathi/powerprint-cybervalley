@@ -7,7 +7,10 @@ import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
 import ObjFileUpload from "@/components/ObjFileUpload";
+import LLMManipulation from "@/components/LLMManipulation";
+import PrintingValidation from "@/components/PrintingValidation";
 import { ParsedObjData } from "@/components/ObjFileParser";
+import { useToast } from "@/hooks/use-toast";
 
 interface ModelViewer3DProps {
   capturedImages?: File[];
@@ -16,6 +19,8 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
+  const [llmLoading, setLlmLoading] = useState(false);
+  const { toast } = useToast();
 
   const {
     apiKey,
@@ -83,6 +88,34 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     console.log("Vision AI 3D model downloaded");
   };
 
+  const handleLLMManipulation = async (instruction: string) => {
+    setLlmLoading(true);
+    // Simulate LLM processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    console.log("LLM manipulation instruction:", instruction);
+    setLlmLoading(false);
+  };
+
+  const handlePrintingValidation = async () => {
+    // Simulate validation logic
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    return {
+      isValid: Math.random() > 0.3, // 70% chance of being valid
+      warnings: [
+        "Wall thickness is below recommended 0.8mm in some areas",
+        "Some overhangs may require support structures"
+      ],
+      errors: Math.random() > 0.7 ? ["Model contains non-manifold edges"] : [],
+      recommendations: [
+        "Consider increasing wall thickness for better durability",
+        "Optimize orientation for minimal support material"
+      ]
+    };
+  };
+
+  const showManipulationTools = uploadedObj || (capturedImages.length === 0 && !generatedModel);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -122,6 +155,20 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
 
         <ModelInfo uploadedImages={capturedImages} />
       </div>
+
+      {/* LLM Manipulation and Printing Validation - Show for OBJ files or default ring */}
+      {showManipulationTools && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <LLMManipulation
+            onManipulate={handleLLMManipulation}
+            isLoading={llmLoading}
+          />
+          <PrintingValidation
+            onValidate={handlePrintingValidation}
+            isLoading={llmLoading}
+          />
+        </div>
+      )}
 
       {/* Property Editor - Only show when model is generated */}
       {generatedModel && !isLoading && (

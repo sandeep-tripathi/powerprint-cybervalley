@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, Environment } from "@react-three/drei";
 import PowerPrintModel from "./PowerPrintModel";
 import ObjViewer from "./ObjViewer";
+import DefaultRing from "./DefaultRing";
 import { ParsedObjData } from "./ObjFileParser";
 
 interface ThreeDCanvasProps {
@@ -48,20 +49,7 @@ const ThreeDCanvas = ({
     );
   }
 
-  if (uploadedImages.length === 0 && !uploadedObj) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 border-2 border-dashed border-gray-500 rounded-lg mx-auto mb-4 flex items-center justify-center">
-            <div className="w-8 h-8 border border-gray-500 rounded"></div>
-          </div>
-          <p className="text-white font-medium">Ready for Advanced 3D Generation</p>
-          <p className="text-gray-400 text-sm">Capture or upload images to generate high-quality 3D models</p>
-          <p className="text-gray-500 text-xs mt-1">Powered by vision language models</p>
-        </div>
-      </div>
-    );
-  }
+  const showDefaultRing = uploadedImages.length === 0 && !uploadedObj && !generatedModel;
 
   return (
     <div className="w-full h-full bg-gray-900 rounded-lg">
@@ -88,6 +76,9 @@ const ThreeDCanvas = ({
           fadeStrength={1}
           infiniteGrid
         />
+
+        {/* Show default ring when no content */}
+        {showDefaultRing && <DefaultRing animate={true} />}
 
         {/* Render the generated model */}
         {generatedModel && (
@@ -118,7 +109,19 @@ const ThreeDCanvas = ({
 
       {/* Overlay text with algorithm info */}
       <div className="absolute bottom-4 left-4">
-        {generatedModel ? (
+        {showDefaultRing ? (
+          <div>
+            <p className="text-white font-medium text-sm">
+              Default 3D Ring Model
+            </p>
+            <p className="text-purple-300 text-xs">
+              Ready for manipulation and printing validation
+            </p>
+            <p className="text-gray-300 text-xs">
+              Click and drag to rotate • Scroll to zoom
+            </p>
+          </div>
+        ) : generatedModel ? (
           <div>
             <p className="text-white font-medium text-sm">
               Vision AI 3D Model Generated
