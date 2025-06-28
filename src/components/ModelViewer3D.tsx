@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useApiKey } from "@/hooks/useApiKey";
-import { useMeshy3DGeneration } from "@/hooks/useMeshy3DGeneration";
+import { usePowerPrint3DGeneration } from "@/hooks/useMeshy3DGeneration";
 import ApiStatus from "@/components/ApiStatus";
 import ViewerControls from "@/components/ViewerControls";
 import ThreeDCanvas from "@/components/ThreeDCanvas";
@@ -34,7 +34,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     generationProgress,
     generatedModel,
     updateGeneratedModel,
-  } = useMeshy3DGeneration({
+  } = usePowerPrint3DGeneration({
     apiKey,
     showApiKeyInput,
     capturedImages,
@@ -59,12 +59,12 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     // Download OBJ file
     const link = document.createElement('a');
     link.href = generatedModel.modelUrls.obj;
-    link.download = `meshy-model-${Date.now()}.obj`;
+    link.download = `powerprint-model-${Date.now()}.obj`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    console.log("Meshy AI 3D model downloaded");
+    console.log("PowerPrint 3D model downloaded");
   };
 
   return (
@@ -73,7 +73,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
           <p className="text-sm text-purple-300">
-            Meshy AI Camera-to-3D Generation • Real-time Image Capture • Professional 3D Models • Multiple Export Formats
+            PowerPrint Camera-to-3D Generation • Real-time Image Capture • Professional 3D Models • Multiple Export Formats
           </p>
         </div>
         
@@ -111,7 +111,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
             uploadedObj={uploadedObj}
           />
           
-          {/* Progress indicator for Meshy AI */}
+          {/* Progress indicator for PowerPrint */}
           {isLoading && generationProgress > 0 && (
             <div className="absolute bottom-4 right-4 bg-black/70 rounded-lg p-3 text-white">
               <div className="flex items-center space-x-2">
@@ -140,7 +140,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
       )}
 
       <div className="text-xs text-purple-200 space-y-1">
-        <p>• Powered by Meshy AI • Camera-based Image Capture • Professional 3D Mesh Generation • Multiple Export Formats</p>
+        <p>• Powered by PowerPrint • Camera-based Image Capture • Professional 3D Mesh Generation • Multiple Export Formats</p>
         <p>• Real-time generation progress • High-quality texture synthesis • Export: GLB, FBX, USDZ, OBJ, MTL • Ready for 3D printing</p>
         {generatedModel && (
           <>

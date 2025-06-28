@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export const useApiKey = () => {
-  const [apiKey, setApiKey] = useState(""); // Start empty for Meshy AI
+  const [apiKey, setApiKey] = useState(""); // Start empty for PowerPrint
   const [showApiInput, setShowApiInput] = useState(true); // Show by default since API key is required
   const { toast } = useToast();
 
@@ -13,7 +13,7 @@ export const useApiKey = () => {
       setShowApiInput(false);
       toast({
         title: "API Key Updated",
-        description: "Your Meshy AI API key has been updated successfully!",
+        description: "Your PowerPrint API key has been updated successfully!",
       });
     }
   };
@@ -21,8 +21,8 @@ export const useApiKey = () => {
   const showApiKeyInput = () => {
     setShowApiInput(true);
     toast({
-      title: "Meshy AI API Key Required",
-      description: "Please enter your Meshy AI API key to generate 3D models from camera images.",
+      title: "PowerPrint API Key Required",
+      description: "Please enter your PowerPrint API key to generate 3D models from camera images.",
       variant: "destructive",
     });
   };

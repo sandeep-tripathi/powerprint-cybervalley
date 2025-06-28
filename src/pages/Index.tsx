@@ -37,10 +37,10 @@ const Index = () => {
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
       <div className="flex items-center space-x-3 mb-2">
         <Euro className="w-5 h-5 text-purple-400" />
-        <span className="text-purple-300 font-medium">Meshy AI Integration</span>
+        <span className="text-purple-300 font-medium">PowerPrint Integration</span>
       </div>
       <p className="text-slate-300 text-sm">
-        PowerPrint Platform with Meshy AI: Professional camera-to-3D conversion using advanced AI technology. 
+        PowerPrint Platform: Professional camera-to-3D conversion using advanced AI technology. 
         Generate high-quality 3D models directly from camera captures with multiple export formats.
       </p>
     </div>
@@ -61,30 +61,30 @@ const Index = () => {
                   AI-Powered Camera to 3D Model Conversion
                 </h1>
                 <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                  Capture images with your camera and transform them into professional 3D models using Meshy AI technology
+                  Capture images with your camera and transform them into professional 3D models using PowerPrint technology
                 </p>
               </div>
 
               <PlatformPricing />
 
-              {/* Meshy AI Info Banner */}
+              {/* PowerPrint Info Banner */}
               <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
                 <div className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-white text-xs font-bold">M</span>
+                    <span className="text-white text-xs font-bold">P</span>
                   </div>
                   <div>
-                    <h3 className="text-purple-300 font-medium mb-1">Meshy AI Integration</h3>
+                    <h3 className="text-purple-300 font-medium mb-1">PowerPrint Integration</h3>
                     <p className="text-slate-300 text-sm">
-                      This app uses Meshy AI's professional image-to-3D conversion service. 
+                      This app uses PowerPrint's professional image-to-3D conversion service. 
                       Get your API key from{" "}
                       <a 
-                        href="https://www.meshy.ai/" 
+                        href="https://powerprint.ai/" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-purple-400 hover:text-purple-300 underline"
                       >
-                        meshy.ai
+                        powerprint.ai
                       </a>
                       {" "}to start generating high-quality 3D models from camera captures!
                     </p>
@@ -120,10 +120,10 @@ const Index = () => {
                     disabled={!capturedImages.length}
                     onClick={() => {
                       // The 3D generation will be triggered automatically when images are captured
-                      console.log("Generate button clicked - processing will start automatically with Meshy AI");
+                      console.log("Generate button clicked - processing will start automatically with PowerPrint");
                     }}
                   >
-                    {capturedImages.length > 0 ? "Processing with Meshy AI..." : "Capture Image to Generate"}
+                    {capturedImages.length > 0 ? "Processing with PowerPrint..." : "Capture Image to Generate"}
                   </button>
                 </div>
 

@@ -31,7 +31,7 @@ const ApiStatus = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-green-300 font-medium">Meshy AI Connected</span>
+            <span className="text-green-300 font-medium">PowerPrint Connected</span>
           </div>
           <div className="flex items-center space-x-2">
             <button
@@ -64,13 +64,13 @@ const ApiStatus = ({
     <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
       <div className="flex items-center space-x-2 mb-3">
         <Key className="w-5 h-5 text-purple-400" />
-        <span className="text-purple-300 font-medium">Meshy AI API Key Required</span>
+        <span className="text-purple-300 font-medium">PowerPrint API Key Required</span>
         <a
-          href="https://www.meshy.ai/"
+          href="https://powerprint.ai/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-purple-400 hover:text-purple-300"
-          title="Get Meshy AI API Key"
+          title="Get PowerPrint API Key"
         >
           <ExternalLink className="w-4 h-4" />
         </a>
@@ -82,7 +82,7 @@ const ApiStatus = ({
             type={showKey ? "text" : "password"}
             value={tempKey}
             onChange={(e) => setTempKey(e.target.value)}
-            placeholder="Enter your Meshy AI API key..."
+            placeholder="Enter your PowerPrint API key..."
             className="w-full bg-black/30 border border-purple-500/30 rounded-lg px-3 py-2 text-white placeholder-gray-400 pr-10"
           />
           <button
@@ -99,7 +99,7 @@ const ApiStatus = ({
             type="submit"
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
-            Connect Meshy AI
+            Connect PowerPrint
           </button>
           {apiKey && (
             <button
@@ -116,12 +116,12 @@ const ApiStatus = ({
       <p className="text-xs text-gray-400 mt-2">
         Get your API key from{" "}
         <a 
-          href="https://www.meshy.ai/" 
+          href="https://powerprint.ai/" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-purple-400 hover:text-purple-300 underline"
         >
-          meshy.ai
+          powerprint.ai
         </a>
         {" "}dashboard
       </p>

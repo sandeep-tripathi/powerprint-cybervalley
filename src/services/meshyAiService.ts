@@ -1,5 +1,5 @@
 
-export interface MeshyTask {
+export interface PowerPrintTask {
   id: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'SUCCEEDED' | 'FAILED';
   progress: number;
@@ -19,14 +19,14 @@ export interface MeshyTask {
   };
 }
 
-export interface MeshyGenerationRequest {
+export interface PowerPrintGenerationRequest {
   image_url: string;
   enable_pbr: boolean;
   surface_mode: 'hard' | 'organic';
   target_polycount: number;
 }
 
-export class MeshyAiService {
+export class PowerPrintService {
   private apiKey: string;
   private baseUrl = 'https://api.meshy.ai';
 
@@ -58,14 +58,14 @@ export class MeshyAiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(`Meshy API error: ${error.message || response.statusText}`);
+      throw new Error(`PowerPrint API error: ${error.message || response.statusText}`);
     }
 
     const result = await response.json();
     return result.id;
   }
 
-  async getTaskStatus(taskId: string): Promise<MeshyTask> {
+  async getTaskStatus(taskId: string): Promise<PowerPrintTask> {
     const response = await fetch(`${this.baseUrl}/v2/image-to-3d/${taskId}`, {
       method: 'GET',
       headers: {
@@ -75,13 +75,13 @@ export class MeshyAiService {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(`Meshy API error: ${error.message || response.statusText}`);
+      throw new Error(`PowerPrint API error: ${error.message || response.statusText}`);
     }
 
     return response.json();
   }
 
-  async waitForCompletion(taskId: string, onProgress?: (progress: number) => void): Promise<MeshyTask> {
+  async waitForCompletion(taskId: string, onProgress?: (progress: number) => void): Promise<PowerPrintTask> {
     const maxAttempts = 120; // 10 minutes maximum
     let attempts = 0;
 

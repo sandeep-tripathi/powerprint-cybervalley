@@ -1,21 +1,21 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { MeshyAiService, MeshyTask } from "@/services/meshyAiService";
+import { PowerPrintService, PowerPrintTask } from "@/services/meshyAiService";
 
-interface UseMeshy3DGenerationProps {
+interface UsePowerPrint3DGenerationProps {
   apiKey: string;
   showApiKeyInput: () => void;
   capturedImages: File[];
   onModelGenerated?: (modelName: string, imageNames: string[], modelData: any, processingTime: number) => void;
 }
 
-export const useMeshy3DGeneration = ({ 
+export const usePowerPrint3DGeneration = ({ 
   apiKey, 
   showApiKeyInput, 
   capturedImages, 
   onModelGenerated 
-}: UseMeshy3DGenerationProps) => {
+}: UsePowerPrint3DGenerationProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasModel, setHasModel] = useState(false);
   const [generationStatus, setGenerationStatus] = useState("");
@@ -43,7 +43,7 @@ export const useMeshy3DGeneration = ({
     console.log("Model updated with new properties:", updatedModel);
   };
 
-  const processImagesWithMeshyAI = async (images: File[]) => {
+  const processImagesWithPowerPrint = async (images: File[]) => {
     if (!apiKey.trim()) {
       showApiKeyInput();
       return;
@@ -58,27 +58,27 @@ export const useMeshy3DGeneration = ({
       return;
     }
 
-    console.log("Starting Meshy AI 3D generation for", images.length, "images");
+    console.log("Starting PowerPrint 3D generation for", images.length, "images");
     setIsLoading(true);
     setHasModel(false);
-    setGenerationStatus("Initializing Meshy AI conversion...");
+    setGenerationStatus("Initializing PowerPrint conversion...");
     setGenerationProgress(0);
 
     const startTime = Date.now();
 
     try {
-      const meshyService = new MeshyAiService(apiKey);
+      const powerPrintService = new PowerPrintService(apiKey);
       
       // Use the first captured image for 3D generation
       const imageFile = images[0];
-      setGenerationStatus("Uploading image to Meshy AI...");
+      setGenerationStatus("Uploading image to PowerPrint...");
       
-      const taskId = await meshyService.createImageTo3DTask(imageFile);
-      console.log("Meshy AI task created:", taskId);
+      const taskId = await powerPrintService.createImageTo3DTask(imageFile);
+      console.log("PowerPrint task created:", taskId);
       
       setGenerationStatus("Generating 3D mesh...");
       
-      const completedTask = await meshyService.waitForCompletion(
+      const completedTask = await powerPrintService.waitForCompletion(
         taskId,
         (progress) => {
           setGenerationProgress(progress);
@@ -86,17 +86,17 @@ export const useMeshy3DGeneration = ({
         }
       );
 
-      console.log("Meshy AI generation completed:", completedTask);
+      console.log("PowerPrint generation completed:", completedTask);
 
       if (!completedTask.result) {
-        throw new Error("No result from Meshy AI");
+        throw new Error("No result from PowerPrint");
       }
 
       // Create model data structure
       const modelData = {
         meshData: {
-          type: "meshy_ai_generated",
-          algorithm: "meshy_ai_image_to_3d",
+          type: "powerprint_generated",
+          algorithm: "powerprint_image_to_3d",
           inputImages: images.length,
           processingTime: Date.now() - startTime,
           taskId: completedTask.id,
@@ -115,29 +115,29 @@ export const useMeshy3DGeneration = ({
       setHasModel(true);
       
       const finalProcessingTime = Date.now() - startTime;
-      setGenerationStatus(`3D mesh generated successfully with Meshy AI!`);
+      setGenerationStatus(`3D mesh generated successfully with PowerPrint!`);
       setGenerationProgress(100);
       
       // Add to history
       if (onModelGenerated) {
-        const modelName = `Meshy AI Model ${new Date().toLocaleDateString()}`;
+        const modelName = `PowerPrint Model ${new Date().toLocaleDateString()}`;
         const imageNames = images.map(img => img.name);
         onModelGenerated(modelName, imageNames, modelData, finalProcessingTime);
       }
       
       toast({
         title: "3D Mesh Generated!",
-        description: `Successfully generated 3D model using Meshy AI in ${(finalProcessingTime / 1000).toFixed(1)} seconds.`,
+        description: `Successfully generated 3D model using PowerPrint in ${(finalProcessingTime / 1000).toFixed(1)} seconds.`,
       });
 
     } catch (error) {
-      console.error("Error in Meshy AI 3D generation:", error);
+      console.error("Error in PowerPrint 3D generation:", error);
       setHasModel(false);
       setGeneratedModel(null);
       setGenerationProgress(0);
       toast({
         title: "Generation Failed",
-        description: error instanceof Error ? error.message : "Failed to generate 3D mesh with Meshy AI.",
+        description: error instanceof Error ? error.message : "Failed to generate 3D mesh with PowerPrint.",
         variant: "destructive",
       });
     } finally {
@@ -157,7 +157,7 @@ export const useMeshy3DGeneration = ({
   // Trigger generation when images are captured
   useEffect(() => {
     if (capturedImages.length > 0 && apiKey.trim()) {
-      processImagesWithMeshyAI(capturedImages);
+      processImagesWithPowerPrint(capturedImages);
     } else if (capturedImages.length === 0) {
       setHasModel(false);
       setGenerationStatus("");
@@ -176,6 +176,6 @@ export const useMeshy3DGeneration = ({
     generationProgress,
     generatedModel,
     updateGeneratedModel,
-    processImagesWithMeshyAI,
+    processImagesWithPowerPrint,
   };
 };
