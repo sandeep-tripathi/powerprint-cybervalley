@@ -70,20 +70,6 @@ const WorkflowSidebar = ({ activeTab, setActiveTab }: WorkflowSidebarProps) => {
           );
         })}
       </div>
-
-      {!isCollapsed && (
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-slate-700 rounded-lg p-3">
-            <div className="flex items-center space-x-2 mb-2">
-              <Cloud className="w-4 h-4 text-purple-400" />
-              <span className="text-purple-300 font-medium text-sm">PowerPrint Pipeline</span>
-            </div>
-            <p className="text-slate-300 text-xs">
-              Advanced AI-powered image to 3D model conversion with REST API access
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

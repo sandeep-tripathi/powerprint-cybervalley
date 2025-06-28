@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Download, Eye, Share2, Heart, ShoppingCart, Star, Search } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import SlicedCube from "./SlicedCube";
+import Panda3D from "./Panda3D";
 
 const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -237,7 +237,7 @@ const Marketplace = () => {
     ));
   };
 
-  // 3D Model Preview Component
+  // 3D Model Preview Component - Now using Panda3D for all models
   const ModelPreview3D = ({ modelType, modelId }: { modelType: string; modelId: number }) => (
     <div className="w-full h-full">
       <Canvas camera={{ position: [3, 3, 3], fov: 50 }}>
@@ -245,12 +245,7 @@ const Marketplace = () => {
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
         <pointLight position={[-5, -5, -5]} intensity={0.4} />
         
-        <SlicedCube
-          position={[0, 0, 0]}
-          scale={[0.8, 0.8, 0.8]}
-          rotation={[0, modelId * 0.3, 0]}
-          animate={true}
-        />
+        <Panda3D animate={true} />
         
         <OrbitControls
           enablePan={false}

@@ -38,15 +38,19 @@ const Index = () => {
             <div className="space-y-8">
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
-                  <CameraCapture 
-                    capturedImages={capturedImages}
-                    setCapturedImages={setCapturedImages}
-                  />
-                  
-                  <ImageUpload 
-                    uploadedImages={uploadedImages}
-                    setUploadedImages={setUploadedImages}
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <CameraCapture 
+                      capturedImages={capturedImages}
+                      setCapturedImages={setCapturedImages}
+                      compact={true}
+                    />
+                    
+                    <ImageUpload 
+                      uploadedImages={uploadedImages}
+                      setUploadedImages={setUploadedImages}
+                      compact={true}
+                    />
+                  </div>
                   
                   <button 
                     className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
