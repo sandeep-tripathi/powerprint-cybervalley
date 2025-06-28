@@ -1,4 +1,3 @@
-
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, Environment } from "@react-three/drei";
 import { Download, Share2, ZoomIn, ZoomOut, RotateCcw, Maximize2 } from "lucide-react";
@@ -17,6 +16,7 @@ interface ThreeDCanvasProps {
     complexity: number;
     vertices: number;
     faces: number;
+    realMesh?: any;
     qualityScore?: number;
   } | null;
   uploadedObj?: {
