@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import { Upload, X, Image as ImageIcon, Info } from "lucide-react";
 import { Button } from "./ui/button";
@@ -157,14 +156,7 @@ const ImageUpload = ({ uploadedImages, setUploadedImages, compact = false }: Ima
                 Upload from Device
               </Button>
               <div className="text-center text-gray-400 text-sm">or choose a sample</div>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  onClick={() => selectPandaImage("sitting")}
-                  variant="outline"
-                  className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
-                >
-                  Sitting Panda
-                </Button>
+              <div className="grid grid-cols-1 gap-2">
                 <Button
                   onClick={() => selectPandaImage("standing")}
                   variant="outline"

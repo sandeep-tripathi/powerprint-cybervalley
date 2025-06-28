@@ -53,44 +53,44 @@ const CompactModelManipulation = ({ onManipulate, isLoading = false }: CompactMo
       {/* Dialog Modal */}
       {showDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">AI Model Manipulation</h3>
+          <div className="bg-white p-8 rounded-xl max-w-lg w-full mx-4 shadow-xl">
+            <h3 className="text-xl font-bold mb-6 text-gray-900">AI Model Manipulation</h3>
             
             {/* Type Selection */}
-            <div className="flex space-x-2 mb-4">
+            <div className="flex space-x-3 mb-6">
               <button
                 onClick={() => setManipulationType('color')}
-                className={`flex items-center px-3 py-2 rounded-lg ${
+                className={`flex items-center px-4 py-3 rounded-lg font-medium transition-all ${
                   manipulationType === 'color' 
-                    ? 'bg-purple-100 text-purple-700 border-2 border-purple-300' 
-                    : 'bg-gray-100 text-gray-600'
+                    ? 'bg-purple-600 text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <Palette className="w-4 h-4 mr-1" />
-                Color
+                <Palette className="w-5 h-5 mr-2" />
+                Color Changes
               </button>
               <button
                 onClick={() => setManipulationType('size')}
-                className={`flex items-center px-3 py-2 rounded-lg ${
+                className={`flex items-center px-4 py-3 rounded-lg font-medium transition-all ${
                   manipulationType === 'size' 
-                    ? 'bg-purple-100 text-purple-700 border-2 border-purple-300' 
-                    : 'bg-gray-100 text-gray-600'
+                    ? 'bg-purple-600 text-white shadow-md' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <Ruler className="w-4 h-4 mr-1" />
-                Size
+                <Ruler className="w-5 h-5 mr-2" />
+                Size Changes
               </button>
             </div>
 
             {/* Quick Suggestions */}
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">Quick suggestions:</p>
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Quick suggestions:</h4>
               <div className="flex flex-wrap gap-2">
                 {(manipulationType === 'color' ? colorSuggestions : sizeSuggestions).map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => setInstruction(suggestion)}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded"
+                    className="text-sm bg-gray-50 hover:bg-purple-50 hover:text-purple-700 border border-gray-200 hover:border-purple-200 px-3 py-2 rounded-lg transition-colors"
                   >
                     {suggestion}
                   </button>
@@ -98,25 +98,31 @@ const CompactModelManipulation = ({ onManipulate, isLoading = false }: CompactMo
               </div>
             </div>
 
-            <textarea
-              value={instruction}
-              onChange={(e) => setInstruction(e.target.value)}
-              placeholder={`Describe how you want to change the ${manipulationType} (e.g., '${manipulationType === 'color' ? 'Make it bright red with gold accents' : 'Make it 3 times bigger'}')`}
-              className="w-full h-20 p-3 border rounded-lg resize-none text-sm"
-              disabled={isLoading}
-            />
-            <div className="flex space-x-2 mt-4">
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Describe your changes:
+              </label>
+              <textarea
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                placeholder={`Tell me how you want to change the ${manipulationType}...\n\nExample: "${manipulationType === 'color' ? 'Make it bright red with gold accents and a metallic finish' : 'Make it 3 times bigger and add more detail'}"`}
+                className="w-full h-24 p-4 border border-gray-300 rounded-lg resize-none text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="flex space-x-3">
               <Button
                 onClick={handleSubmit}
                 disabled={!instruction.trim() || isLoading}
-                className="flex-1"
+                className="flex-1 bg-purple-600 hover:bg-purple-700 py-3"
               >
                 {isLoading ? "Processing..." : "Apply Changes"}
               </Button>
               <Button
                 onClick={() => setShowDialog(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 py-3"
               >
                 Cancel
               </Button>

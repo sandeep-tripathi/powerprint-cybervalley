@@ -110,26 +110,20 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
         <div className="flex items-center space-x-2">
           {showManipulationTools && (
             <div className="flex items-center space-x-4">
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white rounded-full font-semibold text-xs">
-                    2
-                  </span>
-                  <span className="text-white text-sm font-medium">AI Manipulation</span>
-                </div>
+              <div className="flex items-center space-x-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white rounded-full font-semibold text-xs">
+                  2
+                </span>
                 <CompactModelManipulation
                   onManipulate={handleLLMManipulation}
                   isLoading={llmLoading}
                 />
               </div>
               
-              <div className="flex flex-col items-center space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-green-600 text-white rounded-full font-semibold text-xs">
-                    3
-                  </span>
-                  <span className="text-white text-sm font-medium">3D Print validation</span>
-                </div>
+              <div className="flex items-center space-x-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 bg-green-600 text-white rounded-full font-semibold text-xs">
+                  3
+                </span>
                 <CompactPrintingValidation
                   onValidate={handlePrintingValidation}
                   isLoading={llmLoading}
