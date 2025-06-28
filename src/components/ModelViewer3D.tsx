@@ -9,6 +9,7 @@ import CompactModelManipulation from "@/components/CompactModelManipulation";
 import CompactPrintingValidation from "@/components/CompactPrintingValidation";
 import { ParsedObjData } from "@/components/ObjFileParser";
 import { useToast } from "@/hooks/use-toast";
+import { LLMModelManipulator } from "@/services/llmModelManipulation";
 
 interface ModelViewer3DProps {
   capturedImages?: File[];
@@ -17,6 +18,7 @@ interface ModelViewer3DProps {
 
 const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DProps) => {
   const [llmLoading, setLlmLoading] = useState(false);
+  const [manipulator] = useState(() => new LLMModelManipulator());
   const { toast } = useToast();
 
   const {
@@ -43,43 +45,36 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
 
   const handleLLMManipulation = async (instruction: string, type: 'color' | 'size') => {
     setLlmLoading(true);
-    console.log(`LLM ${type} manipulation instruction:`, instruction);
+    console.log(`Processing LLM ${type} manipulation:`, instruction);
     
-    // Simulate LLM processing with type-specific responses
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Simulate model property changes based on type
-    if (generatedModel) {
-      const updatedModel = { ...generatedModel };
-      
-      if (type === 'color') {
-        // Simulate color changes
-        updatedModel.meshData = {
-          ...updatedModel.meshData,
-          colorChange: instruction,
-          appliedAt: new Date().toISOString()
-        };
+    try {
+      const result = await manipulator.manipulateModel({
+        instruction,
+        type,
+        currentModel: generatedModel,
+      });
+
+      if (result.success) {
+        updateGeneratedModel(result.updatedModel);
+        
         toast({
-          title: "Color Changed!",
-          description: `Applied color change: ${instruction}`,
+          title: `${type === 'color' ? 'Color' : 'Size'} Changes Applied!`,
+          description: result.appliedChanges.join(', '),
         });
-      } else if (type === 'size') {
-        // Simulate size changes
-        const sizeMultiplier = instruction.toLowerCase().includes('bigger') ? 1.5 : 
-                              instruction.toLowerCase().includes('smaller') ? 0.7 : 1.2;
-        updatedModel.meshData = {
-          ...updatedModel.meshData,
-          sizeChange: instruction,
-          sizeMultiplier,
-          appliedAt: new Date().toISOString()
-        };
+      } else {
         toast({
-          title: "Size Changed!",
-          description: `Applied size change: ${instruction}`,
+          title: "Manipulation Failed",
+          description: result.error || "Failed to apply changes to the model.",
+          variant: "destructive",
         });
       }
-      
-      updateGeneratedModel(updatedModel);
+    } catch (error) {
+      console.error('LLM manipulation error:', error);
+      toast({
+        title: "Processing Error",
+        description: "An error occurred while processing your request.",
+        variant: "destructive",
+      });
     }
     
     setLlmLoading(false);

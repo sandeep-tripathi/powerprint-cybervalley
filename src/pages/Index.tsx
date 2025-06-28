@@ -58,16 +58,6 @@ const Index = () => {
                       />
                     </div>
                   </div>
-                  
-                  <button 
-                    className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                    disabled={!allImages.length}
-                    onClick={() => {
-                      console.log("Generate button clicked - processing will start automatically");
-                    }}
-                  >
-                    {allImages.length > 0 ? "Processing with Advanced AI..." : "Add Images to Generate"}
-                  </button>
                 </div>
 
                 <div className="xl:col-span-2">
