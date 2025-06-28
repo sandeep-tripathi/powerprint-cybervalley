@@ -38,18 +38,27 @@ const Index = () => {
             <div className="space-y-8">
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-1 space-y-6">
-                  <div className="grid grid-cols-2 gap-3">
-                    <CameraCapture 
-                      capturedImages={capturedImages}
-                      setCapturedImages={setCapturedImages}
-                      compact={true}
-                    />
-                    
-                    <ImageUpload 
-                      uploadedImages={uploadedImages}
-                      setUploadedImages={setUploadedImages}
-                      compact={true}
-                    />
+                  {/* Step 1: Add image to generate */}
+                  <div className="space-y-3">
+                    <div className="text-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 bg-purple-600 text-white rounded-full font-semibold text-sm mb-2">
+                        1
+                      </span>
+                      <p className="text-white font-medium">Add image to generate</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <CameraCapture 
+                        capturedImages={capturedImages}
+                        setCapturedImages={setCapturedImages}
+                        compact={true}
+                      />
+                      
+                      <ImageUpload 
+                        uploadedImages={uploadedImages}
+                        setUploadedImages={setUploadedImages}
+                        compact={true}
+                      />
+                    </div>
                   </div>
                   
                   <button 

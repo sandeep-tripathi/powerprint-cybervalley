@@ -121,16 +121,34 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
           
           {/* Show manipulation tools for default panda or generated models */}
           {showManipulationTools && (
-            <div className="flex items-center space-x-2">
-              <CompactModelManipulation
-                onManipulate={handleLLMManipulation}
-                isLoading={llmLoading}
-              />
+            <div className="flex items-center space-x-4">
+              {/* Step 2: Model manipulation */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="flex items-center space-x-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 bg-purple-600 text-white rounded-full font-semibold text-xs">
+                    2
+                  </span>
+                  <span className="text-white text-sm font-medium">Model manipulation</span>
+                </div>
+                <CompactModelManipulation
+                  onManipulate={handleLLMManipulation}
+                  isLoading={llmLoading}
+                />
+              </div>
               
-              <CompactPrintingValidation
-                onValidate={handlePrintingValidation}
-                isLoading={llmLoading}
-              />
+              {/* Step 3: 3D Print validation */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="flex items-center space-x-2">
+                  <span className="inline-flex items-center justify-center w-6 h-6 bg-green-600 text-white rounded-full font-semibold text-xs">
+                    3
+                  </span>
+                  <span className="text-white text-sm font-medium">3D Print validation</span>
+                </div>
+                <CompactPrintingValidation
+                  onValidate={handlePrintingValidation}
+                  isLoading={llmLoading}
+                />
+              </div>
             </div>
           )}
         </div>
