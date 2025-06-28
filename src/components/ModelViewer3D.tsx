@@ -121,9 +121,6 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">3D Model Viewer</h2>
-          <p className="text-sm text-purple-300">
-            Advanced Vision AI • Enhanced 3D Generation • Camera Capture • Image Upload
-          </p>
         </div>
         
         <ViewerControls
@@ -177,17 +174,6 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
           onModelUpdate={updateGeneratedModel}
         />
       )}
-
-      <div className="text-xs text-purple-200 space-y-1">
-        <p>• Advanced Vision AI • Enhanced 3D Generation • Real-time Processing • High-Quality Results</p>
-        <p>• Vision language models • Depth analysis • Intelligent mesh generation • Export: OBJ format</p>
-        {generatedModel && (
-          <p>• Model Stats: {generatedModel.vertices.toLocaleString()} vertices, {generatedModel.faces.toLocaleString()} faces, Quality: {generatedModel.qualityScore ? (generatedModel.qualityScore * 100).toFixed(1) + '%' : 'N/A'}</p>
-        )}
-        {uploadedObj && (
-          <p>• OBJ File: {uploadedObj.fileName} • {(uploadedObj.data.vertices.length / 3).toLocaleString()} vertices</p>
-        )}
-      </div>
     </div>
   );
 };
