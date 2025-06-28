@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/8a754d9c-caf4-4c40-9fdc-8ee1d3aa7a46
+**URL**: https://powerprint.lovable.app/
 
 ## How can I edit this code?
 
