@@ -27,15 +27,20 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
     }
   });
 
+  // Apply size modifications from LLM manipulation
+  const scaleModifications = useMemo(() => {
+    const sizeModification = modelData.meshData.sizeModification;
+    if (sizeModification) {
+      return [sizeModification.scaleX || 1, sizeModification.scaleY || 1, sizeModification.scaleZ || 1];
+    }
+    return [1, 1, 1];
+  }, [modelData.meshData.sizeModification]);
+
   // If we have real mesh data, use it; otherwise fall back to procedural geometry
   if (modelData.realMesh) {
     console.log("Rendering real 2D→3D converted mesh with", modelData.realMesh.vertexCount, "vertices");
     
-    // Analyze property changes and create appropriate material properties
-    const propertyChanges = modelData.meshData.propertyChanges || [];
-    const lastChange = propertyChanges[propertyChanges.length - 1] || "";
-    
-    // Default material properties
+    // Create appropriate material properties from color modifications
     let materialProps = {
       color: "#8B5CF6",
       roughness: 0.2,
@@ -44,39 +49,23 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
       opacity: 1.0,
     };
 
-    // Apply changes based on the most recent property change
-    if (lastChange.toLowerCase().includes("metallic") || lastChange.toLowerCase().includes("gold")) {
-      materialProps.color = "#FFD700";
-      materialProps.metalness = 0.9;
-      materialProps.roughness = 0.1;
-    } else if (lastChange.toLowerCase().includes("blue")) {
-      materialProps.color = "#3B82F6";
-      materialProps.metalness = 0.3;
-      materialProps.roughness = 0.4;
-    } else if (lastChange.toLowerCase().includes("red")) {
-      materialProps.color = "#EF4444";
-      materialProps.metalness = 0.3;
-      materialProps.roughness = 0.4;
-    } else if (lastChange.toLowerCase().includes("transparent") || lastChange.toLowerCase().includes("glass")) {
-      materialProps.color = "#FFFFFF";
-      materialProps.transparent = true;
-      materialProps.opacity = 0.3;
-      materialProps.metalness = 0.0;
-      materialProps.roughness = 0.0;
-    } else if (lastChange.toLowerCase().includes("stone") || lastChange.toLowerCase().includes("rough")) {
-      materialProps.color = "#78716C";
-      materialProps.roughness = 0.9;
-      materialProps.metalness = 0.0;
-    } else if (lastChange.toLowerCase().includes("shiny") || lastChange.toLowerCase().includes("mirror")) {
-      materialProps.metalness = 1.0;
-      materialProps.roughness = 0.0;
-    } else if (lastChange.toLowerCase().includes("matte")) {
-      materialProps.roughness = 1.0;
-      materialProps.metalness = 0.0;
+    // Apply color modifications from LLM manipulation
+    const colorModification = modelData.meshData.colorModification;
+    if (colorModification) {
+      materialProps.color = colorModification.primaryColor || "#8B5CF6";
+      materialProps.roughness = colorModification.finish === 'metallic' ? 0.1 : 0.4;
+      materialProps.metalness = colorModification.finish === 'metallic' ? 0.9 : 0.3;
+      
+      if (colorModification.intensity) {
+        // Adjust brightness based on intensity
+        const color = new THREE.Color(materialProps.color);
+        color.multiplyScalar(colorModification.intensity);
+        materialProps.color = `#${color.getHexString()}`;
+      }
     }
 
     return (
-      <group ref={groupRef} position={[0, 0, 0]}>
+      <group ref={groupRef} position={[0, 0, 0]} scale={scaleModifications}>
         <GeneratedMesh3D 
           meshData={modelData.realMesh}
           animate={false} // We handle animation at the group level
@@ -85,7 +74,7 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
         />
         
         {/* Visual indicator for recent changes */}
-        {propertyChanges.length > 0 && (
+        {(modelData.meshData.colorModification || modelData.meshData.sizeModification) && (
           <mesh position={[0, 3, 0]} scale={[0.2, 0.2, 0.2]}>
             <sphereGeometry args={[1, 8, 8]} />
             <meshStandardMaterial 
@@ -116,12 +105,8 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
 
   const geometry = createPowerPrintGeometry();
 
-  // Analyze property changes and create appropriate material
+  // Create material with LLM modifications
   const material = useMemo(() => {
-    const propertyChanges = modelData.meshData.propertyChanges || [];
-    const lastChange = propertyChanges[propertyChanges.length - 1] || "";
-    
-    // Default material properties
     let materialProps = {
       color: "#8B5CF6",
       roughness: 0.2,
@@ -134,54 +119,27 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
       emissiveIntensity: 0,
     };
 
-    // Apply changes based on the most recent property change
-    if (lastChange.toLowerCase().includes("metallic") || lastChange.toLowerCase().includes("gold")) {
-      materialProps.color = "#FFD700";
-      materialProps.metalness = 0.9;
-      materialProps.roughness = 0.1;
-      materialProps.envMapIntensity = 1.5;
-    } else if (lastChange.toLowerCase().includes("blue")) {
-      materialProps.color = "#3B82F6";
-      materialProps.metalness = 0.3;
-      materialProps.roughness = 0.4;
-    } else if (lastChange.toLowerCase().includes("red")) {
-      materialProps.color = "#EF4444";
-      materialProps.metalness = 0.3;
-      materialProps.roughness = 0.4;
-    } else if (lastChange.toLowerCase().includes("transparent") || lastChange.toLowerCase().includes("glass")) {
-      materialProps.color = "#FFFFFF";
-      materialProps.transparent = true;
-      materialProps.opacity = 0.3;
-      materialProps.metalness = 0.0;
-      materialProps.roughness = 0.0;
-      materialProps.envMapIntensity = 2.0;
-    } else if (lastChange.toLowerCase().includes("stone") || lastChange.toLowerCase().includes("rough")) {
-      materialProps.color = "#78716C";
-      materialProps.roughness = 0.9;
-      materialProps.metalness = 0.0;
-    } else if (lastChange.toLowerCase().includes("shiny") || lastChange.toLowerCase().includes("mirror")) {
-      materialProps.metalness = 1.0;
-      materialProps.roughness = 0.0;
-      materialProps.envMapIntensity = 2.0;
-    } else if (lastChange.toLowerCase().includes("matte")) {
-      materialProps.roughness = 1.0;
-      materialProps.metalness = 0.0;
-      materialProps.envMapIntensity = 0.5;
+    // Apply color modifications from LLM manipulation
+    const colorModification = modelData.meshData.colorModification;
+    if (colorModification) {
+      materialProps.color = colorModification.primaryColor || "#8B5CF6";
+      materialProps.roughness = colorModification.finish === 'metallic' ? 0.1 : 0.4;
+      materialProps.metalness = colorModification.finish === 'metallic' ? 0.9 : 0.3;
+      materialProps.envMapIntensity = colorModification.finish === 'metallic' ? 1.5 : 1.0;
+      
+      if (colorModification.intensity) {
+        // Adjust brightness based on intensity
+        const color = new THREE.Color(materialProps.color);
+        color.multiplyScalar(colorModification.intensity);
+        materialProps.color = `#${color.getHexString()}`;
+      }
     }
 
-    // Check for multiple changes to combine effects
-    propertyChanges.forEach((change: string) => {
-      if (change.toLowerCase().includes("detail") || change.toLowerCase().includes("complexity")) {
-        materialProps.emissive = "#4C1D95";
-        materialProps.emissiveIntensity = 0.1;
-      }
-    });
-
     return new THREE.MeshStandardMaterial(materialProps);
-  }, [modelData.meshData.propertyChanges]);
+  }, [modelData.meshData.colorModification]);
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
+    <group ref={groupRef} position={[0, 0, 0]} scale={scaleModifications}>
       {/* Main generated model with dynamic material */}
       <mesh geometry={geometry} material={material} />
       
@@ -212,7 +170,7 @@ const PowerPrintModel = ({ modelData, animate = true }: PowerPrintModelProps) =>
       )}
 
       {/* Visual indicator for recent changes */}
-      {modelData.meshData.propertyChanges && modelData.meshData.propertyChanges.length > 0 && (
+      {(modelData.meshData.colorModification || modelData.meshData.sizeModification) && (
         <mesh position={[0, 3, 0]} scale={[0.2, 0.2, 0.2]}>
           <sphereGeometry args={[1, 8, 8]} />
           <meshStandardMaterial 

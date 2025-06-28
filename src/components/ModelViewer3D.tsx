@@ -43,19 +43,49 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     onModelGenerated,
   });
 
+  // Create a default panda model when no real model exists
+  const getModelForManipulation = () => {
+    if (generatedModel) {
+      return generatedModel;
+    }
+    
+    // Create default panda model structure
+    return {
+      meshData: {
+        type: "default_panda",
+        algorithm: "procedural_geometry",
+        inputImages: 0,
+        processingTime: 0,
+        propertyChanges: [],
+      },
+      textureUrl: "",
+      complexity: 2000,
+      vertices: 1000,
+      faces: 800,
+      qualityScore: 0.85
+    };
+  };
+
   const handleLLMManipulation = async (instruction: string, type: 'color' | 'size') => {
     setLlmLoading(true);
     console.log(`Processing LLM ${type} manipulation:`, instruction);
     
     try {
+      const currentModel = getModelForManipulation();
+      
       const result = await manipulator.manipulateModel({
         instruction,
         type,
-        currentModel: generatedModel,
+        currentModel,
       });
 
       if (result.success) {
-        updateGeneratedModel(result.updatedModel);
+        // If we started with a default model, update the generated model
+        if (!generatedModel) {
+          updateGeneratedModel(result.updatedModel);
+        } else {
+          updateGeneratedModel(result.updatedModel);
+        }
         
         toast({
           title: `${type === 'color' ? 'Color' : 'Size'} Changes Applied!`,
@@ -97,7 +127,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     };
   };
 
-  const showManipulationTools = capturedImages.length === 0 || generatedModel;
+  const showManipulationTools = capturedImages.length === 0 || generatedModel || hasModel;
 
   return (
     <div className="space-y-4">
@@ -143,9 +173,9 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
         <ModelInfo uploadedImages={capturedImages} />
       </div>
 
-      {generatedModel && !isLoading && (
+      {(generatedModel || hasModel) && !isLoading && (
         <ModelPropertyEditor
-          generatedModel={generatedModel}
+          generatedModel={generatedModel || getModelForManipulation()}
           onModelUpdate={updateGeneratedModel}
         />
       )}
