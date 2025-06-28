@@ -4,15 +4,12 @@
 
 **URL**: https://powerprint.lovable.app/
 
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8a754d9c-caf4-4c40-9fdc-8ee1d3aa7a46) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
