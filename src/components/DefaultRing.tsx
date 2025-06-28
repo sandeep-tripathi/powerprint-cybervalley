@@ -1,12 +1,12 @@
 
-import OrnateRing from "./OrnateRing";
+import Panda3D from "./Panda3D";
 
 interface DefaultRingProps {
   animate?: boolean;
 }
 
 const DefaultRing = ({ animate = true }: DefaultRingProps) => {
-  return <OrnateRing animate={animate} />;
+  return <Panda3D animate={animate} />;
 };
 
 export default DefaultRing;

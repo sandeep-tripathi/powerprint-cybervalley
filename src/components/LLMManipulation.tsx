@@ -18,7 +18,7 @@ const LLMManipulation = ({ onManipulate, isLoading = false }: LLMManipulationPro
     if (!instruction.trim()) {
       toast({
         title: "No instruction provided",
-        description: "Please enter an instruction for the LLM to manipulate the 3D model.",
+        description: "Please enter an instruction to manipulate the 3D model.",
         variant: "destructive",
       });
       return;
@@ -44,12 +44,12 @@ const LLMManipulation = ({ onManipulate, isLoading = false }: LLMManipulationPro
     <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
       <div className="flex items-center space-x-2">
         <MessageSquare className="w-5 h-5 text-purple-600" />
-        <h3 className="text-lg font-semibold text-gray-900">LLM Model Manipulation</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Model manipulation</h3>
       </div>
       
       <div className="space-y-3">
         <Textarea
-          placeholder="Describe how you want to modify the 3D model (e.g., 'Make the ring thicker', 'Add decorative patterns', 'Scale it up by 50%')"
+          placeholder="Describe how you want to modify the 3D model (e.g., 'Make the panda bigger', 'Change the color', 'Add decorative patterns')"
           value={instruction}
           onChange={(e) => setInstruction(e.target.value)}
           rows={3}
@@ -69,7 +69,7 @@ const LLMManipulation = ({ onManipulate, isLoading = false }: LLMManipulationPro
           ) : (
             <>
               <Wand2 className="w-4 h-4 mr-2" />
-              Apply LLM Manipulation
+              Apply Model Manipulation
             </>
           )}
         </Button>

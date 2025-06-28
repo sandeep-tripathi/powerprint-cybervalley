@@ -6,7 +6,6 @@ import ViewerControls from "@/components/ViewerControls";
 import ThreeDCanvas from "@/components/ThreeDCanvas";
 import ModelInfo from "@/components/ModelInfo";
 import ModelPropertyEditor from "@/components/ModelPropertyEditor";
-import ObjFileUpload from "@/components/ObjFileUpload";
 import LLMManipulation from "@/components/LLMManipulation";
 import PrintingValidation from "@/components/PrintingValidation";
 import { ParsedObjData } from "@/components/ObjFileParser";
@@ -18,7 +17,6 @@ interface ModelViewer3DProps {
 }
 
 const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DProps) => {
-  const [uploadedObj, setUploadedObj] = useState<{ data: ParsedObjData; fileName: string } | null>(null);
   const [llmLoading, setLlmLoading] = useState(false);
   const { toast } = useToast();
 
@@ -43,14 +41,6 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     uploadedImages: capturedImages,
     onModelGenerated,
   });
-
-  const handleObjLoaded = (objData: ParsedObjData, fileName: string) => {
-    setUploadedObj({ data: objData, fileName });
-  };
-
-  const handleRemoveObj = () => {
-    setUploadedObj(null);
-  };
 
   const resetView = () => {
     console.log("Reset view");
@@ -114,7 +104,7 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     };
   };
 
-  const showManipulationTools = uploadedObj || (capturedImages.length === 0 && !generatedModel);
+  const showManipulationTools = capturedImages.length === 0 && !generatedModel;
 
   return (
     <div className="space-y-4">
@@ -124,20 +114,13 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
         </div>
         
         <ViewerControls
-          hasModel={hasModel || !!uploadedObj}
+          hasModel={hasModel}
           uploadedImages={capturedImages}
           generatedModel={generatedModel}
           onResetView={resetView}
           onDownloadOBJ={downloadModel}
         />
       </div>
-
-      {/* OBJ File Upload */}
-      <ObjFileUpload
-        onObjLoaded={handleObjLoaded}
-        onRemoveObj={handleRemoveObj}
-        uploadedObj={uploadedObj}
-      />
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="aspect-video bg-black relative">
@@ -146,14 +129,14 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
             generationStatus={generationStatus}
             uploadedImages={capturedImages}
             generatedModel={generatedModel}
-            uploadedObj={uploadedObj}
+            uploadedObj={null}
           />
         </div>
 
         <ModelInfo uploadedImages={capturedImages} />
       </div>
 
-      {/* LLM Manipulation and Printing Validation - Show for OBJ files or default ring */}
+      {/* Model Manipulation and Printing Validation - Show for default panda */}
       {showManipulationTools && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <LLMManipulation
