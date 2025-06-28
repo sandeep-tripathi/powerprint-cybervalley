@@ -104,7 +104,8 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
     };
   };
 
-  const showManipulationTools = capturedImages.length === 0 && !generatedModel;
+  // Show manipulation tools when there are no uploaded images (default panda) or when model is generated
+  const showManipulationTools = capturedImages.length === 0 || generatedModel;
 
   return (
     <div className="space-y-4">
@@ -122,18 +123,27 @@ const ModelViewer3D = ({ capturedImages = [], onModelGenerated }: ModelViewer3DP
             onDownloadOBJ={downloadModel}
           />
           
-          {/* Compact buttons for manipulation and validation */}
+          {/* Show manipulation tools for default panda or generated models */}
           {showManipulationTools && (
-            <>
-              <CompactModelManipulation
-                onManipulate={handleLLMManipulation}
-                isLoading={llmLoading}
-              />
-              <CompactPrintingValidation
-                onValidate={handlePrintingValidation}
-                isLoading={llmLoading}
-              />
-            </>
+            <div className="flex items-center space-x-2">
+              {/* Workflow Step 2 - Model Manipulation */}
+              <div className="flex items-center space-x-2 mr-2">
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+                <CompactModelManipulation
+                  onManipulate={handleLLMManipulation}
+                  isLoading={llmLoading}
+                />
+              </div>
+              
+              {/* Workflow Step 3 - 3D Print Validation */}
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
+                <CompactPrintingValidation
+                  onValidate={handlePrintingValidation}
+                  isLoading={llmLoading}
+                />
+              </div>
+            </div>
           )}
         </div>
       </div>
